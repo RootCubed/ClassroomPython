@@ -1,0 +1,39 @@
+{
+    "name": "classroompython",
+    "version": "0.0.1",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+        "dev": "vite dev",
+        "format": "prettier --write .",
+        "lint": "prettier --check .",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "ace-builds": "^1.34.2",
+        "flowbite": "^2.3.0",
+        "flowbite-svelte": "^0.46.1",
+        "flowbite-svelte-icons": "^1.6.1",
+        "pyodide": "^0.26.0",
+        "tailwindcss": "^3.4.3"
+    },
+    "devDependencies": {
+        "@sveltejs/adapter-node": "^5.0.1",
+        "@sveltejs/kit": "^2.0.0",
+        "@sveltejs/vite-plugin-svelte": "^3.0.0",
+        "autoprefixer": "^10.4.19",
+        "dotenv": "^16.4.5",
+        "postcss": "^8.4.38",
+        "postgres": "^3.4.4",
+        "prettier": "^3.1.1",
+        "prettier-plugin-svelte": "^3.1.2",
+        "prettier-plugin-tailwindcss": "^0.5.14",
+        "svelte": "^4.2.7",
+        "svelte-check": "^3.6.0",
+        "tslib": "^2.4.1",
+        "typescript": "^5.0.0",
+        "vite": "^5.0.3"
+    }
+}

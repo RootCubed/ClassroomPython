@@ -1,0 +1,12 @@
+# Extends docker-compose.yml
+
+services:
+    frontend:
+        ports:
+            - 5173:5173
+        environment:
+            NODE_ENV: development
+        command: >
+            sh -c "
+            npm i &&
+            npm run dev --env-file=.env -- --host"
