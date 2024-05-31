@@ -20,12 +20,17 @@
         editor.getSession().setMode("ace/mode/" + lang);
     }
 
+    export function setCode(code: string) {
+        value = code;
+        editor.setValue(code, 2);
+    }
+
     onMount(async () => {
         editor = ace.edit(editorElement);
 
         editor.getSession().setMode("ace/mode/" + lang);
         editor.setTheme("ace/theme/" + theme);
-        editor.setValue(value, 0);
+        setCode(value);
         editor.setFontSize(16);
 
         editor.setOptions({

@@ -1,62 +1,29 @@
-<script>
-    import { AccordionItem, Accordion, Indicator, Card } from "flowbite-svelte";
-    import { AngleRightOutline } from "flowbite-svelte-icons";
+<script lang="ts">
+    import * as Accordion from "$lib/components/ui/accordion";
+    import { Separator } from "$lib/components/ui/separator";
+    import type { ExerciseGroup } from "./clpy-types";
+    import { loadedExercise } from "./page-state";
+    import ExerciseCard from "./ExerciseCard.svelte";
 
-    const exampleData = [
-        {
-            title: "Kohn-Skript, Kap. 4.3",
-            exercises: [
-                {
-                    title: "Aufgabe 12",
-                    hasSolution: true,
-                    solved: true
-                },
-                {
-                    title: "Aufgabe 13",
-                    hasSolution: false,
-                    solved: false
-                }
-            ]
-        },
-        ...Array(20)
-            .fill(null)
-            .map((_) => ({
-                title: "Kohn-Skript, Kap. 4.4",
-                exercises: [
-                    {
-                        title: "Aufgabe 14",
-                        hasSolution: true,
-                        solved: false
-                    },
-                    {
-                        title: "Aufgabe 15",
-                        hasSolution: false,
-                        solved: false
-                    }
-                ]
-            }))
-    ];
+    export let exercises: ExerciseGroup[];
 </script>
 
-<div class="overflow-auto px-2">
-    <Accordion flush>
-        {#each exampleData as group}
-            <AccordionItem>
-                <span slot="header" class="flex w-full items-center justify-between pr-5">
-                    {group.title}
-                    <Indicator color="yellow" />
-                </span>
-                {#each group.exercises as exercise}
-                    <button class="my-2 w-full">
-                        <Card padding="sm" color={exercise.solved ? "green" : "default"}>
-                            <div class="flex items-center justify-between">
-                                <p>{exercise.title}</p>
-                                <AngleRightOutline />
-                            </div>
-                        </Card>
-                    </button>
-                {/each}
-            </AccordionItem>
-        {/each}
-    </Accordion>
-</div>
+<span class="text-lg font-semibold"> Aufgaben</span>
+<Separator class="mt-2" />
+<Accordion.Root value={$loadedExercise?.group_id}>
+    {#each exercises as group}
+        <Accordion.Item value={group.id}>
+            <Accordion.Trigger>
+                {group.title}
+            </Accordion.Trigger>
+            <Accordion.Content>
+                <div class="flex flex-col gap-2">
+                    {#each group.exercises as exercise}
+                        {@const selected = $loadedExercise?.id === exercise.id}
+                        <ExerciseCard {exercise} {selected} />
+                    {/each}
+                </div>
+            </Accordion.Content>
+        </Accordion.Item>
+    {/each}
+</Accordion.Root>

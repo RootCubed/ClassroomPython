@@ -1,27 +1,39 @@
 <script lang="ts">
-    import { Button, Tooltip } from "flowbite-svelte";
-    import { PlayOutline, RocketOutline } from "flowbite-svelte-icons";
+    import { Button } from "$lib/components/ui/button";
+    import * as Tooltip from "$lib/components/ui/tooltip";
+    import { Play, Rocket, Save } from "lucide-svelte";
 
-    export let onExecute = () => {
-        console.log("asdf");
-    };
-    export let onSubmit = () => {
-        console.log("asdf");
-    };
+    export let onExecute = () => {};
+    export let onSubmit = () => {};
 </script>
 
-<div class="p-2">
-    <span class="text-lg">Aufgabe 12</span>
-    <div class="mt-2 flex flex-row items-center gap-2">
-        <Button pill={true} color="green" on:click={onExecute}><PlayOutline /></Button>
-        <Tooltip>Code ausführen</Tooltip>
-        <Button pill={true} color="purple" on:click={onSubmit}><RocketOutline /></Button>
-        <Tooltip>Einreichen</Tooltip>
-    </div>
+<div class="flex flex-row items-center gap-2 px-2">
+    <Tooltip.Root>
+        <Tooltip.Trigger>
+            <Button
+                variant="secondary"
+                on:click={onExecute}
+                class="bg-green-600 text-white
+                hover:bg-green-700 dark:bg-green-800 dark:hover:bg-green-900"><Play /></Button
+            ></Tooltip.Trigger
+        >
+        <Tooltip.Content>Code ausführen</Tooltip.Content>
+    </Tooltip.Root>
+    <Tooltip.Root>
+        <Tooltip.Trigger>
+            <Button variant="destructive"><Save /></Button></Tooltip.Trigger
+        >
+        <Tooltip.Content>Code speichern</Tooltip.Content>
+    </Tooltip.Root>
+    <Tooltip.Root>
+        <Tooltip.Trigger>
+            <Button
+                variant="secondary"
+                on:click={onSubmit}
+                class="bg-blue-600 text-white
+                hover:bg-blue-700 dark:bg-blue-800 dark:hover:bg-blue-900"><Rocket /></Button
+            ></Tooltip.Trigger
+        >
+        <Tooltip.Content>Einreichen</Tooltip.Content>
+    </Tooltip.Root>
 </div>
-
-<style>
-    * {
-        z-index: 10;
-    }
-</style>
