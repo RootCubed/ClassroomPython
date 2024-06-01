@@ -8,7 +8,7 @@
     export let data: LayoutData;
 
     if (data.user === null) {
-        if ($page.url.pathname !== "/login") {
+        if ($page.url.pathname !== "/login" && $page.url.pathname !== "/manage") {
             redirect(307, "/login");
         }
     } else {
