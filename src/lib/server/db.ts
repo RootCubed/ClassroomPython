@@ -129,6 +129,14 @@ export async function checkSession(sessionToken: string): Promise<User | null> {
     };
 }
 
+export async function deleteAllUsers(): Promise<void> {
+    await sql`
+        DELETE FROM submission;
+        DELETE FROM session;
+        DELETE FROM clpy_user;
+    `.simple();
+}
+
 export async function createUser(
     name: string,
     fullName: string,
@@ -151,6 +159,19 @@ export async function createExerciseGroup(title: string): Promise<string> {
     return id;
 }
 
+export async function getExerciseGroup(title: string, createIfNotExist: boolean): Promise<string> {
+    const [existingGroup] = await sql`
+        SELECT id FROM exercise_group WHERE title = ${title};
+    `;
+    if (existingGroup) {
+        return existingGroup.id;
+    } else if (!createIfNotExist) {
+        throw new Error("Group does not exist");
+    }
+
+    return await createExerciseGroup(title);
+}
+
 export async function createExercise(
     group: string,
     exercise: {
@@ -170,12 +191,16 @@ export async function createExercise(
     return id;
 }
 
-export async function getUsers(): Promise<
-    { id: string; username: string; fullName: string; role: "student" | "teacher" }[]
-> {
-    return await sql`
+export async function getUsers(): Promise<User[]> {
+    const rawUsers = await sql`
         SELECT * FROM clpy_user;
     `;
+    return rawUsers.map((row) => ({
+        id: row.id,
+        name: row.username,
+        fullName: row.full_name,
+        isAdmin: row.role === "teacher"
+    }));
 }
 
 export async function addSubmission(
