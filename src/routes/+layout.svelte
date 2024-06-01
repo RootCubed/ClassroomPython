@@ -2,10 +2,18 @@
     import "../app.css";
     import { user } from "$lib/page-state";
     import type { LayoutData } from "./$types";
+    import { redirect } from "@sveltejs/kit";
+    import { page } from "$app/stores";
 
     export let data: LayoutData;
 
-    $user = data.user;
+    if (data.user === null) {
+        if ($page.url.pathname !== "/login") {
+            redirect(307, "/login");
+        }
+    } else {
+        $user = data.user;
+    }
 </script>
 
 <div class="h-screen w-full">
