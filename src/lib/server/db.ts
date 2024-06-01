@@ -30,7 +30,7 @@ export async function setupDatabase() {
         CREATE TABLE clpy_user (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             username VARCHAR(255) UNIQUE,
-            full_name VARCHAR(255) UNIQUE,
+            full_name VARCHAR(255),
             role ROLE NOT NULL
         );
         CREATE TABLE exercise_group (
@@ -54,7 +54,7 @@ export async function setupDatabase() {
             timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         CREATE TABLE session (
-            session_id UUID PRIMARY KEY,
+            session_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             user_id UUID REFERENCES clpy_user(id)
         )
     `.simple();
