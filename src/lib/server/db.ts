@@ -221,8 +221,6 @@ export async function adminGetExercise(id: string): Promise<ExerciseAdminView> {
         ORDER BY submission.timestamp DESC;
     `;
 
-    console.log(await sql`SELECT * FROM submission;`);
-
     return {
         id: exercise.id,
         title: exercise.title,
@@ -265,8 +263,6 @@ export async function getExercises(): Promise<ExerciseGroup[]> {
     const groups = await sql`
         SELECT * FROM exercise_group;
     `;
-
-    console.log(exercises);
 
     return groups.map((group) => {
         return {

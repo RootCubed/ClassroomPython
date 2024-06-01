@@ -17,7 +17,6 @@
     $: if (files) {
         // TODO: clean this up
         (async () => {
-            console.log(files);
             for (const file of files) {
                 if (file.name == "users.json") {
                     const users = await file.text();
