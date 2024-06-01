@@ -86,6 +86,21 @@ export async function setupDatabase() {
     console.log("Database setup complete");
 }
 
+export async function loginUser(username: string): Promise<string> {
+    const [user] = await sql`
+        SELECT id FROM clpy_user WHERE username = ${username};
+    `;
+    if (!user) {
+        throw new Error("User does not exist");
+    }
+    const [{ sessionToken }] = await sql`
+        INSERT INTO session (user_id)
+        VALUES (${user.id})
+        RETURNING session_id;
+    `;
+    return sessionToken;
+}
+
 export async function createUser(
     name: string,
     fullName: string,
