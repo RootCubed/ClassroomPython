@@ -77,24 +77,28 @@
     </div>
     <div class="space-y-2">
         <h3 class="text-xl font-bold">Benutzer</h3>
-        <Table.Root class="max-w-[600px]">
-            <Table.Header>
-                <Table.Row>
-                    <Table.Head>Benutzername</Table.Head>
-                    <Table.Head>Name</Table.Head>
-                    <Table.Head>Admin?</Table.Head>
-                </Table.Row>
-            </Table.Header>
-            <Table.Body>
-                {#each data.users as user}
+        {#if !data.users}
+            <p>Keine Benutzer vorhanden</p>
+        {:else}
+            <Table.Root class="max-w-[600px]">
+                <Table.Header>
                     <Table.Row>
-                        <Table.Cell>{user.name}</Table.Cell>
-                        <Table.Cell>{user.fullName}</Table.Cell>
-                        <Table.Cell>{user.isAdmin ? "Ja" : "Nein"}</Table.Cell>
+                        <Table.Head>Benutzername</Table.Head>
+                        <Table.Head>Name</Table.Head>
+                        <Table.Head>Admin?</Table.Head>
                     </Table.Row>
-                {/each}
-            </Table.Body>
-        </Table.Root>
+                </Table.Header>
+                <Table.Body>
+                    {#each data.users as user}
+                        <Table.Row>
+                            <Table.Cell>{user.name}</Table.Cell>
+                            <Table.Cell>{user.fullName}</Table.Cell>
+                            <Table.Cell>{user.isAdmin ? "Ja" : "Nein"}</Table.Cell>
+                        </Table.Row>
+                    {/each}
+                </Table.Body>
+            </Table.Root>
+        {/if}
     </div>
     <div class="space-y-2">
         <h3 class="text-xl font-bold">DB Upload</h3>

@@ -59,30 +59,6 @@ export async function setupDatabase() {
         )
     `.simple();
 
-    const uTestID = await createUser("teacher", "The Teacher", "teacher");
-    const uTest2ID = await createUser("student1", "Student 1", "student");
-
-    const gTestID = await createExerciseGroup("Test");
-    const gTest2ID = await createExerciseGroup("Test 2");
-    const exID = await createExercise(gTestID, {
-        title: "Test Exercise",
-        template: 'print("Hello, world (ex1)!")'
-    });
-    await createExercise(gTestID, {
-        title: "Test Exercise 2",
-        subtitle: "With a subtitle!",
-        template: 'print("Hello, world (ex2)!")'
-    });
-
-    await createExercise(gTest2ID, {
-        title: "Test Exercise",
-        subtitle: "With a subtitle...",
-        description: "...and a description, too!",
-        template: 'print("Hello, world (ex3)!")'
-    });
-
-    await addSubmission(exID, uTestID, 'print("Goodbye, world!")');
-
     console.log("Database setup complete");
 }
 
