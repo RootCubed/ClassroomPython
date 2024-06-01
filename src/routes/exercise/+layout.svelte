@@ -21,7 +21,7 @@
         <UserMenu />
     </div>
     <Separator class="mb-2" />
-    <div class="flex h-full flex-col">
+    <div class="flex h-full min-h-0 flex-col">
         <slot></slot>
     </div>
 </SidebarLayout>

@@ -31,41 +31,39 @@
     {/if}
 </Dialog.Root>
 
-<div class="p-2">
-    <Tabs.Root>
-        <Tabs.List class="grid w-full grid-cols-2">
-            <Tabs.Trigger value="submissions">Submissions</Tabs.Trigger>
-            <Tabs.Trigger value="edit">Edit</Tabs.Trigger>
-        </Tabs.List>
-        <Tabs.Content value="submissions">
-            <Table.Root>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.Head>User</Table.Head>
-                        <Table.Head>Time</Table.Head>
-                        <Table.Head></Table.Head>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                    {#each data.exercise.submissions as submission, i}
-                        <div
-                            on:click={() => (openSubmission = submission)}
-                            on:keypress={() => (openSubmission = submission)}
-                            class="contents"
-                            aria-label="Open submission"
-                            role="button"
-                            tabindex={i}
-                        >
-                            <Table.Row>
-                                <Table.Cell>{submission.user.name}</Table.Cell>
-                                <Table.Cell>{formatTimestamp(submission.timestamp)}</Table.Cell>
-                                <Table.Cell><ChevronRight class="float-right" /></Table.Cell>
-                            </Table.Row>
-                        </div>
-                    {/each}
-                </Table.Body>
-            </Table.Root>
-        </Tabs.Content>
-        <Tabs.Content value="edit">Edit</Tabs.Content>
-    </Tabs.Root>
-</div>
+<Tabs.Root class="flex h-full min-h-0 flex-col overflow-auto p-2">
+    <Tabs.List class="grid w-full grid-cols-2">
+        <Tabs.Trigger value="submissions">Submissions</Tabs.Trigger>
+        <Tabs.Trigger value="edit">Edit</Tabs.Trigger>
+    </Tabs.List>
+    <Tabs.Content value="submissions" class="h-full overflow-auto">
+        <Table.Root>
+            <Table.Header>
+                <Table.Row>
+                    <Table.Head>User</Table.Head>
+                    <Table.Head>Time</Table.Head>
+                    <Table.Head></Table.Head>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {#each data.exercise.submissions as submission, i}
+                    <div
+                        on:click={() => (openSubmission = submission)}
+                        on:keypress={() => (openSubmission = submission)}
+                        class="contents"
+                        aria-label="Open submission"
+                        role="button"
+                        tabindex={i}
+                    >
+                        <Table.Row>
+                            <Table.Cell>{submission.user.name}</Table.Cell>
+                            <Table.Cell>{formatTimestamp(submission.timestamp)}</Table.Cell>
+                            <Table.Cell><ChevronRight class="float-right" /></Table.Cell>
+                        </Table.Row>
+                    </div>
+                {/each}
+            </Table.Body>
+        </Table.Root>
+    </Tabs.Content>
+    <Tabs.Content value="edit" class="h-full overflow-auto">Edit</Tabs.Content>
+</Tabs.Root>
