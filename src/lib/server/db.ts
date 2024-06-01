@@ -216,7 +216,8 @@ export async function adminGetExercise(id: string): Promise<ExerciseAdminView> {
         FROM submission
         LEFT JOIN clpy_user
         ON submission.user_id = clpy_user.id
-        WHERE submission.exercise_id = ${id};
+        WHERE submission.exercise_id = ${id}
+        ORDER BY submission.timestamp DESC;
     `;
 
     console.log(await sql`SELECT * FROM submission;`);
