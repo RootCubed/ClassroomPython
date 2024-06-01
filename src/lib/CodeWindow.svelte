@@ -50,21 +50,18 @@
         }
     }
 
-    let setEditorCode: (code: string) => void = () => {};
+    let editor: AceEditor | undefined;
 
-    $: setEditorCode(initialCode);
+    $: if (editor) {
+        editor.setCode(initialCode);
+    }
 </script>
 
 <Resizable.PaneGroup direction="vertical">
     <Resizable.Pane>
         <div class="flex h-full flex-col gap-2">
             <Toolbar onExecute={runCode} onSubmit={submitCode} />
-            <AceEditor
-                lang="python"
-                theme="monokai"
-                bind:value={userCode}
-                bind:setCode={setEditorCode}
-            />
+            <AceEditor bind:value={userCode} bind:this={editor} />
         </div>
     </Resizable.Pane>
     <Resizable.Handle withHandle />
