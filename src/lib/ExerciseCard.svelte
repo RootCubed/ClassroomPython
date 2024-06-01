@@ -12,7 +12,7 @@
 <a
     href="/exercise/{exercise.id}"
     class={cn(
-        "relative flex min-h-16 flex-col items-start gap-2 rounded-lg border p-3 text-sm transition-all hover:bg-accent",
+        "relative flex min-h-20 flex-col items-start gap-2 rounded-lg border p-3 text-sm transition-all hover:bg-accent",
         selected && "bg-accent text-accent-foreground"
     )}
 >
