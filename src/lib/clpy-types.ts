@@ -1,3 +1,10 @@
+export type User = {
+    id: string;
+    name: string;
+    fullName: string;
+    isAdmin: boolean;
+};
+
 export type Exercise = {
     id: string;
     title: string;
@@ -9,7 +16,7 @@ export type Exercise = {
 
 export type Submission = {
     id: string;
-    user: { id: string; name: string; fullName: string };
+    user: User;
     code: string;
     timestamp: Date;
 };

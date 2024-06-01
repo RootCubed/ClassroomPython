@@ -1,6 +1,6 @@
 import postgres from "postgres";
 import { POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB } from "$env/static/private";
-import type { Exercise, ExerciseAdminView, ExerciseGroup, Submission } from "$lib/clpy-types";
+import type { Exercise, ExerciseAdminView, ExerciseGroup, Submission, User } from "$lib/clpy-types";
 
 const sql = postgres({
     host: "backend",
@@ -88,17 +88,45 @@ export async function setupDatabase() {
 
 export async function loginUser(username: string): Promise<string> {
     const [user] = await sql`
-        SELECT id FROM clpy_user WHERE username = ${username};
+        SELECT id
+        FROM clpy_user
+        WHERE username = ${username};
     `;
     if (!user) {
         throw new Error("User does not exist");
     }
-    const [{ sessionToken }] = await sql`
+    const [{ session_id }] = await sql`
         INSERT INTO session (user_id)
         VALUES (${user.id})
         RETURNING session_id;
     `;
-    return sessionToken;
+    return session_id;
+}
+
+export async function invalidateSession(sessionToken: string): Promise<void> {
+    await sql`
+        DELETE FROM session
+        WHERE session_id = ${sessionToken};
+    `;
+}
+
+export async function checkSession(sessionToken: string): Promise<User | null> {
+    const [user] = await sql`
+        SELECT clpy_user.*
+        FROM session
+        JOIN clpy_user
+        ON session.user_id = clpy_user.id
+        WHERE session_id = ${sessionToken};
+    `;
+    if (!user) {
+        return null;
+    }
+    return {
+        id: user.id,
+        name: user.username,
+        fullName: user.full_name,
+        isAdmin: user.role === "teacher"
+    };
 }
 
 export async function createUser(
@@ -205,7 +233,8 @@ export async function adminGetExercise(id: string): Promise<ExerciseAdminView> {
             user: {
                 id: submission.user_id,
                 name: submission.username,
-                fullName: submission.full_name
+                fullName: submission.full_name,
+                isAdmin: submission.role === "teacher"
             },
             code: submission.code,
             timestamp: new Date(submission.timestamp)
