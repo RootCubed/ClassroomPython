@@ -17,21 +17,63 @@
     let userCode = initialCode;
     let lastSavedCode = userCode;
 
-    let stdout = "";
+    let consoleOutput: { type: "stdout" | "stderr"; text: string }[] = [];
 
     async function runCode() {
-        console.log("Running code");
         if (!$py) {
             $py = await pyodide.loadPyodide();
         }
-        stdout = "";
+        consoleOutput = [];
         $py.setStdout({
             write: (text: Uint8Array) => {
-                stdout += new TextDecoder().decode(text);
+                consoleOutput = [
+                    ...consoleOutput,
+                    { type: "stdout", text: new TextDecoder().decode(text) }
+                ];
                 return text.length;
             }
         });
-        const result = $py.runPythonAsync(userCode);
+        $py.setStderr({
+            write: (text: Uint8Array) => {
+                consoleOutput = [
+                    ...consoleOutput,
+                    { type: "stderr", text: new TextDecoder().decode(text) }
+                ];
+                return text.length;
+            }
+        });
+        try {
+            await $py.runPythonAsync(userCode);
+        } catch (e) {
+            // Print the error to the console
+            let actualErrorStart = false;
+            $py.setStderr({
+                write: (text: Uint8Array) => {
+                    const textStr = new TextDecoder().decode(text);
+                    if (!actualErrorStart) {
+                        if (textStr.includes("in <module>")) {
+                            consoleOutput = [
+                                ...consoleOutput,
+                                { type: "stderr", text: "Runtime-Fehler:" }
+                            ];
+                            actualErrorStart = true;
+                        } else if (textStr.includes("<exec>")) {
+                            consoleOutput = [
+                                ...consoleOutput,
+                                { type: "stderr", text: "Syntax-Fehler:" }
+                            ];
+                            actualErrorStart = true;
+                        }
+                    }
+
+                    if (actualErrorStart) {
+                        consoleOutput = [...consoleOutput, { type: "stderr", text: textStr }];
+                    }
+                    return text.length;
+                }
+            });
+            $py.runPython("import traceback; traceback.print_exception(sys.last_exc)");
+        }
     }
 
     async function submitCode() {
@@ -47,7 +89,6 @@
             body: userCode
         });
         if (resp.ok) {
-            console.log("Submitted code");
             lastSavedCode = userCode;
         } else {
             console.error("Failed to submit code");
@@ -63,6 +104,7 @@
     $: if (editor) {
         editor.setCode(initialCode);
         lastSavedCode = initialCode;
+        consoleOutput = [];
     }
 
     let leaveConfirmWindow = {
@@ -112,6 +154,6 @@
     </Resizable.Pane>
     <Resizable.Handle withHandle />
     <Resizable.Pane defaultSize={20}>
-        <Console {stdout} />
+        <Console {consoleOutput} />
     </Resizable.Pane>
 </Resizable.PaneGroup>
