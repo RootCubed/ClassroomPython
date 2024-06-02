@@ -10,7 +10,14 @@ const sql = postgres({
 });
 
 export async function setupDatabase() {
-    for (const table of ["clpy_user", "exercise", "exercise_group", "submission", "session"]) {
+    for (const table of [
+        "clpy_user",
+        "exercise",
+        "exercise_group",
+        "submission",
+        "save",
+        "session"
+    ]) {
         try {
             await sql`DROP TABLE ${sql(table)} CASCADE;`;
         } catch (error) {
@@ -44,6 +51,12 @@ export async function setupDatabase() {
             subtitle VARCHAR(255),
             description TEXT,
             template TEXT NOT NULL
+        );
+        CREATE TABLE save (
+            user_id UUID REFERENCES clpy_user(id),
+            exercise_id UUID REFERENCES exercise(id),
+            code TEXT NOT NULL,
+            PRIMARY KEY (user_id, exercise_id)
         );
         CREATE TABLE submission (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -205,6 +218,26 @@ export async function getExercise(id: string): Promise<Exercise> {
         group_id: exercise.group_id,
         template: exercise.template
     };
+}
+
+export async function getExerciseSave(exerciseID: string, userID: string): Promise<string | null> {
+    const [save] = await sql`
+        SELECT code FROM save WHERE exercise_id = ${exerciseID} AND user_id = ${userID};
+    `;
+    return save?.code ?? null;
+}
+
+export async function saveExercise(
+    exerciseID: string,
+    userID: string,
+    code: string
+): Promise<void> {
+    await sql`
+        INSERT INTO save (user_id, exercise_id, code)
+        VALUES (${userID}, ${exerciseID}, ${code})
+        ON CONFLICT (user_id, exercise_id) DO UPDATE
+        SET code = ${code};
+    `;
 }
 
 export async function adminGetExercise(id: string): Promise<ExerciseAdminView> {

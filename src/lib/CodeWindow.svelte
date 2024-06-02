@@ -91,7 +91,18 @@
     }
 
     async function saveCode() {
-        lastSavedCode = userCode;
+        const resp = await fetch(`/exercise/${submissionID}/save`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "text/plain"
+            },
+            body: userCode
+        });
+        if (resp.ok) {
+            lastSavedCode = userCode;
+        } else {
+            console.error("Failed to submit code");
+        }
     }
 
     let editor: AceEditor | undefined;
