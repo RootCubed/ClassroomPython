@@ -51,11 +51,7 @@
                 hover:bg-green-700 dark:bg-green-800 dark:hover:bg-green-900"
                     disabled={!runReady}
                 >
-                    {#if runReady}
-                        <Play />
-                    {:else}
-                        <LoadingSpinner />
-                    {/if}
+                    <Play />
                 </Button></Tooltip.Trigger
             >
             <Tooltip.Content>Code ausführen</Tooltip.Content>
