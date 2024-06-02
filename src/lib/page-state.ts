@@ -4,4 +4,3 @@ import * as pyodide from "pyodide";
 
 export const loadedExercise = writable<Exercise>();
 export const user = writable<User>();
-export const py = writable<pyodide.PyodideInterface | undefined>();

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import * as pyodide from "pyodide";
+    import PyodideWorker from "$lib/pyodide.worker?worker";
 
     import * as Resizable from "$lib/components/ui/resizable";
     import * as AlertDialog from "$lib/components/ui/alert-dialog";
@@ -8,8 +8,43 @@
     import Console from "./Console.svelte";
     import Toolbar from "./Toolbar.svelte";
 
-    import { py } from "./page-state";
     import { beforeNavigate, goto } from "$app/navigation";
+    import { browser } from "$app/environment";
+
+    let pyodideWorker: Worker;
+
+    let codeExecutionResolve: (value: unknown) => void;
+    let consoleOutput: { type: "stdout" | "stderr"; text: string }[] = [];
+    let runReady = false;
+
+    // For interrupting the Python code
+    let interruptBuffer: Uint8Array;
+
+    if (browser) {
+        pyodideWorker = new PyodideWorker();
+
+        interruptBuffer = new Uint8Array(new SharedArrayBuffer(1));
+
+        pyodideWorker.addEventListener("message", (ev) => {
+            if (ev.data.type === "ready") {
+                runReady = true;
+                pyodideWorker.postMessage({
+                    type: "setInterruptBuffer",
+                    buffer: interruptBuffer
+                });
+            } else if (ev.data.type === "done") {
+                codeExecutionResolve(true);
+            } else {
+                consoleOutput = [
+                    ...consoleOutput,
+                    {
+                        type: ev.data.type,
+                        text: ev.data.content
+                    }
+                ];
+            }
+        });
+    }
 
     export let initialCode: string;
     export let submissionID: string | null = null;
@@ -17,63 +52,23 @@
     let userCode = initialCode;
     let lastSavedCode = userCode;
 
-    let consoleOutput: { type: "stdout" | "stderr"; text: string }[] = [];
-
     async function runCode() {
-        if (!$py) {
-            $py = await pyodide.loadPyodide();
-        }
-        consoleOutput = [];
-        $py.setStdout({
-            write: (text: Uint8Array) => {
-                consoleOutput = [
-                    ...consoleOutput,
-                    { type: "stdout", text: new TextDecoder().decode(text) }
-                ];
-                return text.length;
-            }
+        interruptBuffer[0] = 0; // Reset interrupt
+        pyodideWorker.postMessage({
+            type: "run",
+            python: userCode
         });
-        $py.setStderr({
-            write: (text: Uint8Array) => {
-                consoleOutput = [
-                    ...consoleOutput,
-                    { type: "stderr", text: new TextDecoder().decode(text) }
-                ];
-                return text.length;
-            }
-        });
-        try {
-            await $py.runPythonAsync(userCode);
-        } catch (e) {
-            // Print the error to the console
-            let actualErrorStart = false;
-            $py.setStderr({
-                write: (text: Uint8Array) => {
-                    const textStr = new TextDecoder().decode(text);
-                    if (!actualErrorStart) {
-                        if (textStr.includes("in <module>")) {
-                            consoleOutput = [
-                                ...consoleOutput,
-                                { type: "stderr", text: "Runtime-Fehler:" }
-                            ];
-                            actualErrorStart = true;
-                        } else if (textStr.includes("<exec>")) {
-                            consoleOutput = [
-                                ...consoleOutput,
-                                { type: "stderr", text: "Syntax-Fehler:" }
-                            ];
-                            actualErrorStart = true;
-                        }
-                    }
 
-                    if (actualErrorStart) {
-                        consoleOutput = [...consoleOutput, { type: "stderr", text: textStr }];
-                    }
-                    return text.length;
-                }
-            });
-            $py.runPython("import traceback; traceback.print_exception(sys.last_exc)");
-        }
+        consoleOutput = [];
+
+        await new Promise((resolve) => {
+            codeExecutionResolve = resolve;
+        });
+    }
+
+    async function cancelExecution() {
+        console.log(":(");
+        interruptBuffer[0] = 2; // SIGINT
     }
 
     async function submitCode() {
