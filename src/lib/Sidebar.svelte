@@ -8,11 +8,11 @@
     export let exercises: ExerciseGroup[];
 </script>
 
-<span class="text-lg font-semibold"> Aufgaben</span>
+<span class="block w-full p-2 text-xl font-semibold">Aufgaben</span>
 <Separator class="mt-2" />
 <Accordion.Root value={$loadedExercise?.group_id}>
     {#each exercises as group}
-        <Accordion.Item value={group.id}>
+        <Accordion.Item value={group.id} class="text-sm">
             <Accordion.Trigger>
                 {group.title}
             </Accordion.Trigger>
