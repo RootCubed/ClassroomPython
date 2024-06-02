@@ -143,7 +143,13 @@
 <Resizable.PaneGroup direction="vertical">
     <Resizable.Pane>
         <div class="flex h-full flex-col gap-2">
-            <Toolbar onExecute={runCode} onSave={saveCode} onSubmit={submitCode} />
+            <Toolbar
+                {runReady}
+                onExecute={runCode}
+                onCancel={cancelExecution}
+                onSave={saveCode}
+                onSubmit={submitCode}
+            />
             <AceEditor bind:value={userCode} bind:this={editor} />
         </div>
     </Resizable.Pane>
