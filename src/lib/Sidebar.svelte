@@ -11,19 +11,23 @@
 <span class="block w-full p-2 text-xl font-semibold">Aufgaben</span>
 <Separator class="mt-2" />
 <Accordion.Root value={$loadedExercise?.group_id}>
-    {#each exercises as group}
-        <Accordion.Item value={group.id} class="text-sm">
-            <Accordion.Trigger>
-                {group.title}
-            </Accordion.Trigger>
-            <Accordion.Content>
-                <div class="flex flex-col gap-2">
-                    {#each group.exercises as exercise}
-                        {@const selected = $loadedExercise?.id === exercise.id}
-                        <ExerciseCard {exercise} {selected} />
-                    {/each}
-                </div>
-            </Accordion.Content>
-        </Accordion.Item>
+    {#each exercises as group (group.id)}
+        {#key group}
+            <Accordion.Item value={group.id} class="text-sm">
+                <Accordion.Trigger>
+                    {group.title}
+                </Accordion.Trigger>
+                <Accordion.Content>
+                    <div class="flex flex-col gap-2">
+                        {#each group.exercises as exercise (exercise.id)}
+                            <ExerciseCard
+                                {exercise}
+                                selected={$loadedExercise?.id === exercise.id}
+                            />
+                        {/each}
+                    </div>
+                </Accordion.Content>
+            </Accordion.Item>
+        {/key}
     {/each}
 </Accordion.Root>

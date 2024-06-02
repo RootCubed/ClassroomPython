@@ -5,6 +5,12 @@ export type User = {
     isAdmin: boolean;
 };
 
+export enum SubmissionStatus {
+    NotSubmitted = "not_submitted",
+    Submitted = "submitted",
+    Accepted = "accepted"
+}
+
 export type Exercise = {
     id: string;
     title: string;
@@ -12,6 +18,8 @@ export type Exercise = {
     description?: string;
     group_id: string;
     template: string;
+    code: string;
+    submissionStatus: SubmissionStatus;
 };
 
 export type Submission = {

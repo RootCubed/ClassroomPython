@@ -8,7 +8,7 @@
     import Console from "./Console.svelte";
     import Toolbar from "./Toolbar.svelte";
 
-    import { beforeNavigate, goto } from "$app/navigation";
+    import { beforeNavigate, goto, invalidateAll } from "$app/navigation";
     import { browser } from "$app/environment";
 
     let pyodideWorker: Worker;
@@ -67,7 +67,6 @@
     }
 
     async function cancelExecution() {
-        console.log(":(");
         interruptBuffer[0] = 2; // SIGINT
     }
 
@@ -85,6 +84,7 @@
         });
         if (resp.ok) {
             lastSavedCode = userCode;
+            invalidateAll();
         } else {
             console.error("Failed to submit code");
         }

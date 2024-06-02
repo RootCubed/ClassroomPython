@@ -1,6 +1,13 @@
 import postgres from "postgres";
 import { POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB } from "$env/static/private";
-import type { Exercise, ExerciseAdminView, ExerciseGroup, Submission, User } from "$lib/clpy-types";
+import {
+    SubmissionStatus,
+    type Exercise,
+    type ExerciseAdminView,
+    type ExerciseGroup,
+    type Submission,
+    type User
+} from "$lib/clpy-types";
 
 const sql = postgres({
     host: "backend",
@@ -205,9 +212,17 @@ export async function addSubmission(
     return id;
 }
 
-export async function getExercise(id: string): Promise<Exercise> {
+export async function getExercise(id: string, userId: string): Promise<Exercise> {
     const [exercise] = await sql`
-        SELECT * FROM exercise WHERE id = ${id};
+        SELECT *, save.code AS save_code
+        FROM exercise
+        LEFT JOIN save
+        ON exercise.id = save.exercise_id AND save.user_id = ${userId}
+        WHERE id = ${id};
+    `;
+
+    const [{ count }] = await sql`
+        SELECT COUNT(*) FROM submission WHERE exercise_id = ${id} AND user_id = ${userId};
     `;
 
     return {
@@ -216,7 +231,10 @@ export async function getExercise(id: string): Promise<Exercise> {
         subtitle: exercise.subtitle,
         description: exercise.description,
         group_id: exercise.group_id,
-        template: exercise.template
+        template: exercise.template,
+        code: exercise.save_code === null ? exercise.template : exercise.save_code,
+        submissionStatus:
+            parseInt(count) === 0 ? SubmissionStatus.NotSubmitted : SubmissionStatus.Submitted
     };
 }
 
@@ -261,6 +279,8 @@ export async function adminGetExercise(id: string): Promise<ExerciseAdminView> {
         description: exercise.description,
         group_id: exercise.group_id,
         template: exercise.template,
+        code: exercise.template,
+        submissionStatus: SubmissionStatus.Submitted,
         submissions: submissions.map((submission) => ({
             id: submission.id,
             user: {
@@ -288,9 +308,15 @@ export async function getSubmission(id: string): Promise<Submission> {
     };
 }
 
-export async function getExercises(): Promise<ExerciseGroup[]> {
+export async function getExercises(userId: string): Promise<ExerciseGroup[]> {
     const exercises = await sql`
-        SELECT * FROM exercise;
+        SELECT exercise.*, save.code AS save_code, COUNT(submission.id) AS submission_count
+        FROM exercise
+        LEFT JOIN save
+        ON exercise.id = save.exercise_id AND save.user_id = ${userId}
+        LEFT JOIN submission
+        ON exercise.id = submission.exercise_id AND submission.user_id = ${userId}
+        GROUP BY exercise.id, exercise.title, save.code;
     `;
 
     const groups = await sql`
@@ -309,7 +335,12 @@ export async function getExercises(): Promise<ExerciseGroup[]> {
                     subtitle: e.subtitle,
                     description: e.description,
                     group_id: e.group_id,
-                    template: e.template
+                    template: e.template,
+                    code: e.save_code === null ? e.template : e.save_code,
+                    submissionStatus:
+                        parseInt(e.submission_count) === 0
+                            ? SubmissionStatus.NotSubmitted
+                            : SubmissionStatus.Submitted
                 }))
         };
     });

@@ -4,4 +4,4 @@
     import { loadedExercise } from "$lib/page-state";
 </script>
 
-<CodeWindow initialCode={$loadedExercise.template} submissionID={$loadedExercise.id} />
+<CodeWindow initialCode={$loadedExercise.code} submissionID={$loadedExercise.id} />

@@ -14,6 +14,7 @@
     class={cn(
         "relative flex min-h-20 flex-col items-start gap-2 rounded-lg border p-3 text-sm transition-all hover:bg-accent",
         selected && "bg-accent text-accent-foreground"
+        // exercise.submissionStatus == "submitted" && "bg-emerald-700"
     )}
 >
     <div class="flex w-full flex-col gap-1">
@@ -24,12 +25,26 @@
                 </div>
             </div>
             <div class="ml-auto text-xs text-foreground">
-                <Tooltip.Root>
-                    <Tooltip.Trigger>
-                        <span class="flex h-2 w-2 rounded-full bg-yellow-600" />
-                    </Tooltip.Trigger>
-                    <Tooltip.Content>Noch nicht abgegeben</Tooltip.Content>
-                </Tooltip.Root>
+                {#if exercise.submissionStatus == "not_submitted" || exercise.submissionStatus == "submitted"}
+                    <Tooltip.Root>
+                        <Tooltip.Trigger>
+                            <span
+                                class={cn(
+                                    "flex h-2 w-2 rounded-full",
+                                    exercise.submissionStatus == "not_submitted" && "bg-yellow-600",
+                                    exercise.submissionStatus == "submitted" && "bg-green-600"
+                                )}
+                            />
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>
+                            {#if exercise.submissionStatus == "not_submitted"}
+                                Noch nicht abgegeben
+                            {:else if exercise.submissionStatus == "submitted"}
+                                Abgegeben
+                            {/if}
+                        </Tooltip.Content>
+                    </Tooltip.Root>
+                {/if}
             </div>
         </div>
         <div class="text-xs font-medium">{exercise.subtitle ?? " "}</div>
