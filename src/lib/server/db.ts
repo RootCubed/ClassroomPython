@@ -54,6 +54,7 @@ export async function setupDatabase() {
         CREATE TABLE exercise (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             group_id UUID REFERENCES exercise_group(id),
+            order_num SERIAL NOT NULL,
             title VARCHAR(255) NOT NULL,
             subtitle VARCHAR(255),
             description TEXT,
@@ -240,7 +241,9 @@ export async function getExercise(id: string, userId: string): Promise<Exercise>
 
 export async function getExerciseSave(exerciseID: string, userID: string): Promise<string | null> {
     const [save] = await sql`
-        SELECT code FROM save WHERE exercise_id = ${exerciseID} AND user_id = ${userID};
+        SELECT code
+        FROM save
+        WHERE exercise_id = ${exerciseID} AND user_id = ${userID};
     `;
     return save?.code ?? null;
 }
@@ -316,7 +319,8 @@ export async function getExercises(userId: string): Promise<ExerciseGroup[]> {
         ON exercise.id = save.exercise_id AND save.user_id = ${userId}
         LEFT JOIN submission
         ON exercise.id = submission.exercise_id AND submission.user_id = ${userId}
-        GROUP BY exercise.id, exercise.title, save.code;
+        GROUP BY exercise.id, exercise.title, save.code
+        ORDER BY exercise.order_num ASC;
     `;
 
     const groups = await sql`
