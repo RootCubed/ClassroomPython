@@ -23,11 +23,11 @@
                 </div>
             </DropdownMenu.Label>
             <DropdownMenu.Separator />
-            <DropdownMenu.Group>
+            <!-- <DropdownMenu.Group>
                 <DropdownMenu.Item>Profil</DropdownMenu.Item>
                 <DropdownMenu.Item>Einstellungen</DropdownMenu.Item>
             </DropdownMenu.Group>
-            <DropdownMenu.Separator />
+            <DropdownMenu.Separator /> -->
             <DropdownMenu.Item on:click={() => goto("/logout")}>Ausloggen</DropdownMenu.Item>
         </DropdownMenu.Content>
     </DropdownMenu.Root>
