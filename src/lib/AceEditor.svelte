@@ -24,8 +24,7 @@
         setCode(value);
 
         editor.setOptions({
-            enableBasicAutocompletion: true,
-            enableLiveAutocompletion: true
+            enableBasicAutocompletion: true
         });
 
         editor.on("change", () => {
