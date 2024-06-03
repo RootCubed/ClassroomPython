@@ -15,12 +15,12 @@ services:
             sh -c "
             npm i -D &&
             npm run build &&
-            cp -t ./build/prod/client/_app/immutable/chunks \
+            cp -t ./build/prod/client/_app/immutable/workers \
             ./node_modules/pyodide/pyodide.asm.js \
             ./node_modules/pyodide/pyodide.asm.wasm \
             ./node_modules/pyodide/python_stdlib.zip \
             ./node_modules/pyodide/pyodide-lock.json &&
-            node build/prod"
+            ORIGIN=$FRONTEND_ORIGIN node ./prod-server.js"
         depends_on:
             - backend
 

@@ -1,9 +1,11 @@
 import * as pyodide from "pyodide";
 
 let _py: pyodide.PyodideInterface | undefined;
-_py = await getPy();
 
-self.postMessage({ type: "ready" });
+(async () => {
+    _py = await getPy();
+    self.postMessage({ type: "ready" });
+})();
 
 async function getPy() {
     if (_py) {

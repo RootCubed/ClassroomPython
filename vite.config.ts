@@ -24,5 +24,15 @@ export default defineConfig({
     plugins: [sveltekit(), viteServerConfig],
     optimizeDeps: {
         exclude: ["pyodide"]
+    },
+    worker: {
+        format: "es"
+    },
+    build: {
+        rollupOptions: {
+            output: {
+                format: "esm"
+            }
+        }
     }
 });
