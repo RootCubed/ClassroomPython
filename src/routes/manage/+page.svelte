@@ -13,9 +13,41 @@
     export let data: PageData;
 
     let files: FileList;
+    let singleFile: FileList;
+
+    async function importExercise(file: File) {
+        const lines = (await file.text()).replace(/\r/g, "").split("\n");
+        const meta: Record<string, string> = {};
+        const tryParse = (line: string, prefix: string, key: string) => {
+            if (line.startsWith(prefix)) {
+                meta[key] = line.slice(prefix.length);
+                return true;
+            }
+            return false;
+        };
+        const code = lines
+            .filter(
+                (line) =>
+                    ![
+                        tryParse(line, "# TITLE: ", "title"),
+                        tryParse(line, "# SUBTITLE: ", "subtitle"),
+                        tryParse(line, "# CATEGORY: ", "groupName")
+                    ].some((x) => x)
+            )
+            .join("\n");
+        await fetch("/api/import-exercise", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                meta,
+                code
+            })
+        });
+    }
 
     $: if (files) {
-        // TODO: clean this up
         (async () => {
             for (const file of files) {
                 if (file.name == "users.json") {
@@ -28,38 +60,15 @@
                         body: users
                     });
                 } else if (file.name.includes(".py")) {
-                    const lines = (await file.text()).replace(/\r/g, "").split("\n");
-                    const meta: Record<string, string> = {};
-                    const tryParse = (line: string, prefix: string, key: string) => {
-                        if (line.startsWith(prefix)) {
-                            meta[key] = line.slice(prefix.length);
-                            return true;
-                        }
-                        return false;
-                    };
-                    const code = lines
-                        .filter(
-                            (line) =>
-                                ![
-                                    tryParse(line, "# TITLE: ", "title"),
-                                    tryParse(line, "# SUBTITLE: ", "subtitle"),
-                                    tryParse(line, "# CATEGORY: ", "groupName")
-                                ].some((x) => x)
-                        )
-                        .join("\n");
-                    await fetch("/api/import-exercise", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            meta,
-                            code
-                        })
-                    });
+                    await importExercise(file);
                 }
             }
         })();
+    }
+
+    $: if (singleFile && singleFile[0]) {
+        console.log("File:", singleFile[0]);
+        importExercise(singleFile[0]);
     }
 
     /* The current Svelte version throws an error if these props are included directly */
@@ -100,10 +109,21 @@
         {/if}
     </div>
     <div class="space-y-2">
+        <h3 class="text-xl font-bold">Aufgabenupload</h3>
+        <div class="grid max-w-sm items-center gap-1.5">
+            <Label for="clpy-course-upload">Lade eine Python-Datei hoch:</Label>
+            <input
+                class="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium"
+                bind:files={singleFile}
+                id="clpy-course-upload"
+                type="file"
+            />
+        </div>
+    </div>
+    <div class="space-y-2">
         <h3 class="text-xl font-bold">DB Upload</h3>
         <div class="grid max-w-sm items-center gap-1.5">
             <Label for="clpy-course-upload">Lade einen clpy_course-Order hoch:</Label>
-            <!-- @ts-ignore -->
             <input
                 class="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium"
                 bind:files
