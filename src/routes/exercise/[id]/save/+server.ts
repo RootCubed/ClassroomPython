@@ -1,21 +1,16 @@
 import type { RequestHandler } from "./$types";
 import * as db from "$lib/server/db";
+import { error } from "@sveltejs/kit";
 
-export const POST: RequestHandler = async ({ cookies, request, params }) => {
-    const sessionToken = cookies.get("session");
-    if (!sessionToken) {
-        return new Response("Unauthorized", { status: 401 });
-    }
-    const user = await db.checkSession(sessionToken);
-    if (!user) {
-        return new Response("Unauthorized", { status: 401 });
+export const POST: RequestHandler = async ({ locals, request, params }) => {
+    if (!locals.user) {
+        throw error(401);
     }
     try {
         const code = await request.text();
-        await db.saveExercise(params.id, user.id, code);
-    } catch (error) {
-        console.error(error);
-        return new Response("Internal Server Error", { status: 500 });
+        await db.saveExercise(params.id, locals.user.id, code);
+    } catch (e) {
+        throw error(500, "Die Aufgabe konnte nicht gespeichert werden.");
     }
 
     return new Response("OK", { status: 200 });
