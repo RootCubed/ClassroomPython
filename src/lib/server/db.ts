@@ -349,3 +349,30 @@ export async function getExercises(userId: string): Promise<ExerciseGroup[]> {
         };
     });
 }
+
+export async function saveLastSubmissions(): Promise<void> {
+    const exercises = await sql`
+        SELECT id FROM exercise;
+    `;
+    for (const exercise of exercises) {
+        const submissions = await sql`
+            SELECT user_id, code
+            FROM submission
+            WHERE exercise_id = ${exercise.id}
+            ORDER BY timestamp DESC;
+        `;
+        for (const submission of submissions) {
+            const trySave = await sql`
+                SELECT * FROM save
+                WHERE user_id = ${submission.user_id} AND exercise_id = ${exercise.id};
+            `;
+            if (trySave.length > 0) {
+                continue;
+            }
+            console.log(
+                `Saving submission for exercise ${exercise.id} by user ${submission.user_id}`
+            );
+            await saveExercise(exercise.id, submission.user_id, submission.code);
+        }
+    }
+}
