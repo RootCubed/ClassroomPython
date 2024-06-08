@@ -1,14 +1,14 @@
 import { error, redirect, type Handle } from "@sveltejs/kit";
 import { authUser } from "$lib/server/auth";
 
-const adminOnlyRoutes = ["/exercise/[id]/admin"];
+const adminOnlyRoutes = ["/exercise/[id]/admin/"];
 const onlyLoggedInRoutes = ["/exercise/", "/api/"];
 
 function isRouteMatch(route: string | null, filter: string[]) {
     if (!route) {
         return false;
     }
-    return filter.some((r) => route.startsWith(r));
+    return filter.some((r) => (route + "/").startsWith(r));
 }
 
 export const handle: Handle = async ({ event, resolve }) => {
