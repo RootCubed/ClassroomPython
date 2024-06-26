@@ -1,16 +1,16 @@
 <script lang="ts">
     import * as Accordion from "$lib/components/ui/accordion";
     import { Separator } from "$lib/components/ui/separator";
-    import type { ExerciseGroup } from "./clpy-types";
+    import type { ExerciseGroupView } from "./server/db";
     import { loadedExercise } from "./page-state";
     import ExerciseCard from "./ExerciseCard.svelte";
 
-    export let exercises: ExerciseGroup[];
+    export let exercises: ExerciseGroupView;
 </script>
 
 <span class="block w-full p-2 text-xl font-semibold">Aufgaben</span>
 <Separator class="mt-2" />
-<Accordion.Root value={$loadedExercise?.group_id}>
+<Accordion.Root value={$loadedExercise?.exerciseGroup.id}>
     {#each exercises as group (group.id)}
         {#key group}
             <Accordion.Item value={group.id} class="text-sm">

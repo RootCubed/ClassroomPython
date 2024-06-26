@@ -49,20 +49,25 @@
 
     $: if (files) {
         (async () => {
+            const codeFiles = [];
+            let usersFile = null;
             for (const file of files) {
                 if (file.name == "users.json") {
-                    const users = await file.text();
-                    await fetch("/api/import-users", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: users
-                    });
+                    usersFile = await file.text();
                 } else if (file.name.includes(".py")) {
-                    await importExercise(file);
+                    codeFiles.push(file);
                 }
             }
+            for (const file of codeFiles) {
+                await importExercise(file);
+            }
+            await fetch("/api/import-users", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: usersFile
+            });
         })();
     }
 
@@ -93,15 +98,15 @@
                     <Table.Row>
                         <Table.Head>Benutzername</Table.Head>
                         <Table.Head>Name</Table.Head>
-                        <Table.Head>Admin?</Table.Head>
+                        <Table.Head>Benutzertyp</Table.Head>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
                     {#each data.users as user}
                         <Table.Row>
-                            <Table.Cell>{user.name}</Table.Cell>
+                            <Table.Cell>{user.userName}</Table.Cell>
                             <Table.Cell>{user.fullName}</Table.Cell>
-                            <Table.Cell>{user.isAdmin ? "Ja" : "Nein"}</Table.Cell>
+                            <Table.Cell>{user.role}</Table.Cell>
                         </Table.Row>
                     {/each}
                 </Table.Body>

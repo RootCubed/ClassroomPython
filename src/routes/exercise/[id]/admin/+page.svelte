@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { PageData } from "./$types";
-    import type { Submission } from "$lib/clpy-types";
+    import type { Submission } from "@prisma/client";
     import * as Tabs from "$lib/components/ui/tabs";
     import * as Table from "$lib/components/ui/table";
     import * as Dialog from "$lib/components/ui/dialog";
@@ -24,7 +24,7 @@
     {#if openSubmission !== undefined}
         <Dialog.Content class="flex h-[90vh] max-w-[90vw] flex-col">
             <Dialog.Header>
-                <Dialog.Title>Viewing submission by {openSubmission.user.name}</Dialog.Title>
+                <Dialog.Title>Viewing submission by {openSubmission}</Dialog.Title>
             </Dialog.Header>
             <CodeWindow initialCode={openSubmission.code} />
         </Dialog.Content>
@@ -56,7 +56,7 @@
                         tabindex={i}
                     >
                         <Table.Row>
-                            <Table.Cell>{submission.user.name}</Table.Cell>
+                            <Table.Cell>{submission.user.userName}</Table.Cell>
                             <Table.Cell>{formatTimestamp(submission.timestamp)}</Table.Cell>
                             <Table.Cell><ChevronRight class="float-right" /></Table.Cell>
                         </Table.Row>

@@ -1,12 +1,12 @@
 <script lang="ts">
-    import type { ExerciseGroup } from "./clpy-types";
+    import type { ExerciseGroupView } from "./server/db";
     import Sidebar from "./Sidebar.svelte";
     import * as Sheet from "$lib/components/ui/sheet";
     import { Menu } from "lucide-svelte";
     import { Button } from "$lib/components/ui/button";
     import { page } from "$app/stores";
 
-    export let exercises: ExerciseGroup[];
+    export let exercises: ExerciseGroupView;
 
     let popoverOpen = false;
 

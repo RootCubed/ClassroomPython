@@ -5,6 +5,8 @@ volumes:
 services:
     frontend:
         image: node:22-alpine
+        environment:
+            POSTGRES_HOST: backend
         working_dir: /home/node/app
         volumes:
             - ./:/home/node/app/
@@ -14,7 +16,8 @@ services:
             - $FRONTEND_PORT:3000
         command: >
             sh -c "
-            npm i -D &&
+            npm i &&
+            npx prisma migrate deploy &&
             npm run build &&
             cp -t ./build/prod/client/_app/immutable/workers \
             ./node_modules/pyodide/pyodide.asm.js \
@@ -34,4 +37,4 @@ services:
         volumes:
             - pgdata:/var/lib/postgresql/data
         expose:
-            - 5432
+            - $POSTGRES_PORT

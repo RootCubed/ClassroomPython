@@ -5,11 +5,9 @@ export const load: ServerLoad = async ({ params, locals }) => {
     if (!locals.user) {
         throw error(401);
     }
-    try {
-        return {
-            exercise: await db.getExercise(params.id!, locals.user.id)
-        };
-    } catch (e) {
+    const exercise = await db.getExercise(params.id!, locals.user.id);
+    if (!exercise) {
         throw error(404, "Die Aufgabe wurde nicht gefunden.");
     }
+    return { exercise };
 };

@@ -34,5 +34,12 @@ export default defineConfig({
                 format: "esm"
             }
         }
+    },
+    resolve: {
+        alias: {
+            // This is to support enums from Prisma with Vite
+            // See https://github.com/prisma/prisma/issues/12504#issuecomment-1285883083
+            ".prisma/client/index-browser": "./node_modules/.prisma/client/index-browser.js"
+        }
     }
 });

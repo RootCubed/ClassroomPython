@@ -18,7 +18,8 @@ services:
         command: >
             sh -c "
             npm i &&
+            npx prisma migrate deploy &&
             npm run dev --env-file=.env -- --host"
     backend:
         ports:
-            - 5432:5432
+            - $POSTGRES_PORT:$POSTGRES_PORT

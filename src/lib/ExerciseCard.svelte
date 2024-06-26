@@ -1,12 +1,15 @@
 <script lang="ts">
     import { Cog } from "lucide-svelte";
     import { cn } from "./utils";
-    import type { Exercise } from "./clpy-types";
+    import type { ExerciseView } from "./server/db";
     import * as Tooltip from "./components/ui/tooltip";
     import { user } from "./page-state";
+    import { Role } from "@prisma/client";
 
-    export let exercise: Exercise;
+    export let exercise: ExerciseView;
     export let selected = false;
+
+    $: submissionStatus = exercise.submissions.length === 0 ? "not_submitted" : "submitted";
 </script>
 
 <a
@@ -25,21 +28,21 @@
                 </div>
             </div>
             <div class="ml-auto text-xs text-foreground">
-                {#if exercise.submissionStatus == "not_submitted" || exercise.submissionStatus == "submitted"}
+                {#if submissionStatus == "not_submitted" || submissionStatus == "submitted"}
                     <Tooltip.Root>
                         <Tooltip.Trigger>
                             <span
                                 class={cn(
                                     "flex h-2 w-2 rounded-full",
-                                    exercise.submissionStatus == "not_submitted" && "bg-yellow-600",
-                                    exercise.submissionStatus == "submitted" && "bg-green-600"
+                                    submissionStatus == "not_submitted" && "bg-yellow-600",
+                                    submissionStatus == "submitted" && "bg-green-600"
                                 )}
                             />
                         </Tooltip.Trigger>
                         <Tooltip.Content>
-                            {#if exercise.submissionStatus == "not_submitted"}
+                            {#if submissionStatus == "not_submitted"}
                                 Noch nicht abgegeben
-                            {:else if exercise.submissionStatus == "submitted"}
+                            {:else if submissionStatus == "submitted"}
                                 Abgegeben
                             {/if}
                         </Tooltip.Content>
@@ -50,7 +53,7 @@
         <div class="text-xs font-medium">{exercise.subtitle ?? " "}</div>
     </div>
     <div class="line-clamp-2 text-xs text-muted-foreground">{exercise.description ?? ""}</div>
-    {#if $user.isAdmin}
+    {#if $user.role === Role.ADMIN}
         <a class="absolute bottom-3 right-3" href="/exercise/{exercise.id}/admin">
             <Cog size={16} />
         </a>

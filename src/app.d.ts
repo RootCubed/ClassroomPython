@@ -1,4 +1,4 @@
-import type { User } from "$lib/clpy-types";
+import type { User } from "@prisma/client";
 
 declare global {
     namespace App {

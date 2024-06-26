@@ -7,13 +7,17 @@ export const POST: RequestHandler = async ({ request }) => {
         code: string;
     };
 
-    const groupID = await db.getExerciseGroup(meta.groupName, true);
+    let group = await db.getExerciseGroup(meta.groupName);
 
-    await db.createExercise(groupID, {
-        title: meta.title,
-        subtitle: meta.subtitle,
-        template: code
-    });
+    if (!group) {
+        group = await db.createExerciseGroup(
+            // Courses not supported yet, hardcoding for now
+            "af0471c8-bcea-4771-8abe-37d3b5173191",
+            meta.groupName
+        );
+    }
+
+    await db.createExercise(group.id, meta.title, meta.subtitle, "", code);
 
     return new Response("OK", { status: 200 });
 };

@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+model User {
+  id           String @id @default(uuid())
+  userName     String @unique
+  passwordHash String
+  fullName     String
+  role         Role
+
+  sessions        Session[]
+  saves           Save[]
+  submissions     Submission[]
+  ownedCourses    Course[]     @relation("courseOwners")
+  enrolledCourses Course[]     @relation("courseStudents")
+}
+
+model Session {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model Exercise {
+  id            String        @id @default(uuid())
+  orderNum      Int           @default(autoincrement())
+  title         String
+  subtitle      String?
+  description   String?
+  codeTemplate  String
+  exerciseGroup ExerciseGroup @relation(fields: [groupId], references: [id])
+  groupId       String
+  exerciseTags  ExerciseTag[]
+  isInLibrary   Boolean
+
+  saves       Save[]
+  submissions Submission[]
+}
+
+model ExerciseTag {
+  name      String     @id
+  exercises Exercise[]
+}
+
+model ExerciseGroup {
+  id    String @id @default(uuid())
+  title String
+
+  exercises Exercise[]
+
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId String
+
+  @@unique([courseId, title])
+}
+
+model Course {
+  id          String @id @default(uuid())
+  title       String
+  description String
+
+  owners   User[] @relation("courseOwners")
+  students User[] @relation("courseStudents")
+
+  exercises ExerciseGroup[]
+}
+
+model Save {
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  exerciseId String
+  code       String
+
+  @@id([userId, exerciseId])
+}
+
+model Submission {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  exerciseId String
+  code       String
+  timestamp  DateTime @default(now())
+}
