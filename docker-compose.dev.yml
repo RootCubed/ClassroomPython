@@ -1,4 +1,13 @@
-# Extends docker-compose.yml
+# Use this file in conjunction with docker-compose.yml to run the development environment with
+# `docker compose -f docker-compose.yml -f docker-compose.dev.yml up`.
+
+# By doing so, you:
+# - Run the frontend in development mode with hot reloading
+# - Expose the postgres database to the host machine for debugging purposes
+
+# You can also run just the backend service with:
+# `docker compose -f docker-compose.yml -f docker-compose.dev.yml up backend`
+# if you want to run the frontend on your host machine.
 
 services:
     frontend:
@@ -10,3 +19,6 @@ services:
             sh -c "
             npm i &&
             npm run dev --env-file=.env -- --host"
+    backend:
+        ports:
+            - 5432:5432
