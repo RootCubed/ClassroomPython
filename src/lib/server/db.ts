@@ -197,7 +197,9 @@ export async function getSubmissions(exerciseId: string): Promise<Submission[]> 
 export async function adminGetExercise(id: string) {
     const exercise = await prisma.exercise.findUnique({
         where: { id },
-        select: { submissions: { include: { user: true } } }
+        include: {
+            submissions: { include: { user: true } }
+        }
     });
     if (!exercise) {
         return null;
