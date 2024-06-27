@@ -2,7 +2,7 @@ import { error, redirect, type Handle } from "@sveltejs/kit";
 import { authUser } from "$lib/server/auth";
 import { Role } from "@prisma/client";
 
-const adminOnlyRoutes = ["/exercise/[id]/admin/"];
+const adminOnlyRoutes = ["/exercise/[id]/admin/", "/manage"];
 const onlyLoggedInRoutes = ["/exercise/", "/api/"];
 
 function isRouteMatch(route: string | null, filter: string[]) {

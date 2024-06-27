@@ -14,6 +14,15 @@ const prisma = new PrismaClient({
     datasourceUrl
 });
 
+export default prisma;
+
+export async function isInitialized(): Promise<boolean> {
+    const numAdmins = await prisma.user.count({
+        where: { role: "ADMIN" }
+    });
+    return numAdmins > 0;
+}
+
 export async function resetAllExceptUsers(): Promise<void> {
     const deleteTransactions = [
         prisma.submission.deleteMany(),
