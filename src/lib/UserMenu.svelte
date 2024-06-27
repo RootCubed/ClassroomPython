@@ -28,7 +28,7 @@
                 <DropdownMenu.Item>Einstellungen</DropdownMenu.Item>
             </DropdownMenu.Group>
             <DropdownMenu.Separator /> -->
-            <DropdownMenu.Item on:click={() => goto("/logout")}>Ausloggen</DropdownMenu.Item>
+            <DropdownMenu.Item on:click={() => goto("/auth/logout")}>Ausloggen</DropdownMenu.Item>
         </DropdownMenu.Content>
     </DropdownMenu.Root>
 </div>

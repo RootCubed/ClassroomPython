@@ -9,5 +9,5 @@ export const GET: RequestHandler = async ({ cookies }) => {
         cookies.delete("session", { path: "/" });
     }
 
-    redirect(302, "/login");
+    redirect(302, "/auth/login");
 };

@@ -18,7 +18,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     if (isRouteMatch(event.route.id, adminOnlyRoutes) && user?.role !== Role.ADMIN) {
         throw error(403, "Forbidden");
     } else if (isRouteMatch(event.route.id, onlyLoggedInRoutes) && !user) {
-        throw redirect(303, "/login");
+        throw redirect(303, "/auth/login");
     }
 
     event.locals.user = user;

@@ -1,6 +1,14 @@
 import type { Actions } from "./$types.js";
 import * as db from "$lib/server/db";
-import { redirect } from "@sveltejs/kit";
+import { redirect, type ServerLoad } from "@sveltejs/kit";
+
+export const load: ServerLoad = async () => {
+    if (!(await db.isInitialized())) {
+        throw redirect(302, "/auth/register-admin");
+    }
+
+    return {};
+};
 
 export const actions: Actions = {
     default: async ({ cookies, request }) => {
