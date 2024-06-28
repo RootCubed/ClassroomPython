@@ -7,6 +7,7 @@ import {
     POSTGRES_PORT,
     POSTGRES_USER
 } from "$env/static/private";
+import argon2 from "argon2";
 
 const datasourceUrl = `postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}`;
 
@@ -40,12 +41,15 @@ export async function resetUsers(): Promise<void> {
     await prisma.$transaction(deleteTransactions);
 }
 
-export async function loginUser(userName: string): Promise<string> {
+export async function loginUser(userName: string, password: string): Promise<string> {
     const user = await prisma.user.findUnique({
         where: { userName }
     });
     if (!user) {
         throw new Error("User does not exist");
+    }
+    if (!(await argon2.verify(user.passwordHash, password))) {
+        throw new Error("Wrong password!");
     }
     const session = await prisma.session.create({
         data: {

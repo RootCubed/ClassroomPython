@@ -12,6 +12,7 @@
 
     function computeLoginFail(form: ActionData) {
         return {
+            fullName: form?.fullName,
             username: form?.username,
             password: form?.password
         };
@@ -29,7 +30,20 @@
                 <form method="POST">
                     <div class="grid gap-4">
                         <div class="grid gap-2">
-                            <Label for="username">Benutzername</Label>
+                            <Label for="fullname">Name</Label>
+                            <div>
+                                <Input
+                                    class={loginFail.fullName ? "border-red-800" : ""}
+                                    value={loginFail.fullName?.value ?? ""}
+                                    id="fullname"
+                                    name="fullname"
+                                    type="text"
+                                />
+                                {#if loginFail.fullName}
+                                    <p class="text-sm text-red-500">{loginFail.fullName.error}</p>
+                                {/if}
+                            </div>
+                            <Label for="username">Benutzername (vorname.nachname)</Label>
                             <div>
                                 <Input
                                     class={loginFail.username ? "border-red-800" : ""}
@@ -37,7 +51,6 @@
                                     id="username"
                                     name="username"
                                     type="text"
-                                    placeholder="Admin-Benutzername"
                                 />
                                 {#if loginFail.username}
                                     <p class="text-sm text-red-500">{loginFail.username.error}</p>
@@ -50,7 +63,6 @@
                                     id="password"
                                     name="password"
                                     type="password"
-                                    placeholder="Passwort"
                                 />
                                 {#if loginFail.password}
                                     <p class="text-sm text-red-500">{loginFail.password.error}</p>

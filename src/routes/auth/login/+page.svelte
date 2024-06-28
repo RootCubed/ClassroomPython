@@ -11,9 +11,9 @@
     $: loginFail = computeLoginFail(form);
 
     function computeLoginFail(form: ActionData) {
-        if (form === null) return { username: null };
         return {
-            username: form.username
+            username: form?.username,
+            password: form?.password
         };
     }
 </script>
@@ -43,6 +43,19 @@
                                     <p class="text-sm text-red-500">{loginFail.username.error}</p>
                                 {/if}
                             </div>
+                        </div>
+                        <Label for="password">Passwort</Label>
+                        <div>
+                            <Input
+                                class={loginFail.password ? "border-red-800" : ""}
+                                id="password"
+                                name="password"
+                                type="password"
+                                placeholder="Passwort"
+                            />
+                            {#if loginFail.password}
+                                <p class="text-sm text-red-500">{loginFail.password.error}</p>
+                            {/if}
                         </div>
                         <Button type="submit" class="w-full">Login</Button>
                     </div>

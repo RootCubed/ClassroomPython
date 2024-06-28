@@ -13,9 +13,10 @@ export const load: ServerLoad = async () => {
 export const actions: Actions = {
     default: async ({ cookies, request }) => {
         const data = await request.formData();
-        const username = data.get("username");
+        const username = data.get("username")?.toString();
+        const password = data.get("password")?.toString();
 
-        if (username === null || username === "") {
+        if (username === undefined || username === "") {
             return {
                 success: false,
                 username: {
@@ -25,14 +26,24 @@ export const actions: Actions = {
             };
         }
 
+        if (password === undefined || password === "") {
+            return {
+                success: false,
+                password: {
+                    value: "",
+                    error: "No password provided!"
+                }
+            };
+        }
+
         try {
-            const sessionToken = await db.loginUser(username.toString());
+            const sessionToken = await db.loginUser(username, password);
             cookies.set("session", sessionToken, { path: "/" });
         } catch (error) {
             return {
                 success: false,
                 username: {
-                    value: username.toString(),
+                    value: username,
                     error: "User does not exist!"
                 }
             };
