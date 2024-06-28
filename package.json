@@ -12,15 +12,15 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@prisma/client": "^5.16.0",
-        "ace-builds": "^1.35.0",
+        "@prisma/client": "^5.16.1",
+        "ace-builds": "^1.35.1",
         "argon2": "^0.40.3",
-        "bits-ui": "^0.21.10",
+        "bits-ui": "^0.21.11",
         "clsx": "^2.1.1",
         "express": "^4.19.2",
-        "lucide-svelte": "^0.396.0",
+        "lucide-svelte": "^0.399.0",
         "paneforge": "^0.0.5",
-        "prisma": "^5.16.0",
+        "prisma": "^5.16.1",
         "pyodide": "^0.26.1",
         "tailwind-merge": "^2.3.0",
         "tailwind-variants": "^0.2.1",
@@ -37,9 +37,9 @@
         "prettier-plugin-svelte": "^3.2.5",
         "prettier-plugin-tailwindcss": "^0.6.5",
         "svelte": "^4.2.18",
-        "svelte-check": "^3.8.2",
+        "svelte-check": "^3.8.4",
         "tslib": "^2.6.3",
         "typescript": "^5.5.2",
-        "vite": "^5.3.1"
+        "vite": "^5.3.2"
     }
 }
