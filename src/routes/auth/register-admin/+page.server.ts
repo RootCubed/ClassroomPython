@@ -1,7 +1,7 @@
 import * as db from "$lib/server/db";
 import { Role } from "@prisma/client";
 import { redirect, type Actions, type ServerLoad } from "@sveltejs/kit";
-import argon2 from "argon2";
+import { createUser } from "$lib/server/auth";
 
 export const load: ServerLoad = async () => {
     if (await db.isInitialized()) {
@@ -50,14 +50,7 @@ export const actions: Actions = {
             };
         }
 
-        await db.default.user.create({
-            data: {
-                fullName: fullName,
-                userName: username,
-                role: Role.ADMIN,
-                passwordHash: await argon2.hash(password)
-            }
-        });
+        await createUser(username, fullName, Role.ADMIN, password);
 
         redirect(302, "/");
     }

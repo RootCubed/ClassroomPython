@@ -1,15 +1,64 @@
 import type { RequestEvent } from "@sveltejs/kit";
-import * as db from "$lib/server/db";
-import type { User } from "@prisma/client";
+import argon2 from "argon2";
+import db from "$lib/server/prisma-db";
+import type { User, Role } from "@prisma/client";
+
+export async function createUser(
+    userName: string,
+    fullName: string,
+    role: Role,
+    password: string
+): Promise<string> {
+    const user = await db.user.create({
+        data: {
+            userName,
+            fullName,
+            role,
+            passwordHash: await argon2.hash(password)
+        }
+    });
+    return user.id;
+}
+
+export async function loginUser(userName: string, password: string): Promise<string> {
+    const user = await db.user.findUnique({
+        where: { userName }
+    });
+    if (!user) {
+        throw new Error("User does not exist");
+    }
+    if (!(await argon2.verify(user.passwordHash, password))) {
+        throw new Error("Wrong password!");
+    }
+    const session = await db.session.create({
+        data: {
+            userId: user.id
+        }
+    });
+    return session.id;
+}
 
 export async function authUser(event: RequestEvent): Promise<User | null> {
     const sessionToken = event.cookies.get("session");
     if (!sessionToken) {
         return null;
     }
-    const user = await db.checkSession(sessionToken);
-    if (!user) {
+    return await checkSession(sessionToken);
+}
+
+export async function checkSession(sessionToken: string): Promise<User | null> {
+    const session = await db.session.findUnique({
+        where: { id: sessionToken },
+        include: { user: true }
+    });
+    if (!session) {
         return null;
     }
-    return user;
+    return session.user;
+}
+
+export async function invalidateSession(sessionToken: string): Promise<void> {
+    await db.session.delete({
+        where: { id: sessionToken }
+    });
 }

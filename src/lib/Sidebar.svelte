@@ -1,7 +1,7 @@
 <script lang="ts">
     import * as Accordion from "$lib/components/ui/accordion";
     import { Separator } from "$lib/components/ui/separator";
-    import type { ExerciseGroupView } from "./server/db";
+    import type { ExerciseGroupView } from "$lib/page-types";
     import { loadedExercise } from "./page-state";
     import ExerciseCard from "./ExerciseCard.svelte";
 

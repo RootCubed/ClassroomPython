@@ -1,5 +1,6 @@
 import type { Actions } from "./$types.js";
 import * as db from "$lib/server/db";
+import { loginUser } from "$lib/server/auth.js";
 import { redirect, type ServerLoad } from "@sveltejs/kit";
 
 export const load: ServerLoad = async () => {
@@ -37,7 +38,7 @@ export const actions: Actions = {
         }
 
         try {
-            const sessionToken = await db.loginUser(username, password);
+            const sessionToken = await loginUser(username, password);
             cookies.set("session", sessionToken, { path: "/" });
         } catch (error) {
             return {

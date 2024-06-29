@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { ExerciseGroupView } from "./server/db";
+    import type { ExerciseGroupView } from "$lib/page-types";
     import Sidebar from "./Sidebar.svelte";
     import * as Sheet from "$lib/components/ui/sheet";
     import { Menu } from "lucide-svelte";

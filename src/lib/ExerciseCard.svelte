@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Cog } from "lucide-svelte";
     import { cn } from "./utils";
-    import type { ExerciseView } from "./server/db";
+    import type { ExerciseView } from "./page-types";
     import * as Tooltip from "./components/ui/tooltip";
     import { user } from "./page-state";
     import { Role } from "@prisma/client";

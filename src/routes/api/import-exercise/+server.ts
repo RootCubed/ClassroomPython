@@ -1,5 +1,6 @@
 import type { RequestHandler } from "./$types";
 import * as db from "$lib/server/db";
+import pdb from "$lib/server/prisma-db";
 
 export const POST: RequestHandler = async ({ request }) => {
     const { meta, code } = (await request.json()) as {
@@ -7,7 +8,11 @@ export const POST: RequestHandler = async ({ request }) => {
         code: string;
     };
 
-    let group = await db.getExerciseGroup(meta.groupName);
+    let group = await pdb.exerciseGroup.findFirst({
+        where: {
+            title: meta.groupName
+        }
+    });
 
     if (!group) {
         group = await db.createExerciseGroup(

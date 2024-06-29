@@ -1,6 +1,7 @@
 import type { RequestHandler } from "./$types";
 import * as db from "$lib/server/db";
 import { Role } from "@prisma/client";
+import { createUser } from "$lib/server/auth";
 
 export const POST: RequestHandler = async ({ request }) => {
     const users = (await request.json()) as {
@@ -11,11 +12,11 @@ export const POST: RequestHandler = async ({ request }) => {
     await db.resetUsers();
 
     for (const { username, fullName } of users.admins) {
-        await db.createUser(username, fullName, Role.ADMIN);
+        await createUser(username, fullName, Role.ADMIN, "");
     }
 
     for (const { username, fullName } of users.students) {
-        await db.createUser(username, fullName, Role.STUDENT);
+        await createUser(username, fullName, Role.STUDENT, "");
     }
 
     return new Response("OK", { status: 200 });
