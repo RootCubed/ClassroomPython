@@ -13,7 +13,7 @@
         {id}
         name={id}
         class={error ? "border-red-800" : ""}
-        value={error?.value ?? ""}
+        value={$$restProps["value"] ?? error?.value ?? undefined}
         {...$$restProps}
     />
     {#if error}
