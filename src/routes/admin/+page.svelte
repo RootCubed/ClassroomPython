@@ -3,7 +3,11 @@
     import { Button } from "$lib/components/ui/button";
     import { Label } from "$lib/components/ui/label";
     import * as Table from "$lib/components/ui/table";
-    import type { PageData } from "./$types";
+    import { PlusSquare, Trash } from "lucide-svelte";
+    import type { ActionData, PageData } from "./$types";
+    import { enhance } from "$app/forms";
+    import ErrorableInput from "$lib/ErrorableInput.svelte";
+    import { Input } from "$lib/components/ui/input";
 
     async function resetDatabase() {
         await fetch("/api/reset-database", { method: "POST" });
@@ -11,6 +15,7 @@
     }
 
     export let data: PageData;
+    export let form: ActionData;
 
     let files: FileList;
     let singleFile: FileList;
@@ -93,12 +98,14 @@
         {#if !data.users}
             <p>Keine Benutzer vorhanden</p>
         {:else}
+            <form id="add-user-form" method="POST" action="?/createUser" use:enhance></form>
             <Table.Root class="max-w-[600px]">
                 <Table.Header>
                     <Table.Row>
                         <Table.Head>Benutzername</Table.Head>
                         <Table.Head>Name</Table.Head>
                         <Table.Head>Benutzertyp</Table.Head>
+                        <Table.Head></Table.Head>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
@@ -107,8 +114,65 @@
                             <Table.Cell>{user.userName}</Table.Cell>
                             <Table.Cell>{user.fullName}</Table.Cell>
                             <Table.Cell>{user.role}</Table.Cell>
+                            <Table.Cell>
+                                <form method="POST" action="?/deleteUser" use:enhance>
+                                    <Input
+                                        id="userId"
+                                        name="userId"
+                                        type="text"
+                                        value={user.id}
+                                        readonly
+                                        class="hidden"
+                                    />
+                                    <Button type="submit" variant="destructive" class="p-2">
+                                        <Trash class="w-4" />
+                                    </Button>
+                                </form>
+                            </Table.Cell>
                         </Table.Row>
                     {/each}
+                    <Table.Row>
+                        <Table.Cell>
+                            <ErrorableInput
+                                form="add-user-form"
+                                label="Benutzername"
+                                id="username"
+                                type="text"
+                                error={undefined}
+                            />
+                        </Table.Cell>
+                        <Table.Cell>
+                            <ErrorableInput
+                                form="add-user-form"
+                                label="Name"
+                                id="fullname"
+                                type="text"
+                                error={form?.fullName}
+                            />
+                        </Table.Cell>
+                        <Table.Cell>
+                            <ErrorableInput
+                                form="add-user-form"
+                                label="Benutzertyp"
+                                id="role"
+                                type="text"
+                                value="STUDENT"
+                                error={undefined}
+                                readonly
+                                class="cursor-not-allowed bg-background text-gray-400"
+                            />
+                        </Table.Cell>
+                        <Table.Cell>
+                            <Button
+                                type="submit"
+                                form="add-user-form"
+                                variant="default"
+                                class="p-2"
+                            >
+                                <PlusSquare class="w-4" />
+                            </Button>
+                        </Table.Cell>
+                    </Table.Row>
                 </Table.Body>
             </Table.Root>
         {/if}
