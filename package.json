@@ -5,10 +5,9 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+        "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && prettier --check .",
         "dev": "vite dev",
         "format": "prettier --write .",
-        "lint": "prettier --check .",
         "preview": "vite preview"
     },
     "dependencies": {
