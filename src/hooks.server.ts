@@ -42,7 +42,10 @@ const knownErrorTypes = [
     }
 ];
 
-export const handleError: HandleServerError = async ({ error }) => {
+export const handleError: HandleServerError = async ({ error, status }) => {
+    if (status === 404) {
+        return { message: "Page not found." };
+    }
     console.error(error);
     for (const { errorClasses, message } of knownErrorTypes) {
         for (const errorClass of errorClasses) {
