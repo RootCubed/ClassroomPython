@@ -1,6 +1,7 @@
-import { error, redirect, type Handle } from "@sveltejs/kit";
+import { error, redirect, type Handle, type HandleServerError } from "@sveltejs/kit";
 import { authUser } from "$lib/server/auth";
 import { Role } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 const adminOnlyRoutes = ["/exercise/[id]/admin/", "/manage"];
 const onlyLoggedInRoutes = ["/exercise/", "/api/"];
@@ -24,4 +25,31 @@ export const handle: Handle = async ({ event, resolve }) => {
     event.locals.user = user;
 
     return await resolve(event);
+};
+
+const knownErrorTypes = [
+    {
+        errorClasses: [Prisma.PrismaClientInitializationError],
+        message: "A database connection error occurred. Please try again later."
+    },
+    {
+        errorClasses: [
+            Prisma.PrismaClientKnownRequestError,
+            Prisma.PrismaClientUnknownRequestError,
+            Prisma.PrismaClientValidationError
+        ],
+        message: "A database error occurred. Please try again later."
+    }
+];
+
+export const handleError: HandleServerError = async ({ error }) => {
+    console.error(error);
+    for (const { errorClasses, message } of knownErrorTypes) {
+        for (const errorClass of errorClasses) {
+            if (error instanceof errorClass) {
+                return { message };
+            }
+        }
+    }
+    return { message: "An unknown error occurred." };
 };
