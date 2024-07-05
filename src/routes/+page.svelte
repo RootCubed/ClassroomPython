@@ -38,7 +38,10 @@
                         </span>
                     {:else}
                         <span class="text-sm italic text-gray-500">
-                            Du hast noch keine Kurse erstellt. Erstelle einen neuen Kurs.
+                            Du hast noch keine Kurse erstellt. Erstelle einen neuen Kurs im <a
+                                class="text-blue-400 underline hover:text-blue-300"
+                                href="/teacher-admin">Lehrer-Dashboard</a
+                            >.
                         </span>
                     {/if}
                 </div>

@@ -3,7 +3,8 @@ import { authUser } from "$lib/server/auth";
 import { Role } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 
-const adminOnlyRoutes = ["/exercise/[id]/admin/", "/manage"];
+const adminOnlyRoutes = ["/exercise/[id]/admin/", "/admin"];
+const nonStudentRoutes = ["/course-admin"];
 const nonLoggedInAllowedRoutes = ["/auth/"];
 
 function isRouteMatch(route: string | null, filter: string[]) {
@@ -17,6 +18,8 @@ export const handle: Handle = async ({ event, resolve }) => {
     const user = await authUser(event);
 
     if (isRouteMatch(event.route.id, adminOnlyRoutes) && user?.role !== Role.ADMIN) {
+        throw error(403, "Forbidden");
+    } else if (isRouteMatch(event.route.id, nonStudentRoutes) && user?.role === Role.STUDENT) {
         throw error(403, "Forbidden");
     } else if (!user && !isRouteMatch(event.route.id, nonLoggedInAllowedRoutes)) {
         throw redirect(303, "/auth/login");
