@@ -8,10 +8,9 @@ export const POST: RequestHandler = async ({ locals, request, params }) => {
     }
     try {
         const code = await request.text();
-        await db.saveExercise(params.id, locals.user.id, code);
-        await db.addSubmission(params.id, locals.user.id, code);
+        await db.saveExercise(params.exerciseID, locals.user.id, code);
     } catch (e) {
-        throw error(500, "Die Aufgabe konnte nicht abgegeben werden.");
+        throw error(500, "Die Aufgabe konnte nicht gespeichert werden.");
     }
 
     return new Response("OK", { status: 200 });

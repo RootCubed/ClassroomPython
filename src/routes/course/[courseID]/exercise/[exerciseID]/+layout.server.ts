@@ -8,7 +8,7 @@ export const load: ServerLoad = async ({ params, locals }) => {
 
     const exercise = await pdb.exercise.findUnique({
         where: {
-            id: params.id
+            id: params.exerciseID
         },
         include: {
             saves: { where: { userId: locals.user.id } },
