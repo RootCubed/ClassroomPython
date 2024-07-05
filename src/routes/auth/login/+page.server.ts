@@ -27,7 +27,7 @@ export const actions: Actions = {
             };
         }
 
-        if (password === undefined || password === "") {
+        if (password === undefined) {
             return {
                 success: false,
                 password: {
