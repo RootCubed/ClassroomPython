@@ -4,7 +4,7 @@ import { Role } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 
 const adminOnlyRoutes = ["/exercise/[id]/admin/", "/manage"];
-const onlyLoggedInRoutes = ["/exercise/", "/api/"];
+const nonLoggedInAllowedRoutes = ["/auth/"];
 
 function isRouteMatch(route: string | null, filter: string[]) {
     if (!route) {
@@ -18,7 +18,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     if (isRouteMatch(event.route.id, adminOnlyRoutes) && user?.role !== Role.ADMIN) {
         throw error(403, "Forbidden");
-    } else if (isRouteMatch(event.route.id, onlyLoggedInRoutes) && !user) {
+    } else if (!user && !isRouteMatch(event.route.id, nonLoggedInAllowedRoutes)) {
         throw redirect(303, "/auth/login");
     }
 
