@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { PageData } from "./$types";
-    import type { $Enums, Submission, User } from "@prisma/client";
+    import type { Submission } from "@prisma/client";
     import * as Tabs from "$lib/components/ui/tabs";
     import * as Table from "$lib/components/ui/table";
     import * as Dialog from "$lib/components/ui/dialog";
@@ -17,7 +17,7 @@
         return `/admin/submission/${submission.id}`;
     }
 
-    let openSubmission: (Submission & { user: User }) | undefined;
+    let openSubmission: (typeof data.exercise.submissions)[number] | undefined;
 </script>
 
 <Dialog.Root open={openSubmission !== undefined}>
