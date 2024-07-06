@@ -1,4 +1,4 @@
-import type { Exercise, ExerciseGroup, Prisma, Role, Submission, User } from "@prisma/client";
+import type { Exercise, ExerciseGroup, Submission } from "@prisma/client";
 import db from "./prisma-db";
 
 export async function isInitialized(): Promise<boolean> {

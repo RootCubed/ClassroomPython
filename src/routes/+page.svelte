@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { PageData } from "./course/$types";
+    import type { PageData } from "./$types";
     import UserMenu from "$lib/UserMenu.svelte";
     import * as Card from "$lib/components/ui/card";
     import { user } from "$lib/page-state";

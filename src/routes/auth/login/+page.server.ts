@@ -1,4 +1,4 @@
-import type { Actions } from "./$types.js";
+import type { Actions } from "./$types";
 import * as db from "$lib/server/db";
 import { loginUser } from "$lib/server/auth.js";
 import { redirect, type ServerLoad } from "@sveltejs/kit";
