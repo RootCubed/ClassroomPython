@@ -138,7 +138,7 @@
                                 label="Benutzername"
                                 id="username"
                                 type="text"
-                                error={undefined}
+                                serverResp={undefined}
                             />
                         </Table.Cell>
                         <Table.Cell>
@@ -147,7 +147,7 @@
                                 label="Name"
                                 id="fullname"
                                 type="text"
-                                error={form?.fullName}
+                                serverResp={form?.fullName}
                             />
                         </Table.Cell>
                         <Table.Cell>
@@ -157,7 +157,7 @@
                                 id="role"
                                 type="text"
                                 value="STUDENT"
-                                error={undefined}
+                                serverResp={undefined}
                                 readonly
                                 class="cursor-not-allowed bg-background text-gray-400"
                             />

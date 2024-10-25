@@ -6,15 +6,6 @@
     import ErrorableInput from "$lib/ErrorableInput.svelte";
 
     export let form: ActionData;
-
-    $: loginFail = computeLoginFail(form);
-
-    function computeLoginFail(form: ActionData) {
-        return {
-            username: form?.username,
-            password: form?.password
-        };
-    }
 </script>
 
 <div class="flex h-screen w-full items-center justify-center px-4">
@@ -29,7 +20,7 @@
                     <div class="grid gap-4">
                         <ErrorableInput
                             label="Benutzername (vorname.nachname)"
-                            error={loginFail.username}
+                            serverResp={form?.username}
                             id="username"
                             type="text"
                         />
@@ -37,7 +28,7 @@
                             label="Passwort"
                             id="password"
                             type="password"
-                            error={loginFail.password}
+                            serverResp={form?.password}
                         />
                         <Button type="submit" class="w-full">Login</Button>
                     </div>

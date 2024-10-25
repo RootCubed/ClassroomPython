@@ -4,7 +4,7 @@
 
     export let label: string;
     export let id: string;
-    export let error: { value: string; error: string } | undefined;
+    export let serverResp: { value: string; error?: string } | undefined;
 </script>
 
 <div class="grid gap-2">
@@ -12,11 +12,11 @@
     <Input
         {id}
         name={id}
-        class={error ? "border-red-800" : ""}
-        value={$$restProps["value"] ?? error?.value ?? undefined}
+        class={serverResp?.error ? "border-red-800" : ""}
+        value={$$restProps["value"] ?? serverResp?.value}
         {...$$restProps}
     />
-    {#if error}
-        <p class="text-sm text-red-500">{error.error}</p>
+    {#if serverResp && serverResp.error}
+        <p class="text-sm text-red-500">{serverResp.error}</p>
     {/if}
 </div>

@@ -1,7 +1,7 @@
 import pdb from "$lib/server/prisma-db";
 import { createUser } from "$lib/server/auth";
 import { Role } from "@prisma/client";
-import type { Actions, Load } from "@sveltejs/kit";
+import { fail, type ActionFailure, type Actions, type Load } from "@sveltejs/kit";
 
 export const load: Load = async () => {
     try {
@@ -22,9 +22,7 @@ export const actions: Actions = {
         const id = data.get("userId")?.toString();
 
         if (id === undefined) {
-            return {
-                success: false
-            };
+            return fail(400, { message: "No user ID provided" });
         }
 
         // Cannot delete own user or ADMIN
@@ -32,9 +30,7 @@ export const actions: Actions = {
             where: { id }
         });
         if (user === null || user.id === locals.user?.id || user.role === Role.ADMIN) {
-            return {
-                success: false
-            };
+            return fail(400, { message: "Cannot delete this user" });
         }
 
         await pdb.user.delete({
@@ -47,29 +43,23 @@ export const actions: Actions = {
         const username = data.get("username")?.toString();
 
         if (fullName === undefined || fullName === "") {
-            return {
-                success: false,
+            return fail(400, {
                 fullName: {
                     value: "",
                     error: "No full name provided!"
                 }
-            };
+            });
         }
 
         if (username === undefined || username === "") {
-            return {
-                success: false,
+            return fail(400, {
                 username: {
                     value: "",
                     error: "No username provided!"
                 }
-            };
+            });
         }
 
         await createUser(username, fullName, Role.STUDENT, "");
-
-        return {
-            success: true
-        };
     }
 };

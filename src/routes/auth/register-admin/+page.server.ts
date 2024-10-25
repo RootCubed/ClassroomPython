@@ -1,6 +1,6 @@
 import * as db from "$lib/server/db";
 import { Role } from "@prisma/client";
-import { redirect, type Actions, type ServerLoad } from "@sveltejs/kit";
+import { fail, redirect, type Actions, type ServerLoad } from "@sveltejs/kit";
 import { createUser } from "$lib/server/auth";
 
 export const load: ServerLoad = async () => {
@@ -21,33 +21,30 @@ export const actions: Actions = {
         const password = data.get("password")?.toString();
 
         if (fullName === undefined || fullName === "") {
-            return {
-                success: false,
+            return fail(400, {
                 fullName: {
                     value: "",
                     error: "No full name provided!"
                 }
-            };
+            });
         }
 
         if (username === undefined || username === "") {
-            return {
-                success: false,
+            return fail(400, {
                 username: {
                     value: "",
                     error: "No username provided!"
                 }
-            };
+            });
         }
 
         if (password === undefined || password === "") {
-            return {
-                success: false,
+            return fail(400, {
                 password: {
                     value: "",
                     error: "No password provided!"
                 }
-            };
+            });
         }
 
         await createUser(username, fullName, Role.ADMIN, password);
