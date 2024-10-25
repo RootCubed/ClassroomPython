@@ -13,12 +13,15 @@ services:
     frontend:
         ports:
             - 5173:5173
+            - 5555:5555
         environment:
             NODE_ENV: development
         command: >
             sh -c "
             npm i &&
             npx prisma migrate deploy &&
+            npx prisma generate &&
+            npx prisma studio &
             npm run dev --env-file=.env -- --host"
     backend:
         ports:
