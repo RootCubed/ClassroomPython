@@ -41,6 +41,30 @@ export const actions: Actions = {
         const data = await request.formData();
         const fullName = data.get("fullname")?.toString();
         const username = data.get("username")?.toString();
+        const role = data.get("role")?.toString();
+
+        if (!role) {
+            return fail(400, {
+                role: {
+                    value: role,
+                    error: "No role provided!"
+                }
+            });
+        }
+        const roleValue = {
+            ADMIN: Role.ADMIN,
+            TEACHER: Role.TEACHER,
+            STUDENT: Role.STUDENT
+        }[role];
+
+        if (roleValue === undefined) {
+            return fail(400, {
+                role: {
+                    value: role,
+                    error: "Invalid role provided!"
+                }
+            });
+        }
 
         if (fullName === undefined || fullName === "") {
             return fail(400, {
@@ -60,6 +84,6 @@ export const actions: Actions = {
             });
         }
 
-        await createUser(username, fullName, Role.STUDENT, username);
+        await createUser(username, fullName, roleValue, username);
     }
 };

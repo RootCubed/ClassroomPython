@@ -151,16 +151,17 @@
                             />
                         </Table.Cell>
                         <Table.Cell>
-                            <ErrorableInput
+                            <Label for="role">Rolle</Label>
+                            <select
                                 form="add-user-form"
-                                label="Benutzertyp"
                                 id="role"
-                                type="text"
-                                value="STUDENT"
-                                serverResp={undefined}
-                                readonly
-                                class="cursor-not-allowed bg-background text-gray-400"
-                            />
+                                name="role"
+                                class="my-2 rounded-md border border-input bg-background p-1.5 text-sm ring-offset-background"
+                            >
+                                <option value="STUDENT">Schüler</option>
+                                <option value="TEACHER">Lehrer</option>
+                                <option value="ADMIN">Admin</option>
+                            </select>
                         </Table.Cell>
                         <Table.Cell>
                             <Button
