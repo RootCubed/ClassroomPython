@@ -47,7 +47,7 @@
     }
 
     export let initialCode: string;
-    export let submissionID: string | null = null;
+    export let exerciseURL: string | null = null;
 
     let userCode = initialCode;
     let lastSavedCode = userCode;
@@ -71,11 +71,11 @@
     }
 
     async function submitCode() {
-        if (!submissionID) {
+        if (!exerciseURL) {
             console.error("No submission ID");
             return;
         }
-        const resp = await fetch(`/exercise/${submissionID}/submit`, {
+        const resp = await fetch(`${exerciseURL}/submit`, {
             method: "POST",
             headers: {
                 "Content-Type": "text/plain"
@@ -91,7 +91,7 @@
     }
 
     async function saveCode() {
-        const resp = await fetch(`/exercise/${submissionID}/save`, {
+        const resp = await fetch(`${exerciseURL}/save`, {
             method: "POST",
             headers: {
                 "Content-Type": "text/plain"
