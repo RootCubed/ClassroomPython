@@ -9,14 +9,17 @@ export const load: ServerLoad = async ({ locals, params }) => {
 
     return {
         course: await pdb.course.findUnique({
-            where: { id: params.courseID! }
+            where: { id: params.courseID! },
+            include: {
+                students: true
+            }
         }),
         exercises: await getExercises(params.courseID!, locals.user)
     };
 };
 
 export const actions: Actions = {
-    default: async ({ request, params }) => {
+    createExercise: async ({ request, params }) => {
         const data = await request.formData();
         const title = data.get("title")?.toString();
         const code = data.get("code")?.toString() ?? "";
@@ -50,6 +53,29 @@ export const actions: Actions = {
                             title: group,
                             courseId: params.courseID
                         }
+                    }
+                }
+            }
+        });
+    },
+    addStudent: async ({ request, params }) => {
+        const data = await request.formData();
+        const username = data.get("studentUsername")?.toString();
+
+        if (!username) {
+            return fail(400, { message: "Invalid arguments" });
+        }
+
+        if (!params.courseID) {
+            return fail(500, { message: "Course not found" });
+        }
+
+        await pdb.course.update({
+            where: { id: params.courseID },
+            data: {
+                students: {
+                    connect: {
+                        userName: username
                     }
                 }
             }
