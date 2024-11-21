@@ -15,6 +15,26 @@ async function getPy() {
     return _py;
 }
 
+let stdinReceived: ((s: string) => void) | null = null;
+function browserStdin() {
+    return new Promise((resolve) => {
+        stdinReceived = (s: string) => {
+            resolve(s);
+        };
+    });
+}
+
+// Remove TigerJython-specific syntax like repeat
+function untiger(code: string) {
+    const matches = code.match(/repeat ([^:]+):/g) ?? [];
+    for (const m of matches) {
+        const subM = m.match(/repeat ([^:]+):/)!;
+        code = code.replace(m, `for _${code.indexOf(m)} in range(${subM[1]}):`);
+    }
+    code = code.replace(/inputInt\(([^)]*)\)/g, "int(await input($1))");
+    return code;
+}
+
 async function runCode(code: string) {
     const py = await getPy();
     py.setStdout({
@@ -35,8 +55,18 @@ async function runCode(code: string) {
             return text.length;
         }
     });
+    py.globals.set("input", async (title: string) => {
+        self.postMessage({
+            type: "inputReq",
+            content: title
+        });
+        return await browserStdin();
+    });
+    code = code.replace(/\binput\s*[(]/g, "await $&");
+    code = untiger(code);
+    console.log(code);
     try {
-        py.runPython(code);
+        await py.runPythonAsync(code);
     } catch (e) {
         let actualErrorStart = false;
         let error: string[] = [];
@@ -84,6 +114,11 @@ self.onmessage = async (event) => {
     } else if (type === "setInterruptBuffer") {
         const py = await getPy();
         py.setInterruptBuffer(event.data.buffer);
+    } else if (type == "stdinResp") {
+        if (!stdinReceived) {
+            throw new Error("stdinResp received without stdinRequested");
+        }
+        stdinReceived(event.data.buffer);
     } else {
         console.error("Unknown message type", type);
     }

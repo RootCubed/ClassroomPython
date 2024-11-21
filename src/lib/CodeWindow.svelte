@@ -34,6 +34,13 @@
                 });
             } else if (ev.data.type === "done") {
                 codeExecutionResolve(true);
+            } else if (ev.data.type == "inputReq") {
+                // TODO: Use a nicer prompt box
+                const response = prompt(ev.data.content);
+                pyodideWorker.postMessage({
+                    type: "stdinResp",
+                    buffer: response
+                });
             } else {
                 consoleOutput = [
                     ...consoleOutput,
