@@ -33,7 +33,7 @@
     });
 </script>
 
-<div class="ace-editor h-full w-full" bind:this={editorElement} />
+<div class="ace-editor h-full w-full" bind:this={editorElement}></div>
 
 <style>
     /* This is easier to write directly in CSS */

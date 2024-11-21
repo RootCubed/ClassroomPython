@@ -13,16 +13,16 @@
     $: submissionStatus = exercise.submissions.length === 0 ? "not_submitted" : "submitted";
 </script>
 
-<a
-    href="/course/{$page.params.courseID}/exercise/{exercise.id}"
-    class={cn(
-        "relative flex min-h-20 flex-col items-start gap-2 rounded-lg border p-3 text-sm transition-all hover:bg-accent",
-        selected && "bg-accent text-accent-foreground"
-        // exercise.submissionStatus == "submitted" && "bg-emerald-700"
-    )}
->
-    <div class="flex w-full flex-col gap-1">
-        <div class="flex items-center">
+<div class="relative w-full">
+    <a
+        class={cn(
+            "flex min-h-20 flex-col items-start gap-1 rounded-lg border p-3 text-sm transition-all hover:bg-accent",
+            selected && "bg-accent text-accent-foreground"
+            // exercise.submissionStatus == "submitted" && "bg-emerald-700"
+        )}
+        href="/course/{$page.params.courseID}/exercise/{exercise.id}"
+    >
+        <div class="flex w-full items-center">
             <div class="flex items-center gap-2">
                 <div class="font-semibold">
                     {exercise.title}
@@ -38,7 +38,7 @@
                                     submissionStatus == "not_submitted" && "bg-yellow-600",
                                     submissionStatus == "submitted" && "bg-green-600"
                                 )}
-                            />
+                            ></span>
                         </Tooltip.Trigger>
                         <Tooltip.Content>
                             {#if submissionStatus == "not_submitted"}
@@ -52,8 +52,8 @@
             </div>
         </div>
         <div class="text-xs font-medium">{exercise.subtitle ?? " "}</div>
-    </div>
-    <div class="line-clamp-2 text-xs text-muted-foreground">{exercise.description ?? ""}</div>
+        <div class="line-clamp-2 text-xs text-muted-foreground">{exercise.description ?? ""}</div>
+    </a>
     {#if $user.role === Role.ADMIN}
         <a
             class="absolute bottom-3 right-3"
@@ -62,4 +62,4 @@
             <Cog size={16} />
         </a>
     {/if}
-</a>
+</div>
