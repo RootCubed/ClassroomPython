@@ -1,5 +1,6 @@
 import type { Exercise, ExerciseGroup, Submission } from "@prisma/client";
 import db from "./prisma-db";
+import type { ClientUser } from "./auth";
 
 export async function isInitialized(): Promise<boolean> {
     const numAdmins = await db.user.count({
@@ -102,5 +103,21 @@ export async function getSubmission(id: string): Promise<Submission | null> {
 export async function getSubmissions(exerciseId: string): Promise<Submission[]> {
     return db.submission.findMany({
         where: { exerciseId }
+    });
+}
+
+export async function getExercises(courseId: string, user: ClientUser) {
+    return await db.exerciseGroup.findMany({
+        where: { courseId },
+        include: {
+            exercises: {
+                include: {
+                    saves: { where: { userId: user.id } },
+                    submissions: { where: { userId: user.id } },
+                    exerciseGroup: true
+                },
+                orderBy: { orderNum: "asc" }
+            }
+        }
     });
 }

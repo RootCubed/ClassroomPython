@@ -4,7 +4,7 @@ import { error, type Load } from "@sveltejs/kit";
 export const load: Load = async ({ params }) => {
     const exercise = await pdb.exercise.findUnique({
         where: {
-            id: params.id
+            id: params.exerciseID
         },
         include: {
             submissions: { include: { user: true } }

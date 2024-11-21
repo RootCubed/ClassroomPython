@@ -1,4 +1,4 @@
-import pdb from "$lib/server/prisma-db";
+import { getExercises } from "$lib/server/db";
 import { error, type ServerLoad } from "@sveltejs/kit";
 
 export const load: ServerLoad = async ({ locals, params }) => {
@@ -7,17 +7,6 @@ export const load: ServerLoad = async ({ locals, params }) => {
     }
 
     return {
-        exercises: await pdb.exerciseGroup.findMany({
-            where: { courseId: params.courseID! },
-            include: {
-                exercises: {
-                    include: {
-                        saves: { where: { userId: locals.user.id } },
-                        submissions: { where: { userId: locals.user.id } },
-                        exerciseGroup: true
-                    }
-                }
-            }
-        })
+        exercises: await getExercises(params.courseID!, locals.user)
     };
 };

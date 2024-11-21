@@ -5,6 +5,7 @@
     import * as Tooltip from "./components/ui/tooltip";
     import { user } from "./page-state";
     import { Role } from "@prisma/client";
+    import { page } from "$app/stores";
 
     export let exercise: ExerciseView;
     export let selected = false;
@@ -13,7 +14,7 @@
 </script>
 
 <a
-    href="/exercise/{exercise.id}"
+    href="/course/{$page.params.courseID}/exercise/{exercise.id}"
     class={cn(
         "relative flex min-h-20 flex-col items-start gap-2 rounded-lg border p-3 text-sm transition-all hover:bg-accent",
         selected && "bg-accent text-accent-foreground"
@@ -54,7 +55,10 @@
     </div>
     <div class="line-clamp-2 text-xs text-muted-foreground">{exercise.description ?? ""}</div>
     {#if $user.role === Role.ADMIN}
-        <a class="absolute bottom-3 right-3" href="/exercise/{exercise.id}/admin">
+        <a
+            class="absolute bottom-3 right-3"
+            href="/course/{$page.params.courseID}/exercise/{exercise.id}/admin"
+        >
             <Cog size={16} />
         </a>
     {/if}

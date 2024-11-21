@@ -60,6 +60,6 @@ export const actions: Actions = {
             });
         }
 
-        await createUser(username, fullName, Role.STUDENT, "");
+        await createUser(username, fullName, Role.STUDENT, username);
     }
 };
