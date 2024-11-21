@@ -21,8 +21,7 @@ services:
             npm i &&
             npx prisma migrate deploy &&
             npx prisma generate &&
-            npx prisma studio &
-            npm run dev --env-file=.env -- --host"
+            { npx prisma studio & npm run dev --env-file=.env -- --host; }"
     backend:
         ports:
             - $POSTGRES_PORT:$POSTGRES_PORT
