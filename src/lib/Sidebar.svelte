@@ -2,13 +2,22 @@
     import * as Accordion from "$lib/components/ui/accordion";
     import { Separator } from "$lib/components/ui/separator";
     import type { ExerciseGroupView } from "$lib/page-types";
-    import { loadedExercise } from "./page-state";
+    import { loadedExercise, user } from "./page-state";
     import ExerciseCard from "./ExerciseCard.svelte";
+    import { CogIcon } from "lucide-svelte";
+    import { page } from "$app/stores";
 
     export let exercises: ExerciseGroupView;
 </script>
 
-<span class="block w-full p-2 text-xl font-semibold">Aufgaben</span>
+<div class="flex w-full items-center justify-between p-2">
+    <span class="inline-block text-xl font-semibold">Aufgaben</span>
+    {#if $user.role == "TEACHER" || $user.role == "ADMIN"}
+        <a href="/teacher-admin/course/{$page.params.courseID}">
+            <CogIcon size={20} />
+        </a>
+    {/if}
+</div>
 <Separator class="mt-2" />
 <Accordion.Root value={$loadedExercise?.exerciseGroup.id}>
     {#each exercises as group (group.id)}
