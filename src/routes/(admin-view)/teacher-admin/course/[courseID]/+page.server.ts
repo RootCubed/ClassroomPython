@@ -19,10 +19,18 @@ export const actions: Actions = {
     default: async ({ request, params }) => {
         const data = await request.formData();
         const title = data.get("title")?.toString();
-        const code = data.get("code")?.toString();
-        const group = data.get("group")?.toString();
+        const code = data.get("code")?.toString() ?? "";
+        let group = data.get("group")?.toString();
 
-        if (!title || !code || !group) {
+        if (!group) {
+            const newGroupName = data.get("newGroupName")?.toString();
+            if (!newGroupName) {
+                return fail(400, { message: "Invalid arguments" });
+            }
+            group = newGroupName;
+        }
+
+        if (!title) {
             return fail(400, { message: "Invalid arguments" });
         }
 

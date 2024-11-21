@@ -10,12 +10,15 @@
     import AceEditor from "$lib/AceEditor.svelte";
     import Label from "$lib/components/ui/label/label.svelte";
     import type { ExerciseGroup } from "@prisma/client";
+    import { invalidateAll } from "$app/navigation";
 
     export let data: PageData;
 
     let code = "";
     let createExercise = false;
     let editor: AceEditor | undefined;
+
+    let groupSelect = "";
 
     let availExerciseGroups = data.exercises.reduce((acc, exercise) => {
         if (!acc.find((g) => g.id === exercise.id)) {
@@ -26,24 +29,34 @@
 </script>
 
 <Dialog.Root bind:open={createExercise}>
-    <Dialog.Content class="flex flex-col">
+    <Dialog.Content class="flex max-w-2xl flex-col">
         <Dialog.Header>
             <Dialog.Title>Aufgabe erstellen</Dialog.Title>
         </Dialog.Header>
         <div class="grid w-full items-center gap-1.5">
-            <form method="POST" use:enhance>
+            <form method="POST" use:enhance on:submit={invalidateAll}>
                 <div class="grid gap-4">
                     <ErrorableInput label="Titel" id="title" type="text" serverResp={undefined} />
                     <select
                         id="group"
                         name="group"
                         class="w-full rounded-md border border-gray-300 p-2"
+                        bind:value={groupSelect}
                     >
                         {#each availExerciseGroups as group}
                             <option value={group.id}>{group.title}</option>
                         {/each}
-                        <option value="new">Neuer Ordner</option>
+                        <option value="">(Neuer Ordner)</option>
                     </select>
+                    {#if groupSelect == ""}
+                        <ErrorableInput
+                            label="Ordnername"
+                            id="newGroupName"
+                            type="text"
+                            placeholder="Neuer Ordner"
+                            serverResp={undefined}
+                        />
+                    {/if}
                     <Label for="code">Code-Vorlage</Label>
                     <div class="h-80">
                         <AceEditor bind:value={code} bind:this={editor} />
