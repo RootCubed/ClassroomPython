@@ -60,8 +60,9 @@
             >
             <Tooltip.Content>Code ausführen</Tooltip.Content>
         {:else}
-            <Tooltip.Trigger>
+            <Tooltip.Trigger asChild let:builder>
                 <Button
+                    builders={[builder]}
                     variant="secondary"
                     on:click={onCancel}
                     class="bg-rose-600 text-white
@@ -74,8 +75,13 @@
         {/if}
     </Tooltip.Root>
     <Tooltip.Root>
-        <Tooltip.Trigger>
-            <Button variant="secondary" on:click={handleSave} disabled={isSaving}>
+        <Tooltip.Trigger asChild let:builder>
+            <Button
+                builders={[builder]}
+                variant="secondary"
+                on:click={handleSave}
+                disabled={isSaving}
+            >
                 {#if isSaving}
                     <LoadingSpinner />
                 {:else}
@@ -86,8 +92,9 @@
         <Tooltip.Content>Code speichern</Tooltip.Content>
     </Tooltip.Root>
     <Tooltip.Root>
-        <Tooltip.Trigger asChild>
+        <Tooltip.Trigger asChild let:builder>
             <Button
+                builders={[builder]}
                 variant="secondary"
                 on:click={handleSubmit}
                 class={cn(

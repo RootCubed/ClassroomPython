@@ -9,12 +9,13 @@
 
 <div class="ml-auto flex items-center">
     <DropdownMenu.Root>
-        <DropdownMenu.Trigger asChild let:builder>
-            <Button builders={[builder]} variant="secondary" class="flex gap-2 px-2" tabindex={0}>
-                <User size={16} aria-label="User icon" />
-                {$user.fullName}
-                <ChevronDown class="h-4 w-4 text-secondary-foreground" aria-label="Dropdown Icon" />
-            </Button>
+        <DropdownMenu.Trigger
+            tabindex={0}
+            class="flex items-center gap-2 rounded-md bg-secondary p-2 text-sm hover:bg-secondary/80"
+        >
+            <User size={16} aria-label="User icon" />
+            {$user.fullName}
+            <ChevronDown class="h-4 w-4 text-secondary-foreground" aria-label="Dropdown Icon" />
         </DropdownMenu.Trigger>
         <DropdownMenu.Content class="w-40">
             <DropdownMenu.Label class="font-normal">

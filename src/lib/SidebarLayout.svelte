@@ -27,8 +27,8 @@
         </div>
         <div class="absolute left-0 top-0 m-2 md:hidden">
             <Sheet.Root bind:open={popoverOpen}>
-                <Sheet.Trigger>
-                    <Button variant="ghost" on:click={() => (popoverOpen = true)}>
+                <Sheet.Trigger asChild let:builder>
+                    <Button variant="ghost" builders={[builder]}>
                         <Menu size={24} />
                     </Button>
                 </Sheet.Trigger>
