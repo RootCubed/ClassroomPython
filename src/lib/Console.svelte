@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let consoleOutput: { type: "stdout" | "stderr"; text: string }[] = [];
+    export let consoleOutput: { type: "stdout" | "stderr" | "extra"; text: string }[] = [];
 </script>
 
 <div class="flex h-full flex-col bg-zinc-300 text-gray-900 dark:bg-zinc-900 dark:text-gray-300">
@@ -10,6 +10,8 @@
                 <pre>{chunk.text}</pre>
             {:else if chunk.type === "stderr"}
                 <pre class="text-red-500">{chunk.text}</pre>
+            {:else if chunk.type === "extra"}
+                <pre class="text-green-500">{chunk.text}</pre>
             {/if}
         {/each}
     </div>

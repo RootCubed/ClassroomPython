@@ -7,6 +7,7 @@
     import "ace-builds/src-min-noconflict/ext-language_tools";
 
     export let value: string = "";
+    export let disabled: boolean = false;
 
     let editorElement: HTMLElement;
     let editor: ace.Ace.Editor;
@@ -15,6 +16,8 @@
         value = code;
         editor.setValue(code, 2);
     }
+
+    $: editor?.setReadOnly(disabled);
 
     onMount(async () => {
         editor = ace.edit(editorElement);

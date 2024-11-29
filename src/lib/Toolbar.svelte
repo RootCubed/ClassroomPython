@@ -1,9 +1,9 @@
 <script lang="ts">
     import { Button } from "$lib/components/ui/button";
+    import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
     import * as Tooltip from "$lib/components/ui/tooltip";
-    import { Play, Rocket, Save, Square } from "lucide-svelte";
+    import { ChevronDown, FileText, Play, Rocket, Save, Square } from "lucide-svelte";
     import LoadingSpinner from "./LoadingSpinner.svelte";
-    import { cn } from "./utils";
 
     export let onExecute = () => {};
     export let onCancel = () => {};
@@ -11,10 +11,13 @@
     export let onSubmit = async () => {};
 
     export let runReady: boolean;
+    export let currTestcaseNum: number;
 
     let isExecuting = false;
     let isSaving = false;
     let isSubmitting = false;
+
+    export let inputSource: "userInput" | "fileInput" = "userInput";
 
     // So that the spinner is briefly visible even if the submission happens instantly
     async function artificialDelay(func: () => any, amount = 200) {
@@ -43,30 +46,70 @@
 <div class="flex flex-row items-center gap-2 px-2">
     <Tooltip.Root>
         {#if !isExecuting}
-            <Tooltip.Trigger>
-                <Button
-                    variant="secondary"
-                    on:click={handleExecute}
-                    class="bg-green-600 text-white
-                hover:bg-green-700 dark:bg-green-800 dark:hover:bg-green-900"
-                    disabled={!runReady}
-                >
-                    {#if !runReady}
-                        <LoadingSpinner />
-                    {:else}
-                        <Play />
-                    {/if}
-                </Button></Tooltip.Trigger
-            >
-            <Tooltip.Content>Code ausführen</Tooltip.Content>
+            <div class="relative flex flex-row">
+                <Tooltip.Trigger asChild let:builder>
+                    <Button
+                        builders={[builder]}
+                        on:click={handleExecute}
+                        variant="secondary"
+                        class="rounded-r-none bg-green-600 hover:bg-green-700 dark:bg-green-800 dark:hover:bg-green-900"
+                        disabled={!runReady}
+                    >
+                        {#if !runReady}
+                            <LoadingSpinner />
+                        {:else}
+                            <Play />
+                        {/if}
+                    </Button>
+                </Tooltip.Trigger>
+                <Tooltip.Content>Code ausführen</Tooltip.Content>
+                <span class="inline-block w-px bg-green-900"></span>
+
+                <DropdownMenu.Root>
+                    <DropdownMenu.Trigger
+                        class="w-auto rounded-r-sm bg-green-600 px-1 hover:bg-green-700 dark:bg-green-800 dark:hover:bg-green-900"
+                    >
+                        <ChevronDown size={16} />
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Content class="w-60">
+                        <DropdownMenu.Label>Eingabe</DropdownMenu.Label>
+                        <DropdownMenu.Separator />
+                        <DropdownMenu.RadioGroup bind:value={inputSource}>
+                            <DropdownMenu.RadioItem value="userInput">
+                                <div class="flex flex-col">
+                                    Benutzereingabe
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">
+                                        <code>input()</code> öffnet ein Eingabefeld für Benutzereingaben.
+                                    </span>
+                                </div>
+                            </DropdownMenu.RadioItem>
+                            <DropdownMenu.RadioItem value="fileInput">
+                                <div class="flex flex-col">
+                                    Vordefinierte Eingabe
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">
+                                        <code>input()</code> holt sich die Eingabe von vordefinierten
+                                        Testfall-Dateien.
+                                    </span>
+                                </div>
+                            </DropdownMenu.RadioItem>
+                        </DropdownMenu.RadioGroup>
+                    </DropdownMenu.Content>
+                </DropdownMenu.Root>
+                {#if inputSource == "fileInput"}
+                    <span
+                        class="pointer-events-none absolute left-7 top-3 rounded-md p-2 font-mono text-xs text-gray-200"
+                    >
+                        T{currTestcaseNum + 1}
+                    </span>
+                {/if}
+            </div>
         {:else}
             <Tooltip.Trigger asChild let:builder>
                 <Button
                     builders={[builder]}
                     variant="secondary"
                     on:click={onCancel}
-                    class="bg-rose-600 text-white
-                hover:bg-rose-700 dark:bg-rose-800 dark:hover:bg-rose-900"
+                    class="bg-rose-600 text-white hover:bg-rose-700 dark:bg-rose-800 dark:hover:bg-rose-900"
                 >
                     <Square />
                 </Button></Tooltip.Trigger
@@ -97,9 +140,7 @@
                 builders={[builder]}
                 variant="secondary"
                 on:click={handleSubmit}
-                class={cn(
-                    "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-800 dark:hover:bg-blue-900"
-                )}
+                class="bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-800 dark:hover:bg-blue-900"
                 disabled={isSubmitting}
             >
                 {#if isSubmitting}

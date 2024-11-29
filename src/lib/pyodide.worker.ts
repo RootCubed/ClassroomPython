@@ -15,9 +15,12 @@ async function getPy() {
     return _py;
 }
 
+let runMode: "userInput" | "fileInput" = "userInput";
+let currentInput: string[] = [];
+
 let stdinReceived: ((s: string) => void) | null = null;
 function browserStdin() {
-    return new Promise((resolve) => {
+    return new Promise<string>((resolve) => {
         stdinReceived = (s: string) => {
             resolve(s);
         };
@@ -31,8 +34,25 @@ function untiger(code: string) {
         const subM = m.match(/repeat ([^:]+):/)!;
         code = code.replace(m, `for _${code.indexOf(m)} in range(${subM[1]}):`);
     }
-    code = code.replace(/inputInt\(([^)]*)\)/g, "int(await input($1))");
     return code;
+}
+
+async function handleInput(title: string, datatype: string) {
+    if (runMode === "fileInput") {
+        const input = currentInput.shift();
+        if (input === undefined) {
+            return "";
+        }
+        return input;
+    }
+
+    self.postMessage({
+        type: "inputReq",
+        datatype,
+        content: title
+    });
+
+    return await browserStdin();
 }
 
 async function runCode(code: string) {
@@ -56,15 +76,14 @@ async function runCode(code: string) {
         }
     });
     py.globals.set("input", async (title: string) => {
-        self.postMessage({
-            type: "inputReq",
-            content: title
-        });
-        return await browserStdin();
+        return handleInput(title, "str");
+    });
+    py.globals.set("inputInt", async (title: string) => {
+        return parseInt(await handleInput(title, "int"));
     });
     code = code.replace(/\binput\s*[(]/g, "await $&");
+    code = code.replace(/\binputInt\s*[(]/g, "await $&");
     code = untiger(code);
-    console.log(code);
     try {
         await py.runPythonAsync(code);
     } catch (e) {
@@ -109,6 +128,10 @@ self.onmessage = async (event) => {
     const { type } = event.data;
 
     if (type === "run") {
+        runMode = event.data.inputMode;
+        if (runMode === "fileInput") {
+            currentInput = event.data.inputData.split("\n");
+        }
         await runCode(event.data.python);
         self.postMessage({ type: "done" });
     } else if (type === "setInterruptBuffer") {

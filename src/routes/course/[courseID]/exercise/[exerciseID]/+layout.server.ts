@@ -13,6 +13,15 @@ export const load: ServerLoad = async ({ params, locals }) => {
         include: {
             saves: { where: { userId: locals.user.id } },
             submissions: { where: { userId: locals.user.id } },
+            testcases: {
+                include: {
+                    testcaseResults: {
+                        where: {
+                            userId: locals.user.id
+                        }
+                    }
+                }
+            },
             exerciseGroup: true
         }
     });

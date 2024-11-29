@@ -7,7 +7,21 @@ export const load: Load = async ({ params }) => {
             id: params.exerciseID
         },
         include: {
-            submissions: { include: { user: true } }
+            submissions: {
+                include: {
+                    user: true,
+                    exercise: {
+                        include: {
+                            testcases: true
+                        }
+                    }
+                }
+            },
+            testcases: {
+                include: {
+                    testcaseResults: true
+                }
+            }
         }
     });
 

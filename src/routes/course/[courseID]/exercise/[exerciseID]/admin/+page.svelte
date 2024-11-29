@@ -6,6 +6,7 @@
     import * as Dialog from "$lib/components/ui/dialog";
     import { ChevronRight } from "lucide-svelte";
     import CodeWindow from "$lib/CodeWindow.svelte";
+    import { page } from "$app/stores";
 
     export let data: PageData;
 
@@ -18,15 +19,24 @@
     }
 
     let openSubmission: (typeof data.exercise.submissions)[number] | undefined;
+    $: submissionViewing = openSubmission != undefined;
 </script>
 
-<Dialog.Root open={openSubmission !== undefined}>
-    {#if openSubmission !== undefined}
+<Dialog.Root bind:open={submissionViewing}>
+    {#if openSubmission != undefined}
         <Dialog.Content class="flex h-[90vh] max-w-[90vw] flex-col">
             <Dialog.Header>
                 <Dialog.Title>Viewing submission by {openSubmission.user.userName}</Dialog.Title>
             </Dialog.Header>
-            <CodeWindow initialCode={openSubmission.code} />
+            <CodeWindow
+                exercise={{
+                    ...data.exercise,
+                    codeTemplate: openSubmission.code,
+                    saves: []
+                }}
+                exerciseURL="/course/{$page.params.courseID}/exercise/{data.exercise.id}"
+                mode="SUBMISSION_VIEW"
+            />
         </Dialog.Content>
     {/if}
 </Dialog.Root>
@@ -65,5 +75,14 @@
             </Table.Body>
         </Table.Root>
     </Tabs.Content>
-    <Tabs.Content value="edit" class="h-full overflow-auto">Edit</Tabs.Content>
+    <Tabs.Content value="edit" class="h-full overflow-auto">
+        <CodeWindow
+            exercise={{
+                ...data.exercise,
+                saves: []
+            }}
+            exerciseURL="/course/{$page.params.courseID}/exercise/{data.exercise.id}"
+            mode="EDIT"
+        />
+    </Tabs.Content>
 </Tabs.Root>
