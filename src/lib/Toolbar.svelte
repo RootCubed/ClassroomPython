@@ -52,7 +52,7 @@
                         builders={[builder]}
                         on:click={handleExecute}
                         variant="secondary"
-                        class="rounded-r-none bg-green-600 hover:bg-green-700 dark:bg-green-800 dark:hover:bg-green-900"
+                        class="rounded-r-none bg-green-500 hover:bg-green-600 dark:bg-green-800 dark:hover:bg-green-900"
                         disabled={!runReady}
                     >
                         {#if !runReady}
@@ -63,11 +63,11 @@
                     </Button>
                 </Tooltip.Trigger>
                 <Tooltip.Content>Code ausführen</Tooltip.Content>
-                <span class="inline-block w-px bg-green-900"></span>
+                <span class="inline-block w-px bg-green-600 dark:bg-green-900"></span>
 
                 <DropdownMenu.Root>
                     <DropdownMenu.Trigger
-                        class="w-auto rounded-r-sm bg-green-600 px-1 hover:bg-green-700 dark:bg-green-800 dark:hover:bg-green-900"
+                        class="w-auto rounded-r-sm bg-green-500 px-1 hover:bg-green-600 dark:bg-green-800 dark:hover:bg-green-900"
                     >
                         <ChevronDown size={16} />
                     </DropdownMenu.Trigger>
@@ -97,7 +97,7 @@
                 </DropdownMenu.Root>
                 {#if inputSource == "fileInput"}
                     <span
-                        class="pointer-events-none absolute left-7 top-3 rounded-md p-2 font-mono text-xs text-gray-200"
+                        class="pointer-events-none absolute left-7 top-3 rounded-md p-2 font-mono text-xs font-bold text-gray-700 dark:text-gray-200"
                     >
                         T{currTestcaseNum + 1}
                     </span>

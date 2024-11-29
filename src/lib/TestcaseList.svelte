@@ -64,15 +64,17 @@
 
     function testcaseCol(tc: TestcaseView) {
         if (tc.testcaseResults.length == 0) {
-            return "bg-zinc-600";
+            return "bg-zinc-300 dark:bg-zinc-600";
         }
-        return tc.testcaseResults[0].passed ? "bg-green-800" : "bg-red-800";
+        return tc.testcaseResults[0].passed
+            ? "bg-green-400 dark:bg-green-800"
+            : "bg-red-400 dark:bg-red-800";
     }
 </script>
 
 <div class="grid h-full grid-cols-[1fr_auto] grid-rows-1 overflow-hidden">
     {#if currentTest != null}
-        <div class="flex flex-col gap-2 bg-zinc-800 p-2">
+        <div class="flex flex-col gap-2 bg-zinc-200 p-2 dark:bg-zinc-800">
             <Label>Programm-Eingaben</Label>
             <AceEditor
                 disabled={!editMode}
@@ -111,8 +113,9 @@
             {#key currentTest}
                 {#each testcases as tc, i}
                     <Button
+                        variant="secondary"
                         class={cn(
-                            "flex cursor-pointer select-none items-center justify-between gap-1 rounded-l-none bg-zinc-800 px-2 text-white hover:bg-zinc-700",
+                            "flex cursor-pointer select-none items-center justify-between gap-1 rounded-l-none bg-zinc-200 px-2 hover:bg-opacity-50 dark:bg-zinc-800",
                             i != currTestcaseNum && "ml-2 bg-opacity-50"
                         )}
                         on:click={() => {
@@ -122,7 +125,7 @@
                         <span class="text-sm">Testcase {i + 1}</span>
                         <div
                             class={cn(
-                                "flex cursor-pointer select-none items-center justify-between gap-1 rounded-sm p-1 text-white",
+                                "flex cursor-pointer select-none items-center justify-between gap-1 rounded-sm p-1",
                                 testcaseCol(tc),
                                 i != currTestcaseNum && "ml-2 bg-opacity-50"
                             )}
@@ -140,7 +143,7 @@
             {/key}
             {#if editMode}
                 <Button
-                    class="ml-2 flex w-8 cursor-pointer select-none gap-1 bg-zinc-800 px-2 text-white hover:bg-zinc-700"
+                    class="ml-2 flex w-8 cursor-pointer select-none gap-1 bg-zinc-200 px-2 hover:bg-opacity-50 dark:bg-zinc-800"
                     on:click={() => {
                         currTestcaseNum = testcases.length;
                         testcases = [...testcases, { ...defaultTestcase }];

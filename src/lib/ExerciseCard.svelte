@@ -7,7 +7,7 @@
     import { Role } from "@prisma/client";
     import { page } from "$app/stores";
 
-    export let exercise: ExerciseView;
+    export let exercise: Pick<ExerciseView, "id" | "title" | "subtitle" | "submissions">;
     export let selected = false;
 
     $: submissionStatus = exercise.submissions.length === 0 ? "not_submitted" : "submitted";
@@ -15,8 +15,8 @@
 
 <div
     class={cn(
-        "flex min-h-16 flex-row rounded-lg bg-zinc-800 transition-all hover:bg-opacity-75",
-        selected && "bg-zinc-700 text-accent-foreground"
+        "flex min-h-16 flex-row rounded-lg bg-zinc-100 transition-all hover:bg-opacity-75 dark:bg-zinc-800",
+        selected && "bg-zinc-300 text-accent-foreground dark:bg-zinc-700"
         // exercise.submissionStatus == "submitted" && "bg-emerald-700"
     )}
 >
