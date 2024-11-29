@@ -13,53 +13,50 @@
     $: submissionStatus = exercise.submissions.length === 0 ? "not_submitted" : "submitted";
 </script>
 
-<div class="relative w-full">
+<div
+    class={cn(
+        "flex min-h-16 flex-row rounded-lg bg-zinc-800 transition-all hover:bg-opacity-75",
+        selected && "bg-zinc-700 text-accent-foreground"
+        // exercise.submissionStatus == "submitted" && "bg-emerald-700"
+    )}
+>
     <a
-        class={cn(
-            "flex min-h-20 flex-col items-start gap-1 rounded-lg border p-3 text-sm transition-all hover:bg-accent",
-            selected && "bg-accent text-accent-foreground"
-            // exercise.submissionStatus == "submitted" && "bg-emerald-700"
-        )}
         href="/course/{$page.params.courseID}/exercise/{exercise.id}"
+        class="flex flex-grow flex-col items-start gap-1 border border-opacity-0 p-3 text-sm"
     >
-        <div class="flex w-full items-center">
+        <div class="relative flex w-full items-center">
             <div class="flex items-center gap-2">
                 <div class="font-semibold">
                     {exercise.title}
                 </div>
             </div>
-            <div class="ml-auto text-xs text-foreground">
-                {#if submissionStatus == "not_submitted" || submissionStatus == "submitted"}
-                    <Tooltip.Root>
-                        <Tooltip.Trigger>
-                            <span
-                                class={cn(
-                                    "flex h-2 w-2 rounded-full",
-                                    submissionStatus == "not_submitted" && "bg-yellow-600",
-                                    submissionStatus == "submitted" && "bg-green-600"
-                                )}
-                            ></span>
-                        </Tooltip.Trigger>
-                        <Tooltip.Content>
-                            {#if submissionStatus == "not_submitted"}
-                                Noch nicht abgegeben
-                            {:else if submissionStatus == "submitted"}
-                                Abgegeben
-                            {/if}
-                        </Tooltip.Content>
-                    </Tooltip.Root>
-                {/if}
-            </div>
         </div>
         <div class="text-xs font-medium">{exercise.subtitle ?? " "}</div>
-        <div class="line-clamp-2 text-xs text-muted-foreground">{exercise.description ?? ""}</div>
     </a>
-    {#if $user.role === Role.ADMIN}
-        <a
-            class="absolute bottom-3 right-3"
-            href="/course/{$page.params.courseID}/exercise/{exercise.id}/admin"
-        >
-            <Cog size={16} />
-        </a>
-    {/if}
+    <div class="flex items-center gap-2 p-2">
+        {#if $user.role != Role.STUDENT}
+            <a href="/course/{$page.params.courseID}/exercise/{exercise.id}/admin">
+                <Cog size={16} />
+            </a>
+        {:else if submissionStatus == "not_submitted" || submissionStatus == "submitted"}
+            <Tooltip.Root>
+                <Tooltip.Trigger>
+                    <span
+                        class={cn(
+                            "mr-2 flex h-2 w-2 rounded-full",
+                            submissionStatus == "not_submitted" && "bg-yellow-600",
+                            submissionStatus == "submitted" && "bg-green-600"
+                        )}
+                    ></span>
+                </Tooltip.Trigger>
+                <Tooltip.Content>
+                    {#if submissionStatus == "not_submitted"}
+                        Noch nicht abgegeben
+                    {:else if submissionStatus == "submitted"}
+                        Abgegeben
+                    {/if}
+                </Tooltip.Content>
+            </Tooltip.Root>
+        {/if}
+    </div>
 </div>
