@@ -24,14 +24,25 @@ model User {
   sessions        Session[]
   saves           Save[]
   submissions     Submission[]
-  ownedCourses    Course[]     @relation("courseOwners")
-  enrolledCourses Course[]     @relation("courseStudents")
+  ownedCourses    Course[]         @relation("courseOwners")
+  enrolledCourses Course[]         @relation("courseStudents")
+  testcaseResults TestcaseResult[]
 }
 
 model Session {
   id     String @id @default(uuid())
   user   User   @relation(fields: [userId], references: [id])
   userId String
+}
+
+model Testcase {
+  id             String @id @default(uuid())
+  input          String
+  expectedOutput String
+
+  exercise        Exercise         @relation(fields: [exerciseId], references: [id])
+  exerciseId      String
+  testcaseResults TestcaseResult[]
 }
 
 model Exercise {
@@ -45,9 +56,20 @@ model Exercise {
   groupId       String
   exerciseTags  ExerciseTag[]
   isInLibrary   Boolean
+  testcases     Testcase[]
 
   saves       Save[]
   submissions Submission[]
+}
+
+model TestcaseResult {
+  testcase   Testcase @relation(fields: [testcaseId], references: [id])
+  testcaseId String
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  passed     Boolean
+
+  @@id([testcaseId, userId])
 }
 
 model ExerciseTag {
