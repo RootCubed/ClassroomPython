@@ -94,5 +94,26 @@ export const actions: Actions = {
                 }
             }
         });
+    },
+    updateCourse: async ({ request, params }) => {
+        const data = await request.formData();
+        const title = data.get("title")?.toString();
+        const description = data.get("description")?.toString();
+
+        if (!title || !description) {
+            return fail(400, { message: "Invalid arguments" });
+        }
+
+        if (!params.courseID) {
+            return fail(500, { message: "Course not found" });
+        }
+
+        await pdb.course.update({
+            where: { id: params.courseID },
+            data: {
+                title,
+                description
+            }
+        });
     }
 };

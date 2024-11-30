@@ -34,7 +34,7 @@
             <Dialog.Title>Aufgabe erstellen</Dialog.Title>
         </Dialog.Header>
         <div class="grid w-full items-center gap-1.5">
-            <form method="POST" action="?/createExercise" use:enhance on:submit={invalidateAll}>
+            <form method="POST" action="?/createExercise" use:enhance>
                 <div class="grid gap-4">
                     <ErrorableInput label="Titel" id="title" type="text" serverResp={undefined} />
                     <select
@@ -69,9 +69,36 @@
     </Dialog.Content>
 </Dialog.Root>
 
-<div class="h-full space-y-8 p-8">
+<div class="h-full max-w-xl space-y-8 p-8">
     <h2 class="text-2xl font-bold">Kursmanagement {data.course?.title}</h2>
-    <div class="max-w-xl space-y-4">
+    <form
+        method="POST"
+        action="?/updateCourse"
+        use:enhance={() => {
+            return async ({ update }) => {
+                update({ reset: false });
+            };
+        }}
+    >
+        <div class="grid gap-4">
+            <ErrorableInput
+                label="Titel"
+                id="title"
+                type="text"
+                value={data.course?.title}
+                serverResp={undefined}
+            />
+            <ErrorableInput
+                label="Beschreibung"
+                id="description"
+                type="text"
+                value={data.course?.description}
+                serverResp={undefined}
+            />
+            <Button type="submit">Speichern</Button>
+        </div>
+    </form>
+    <div class="space-y-4">
         <h3 class="text-xl font-bold">Schüler</h3>
         {#if data.course}
             <div class="grid gap-2">
@@ -98,7 +125,7 @@
             </div>
         {/if}
     </div>
-    <div class="max-w-xl space-y-4">
+    <div class="space-y-4">
         <h3 class="text-xl font-bold">Editor</h3>
 
         {#each data.exercises as group}
