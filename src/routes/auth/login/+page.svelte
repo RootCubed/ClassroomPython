@@ -4,35 +4,66 @@
 
     import type { ActionData } from "./$types";
     import ErrorableInput from "$lib/ErrorableInput.svelte";
+    import LoginWithMicrosoftButton from "$lib/oauth/LoginWithMicrosoftButton.svelte";
+    import { ArrowRight } from "lucide-svelte";
+    import { cn } from "$lib/utils";
 
     export let form: ActionData;
+
+    let formDropdown = false;
 </script>
 
 <div class="flex h-screen w-full items-center justify-center px-4">
     <Card.Root class="mx-auto max-w-sm">
         <Card.Header>
             <Card.Title class="text-2xl">Login</Card.Title>
-            <Card.Description>Gib deinen Benutzernamen ein, um fortzufahren.</Card.Description>
+            <Card.Description
+                >Melde dich mit deinem Schulkonto an, um fortzufahren.</Card.Description
+            >
         </Card.Header>
         <Card.Content>
             <div class="grid w-full max-w-sm items-center gap-1.5">
-                <form method="POST">
-                    <div class="grid gap-4">
-                        <ErrorableInput
-                            label="Benutzername (vorname.nachname)"
-                            serverResp={form?.username}
-                            id="username"
-                            type="text"
-                        />
-                        <ErrorableInput
-                            label="Passwort"
-                            id="password"
-                            type="password"
-                            serverResp={form?.password}
-                        />
-                        <Button type="submit" class="w-full">Login</Button>
+                <LoginWithMicrosoftButton />
+                <div class="relative my-2">
+                    <div class="absolute inset-0 flex items-center">
+                        <span class="w-full border-t"></span>
                     </div>
-                </form>
+                    <div class="relative flex justify-center text-xs uppercase">
+                        <span class="bg-background px-2 text-muted-foreground">
+                            Oder weiter mit
+                        </span>
+                    </div>
+                </div>
+
+                <button
+                    class="flex w-full items-center justify-between border-b py-2 text-left text-sm"
+                    on:click={() => (formDropdown = !formDropdown)}
+                >
+                    Login mit Benutzername & Passwort
+                    <ArrowRight
+                        size={18}
+                        class={cn("transform transition-transform", formDropdown && "rotate-90")}
+                    />
+                </button>
+                {#if formDropdown}
+                    <form method="POST">
+                        <div class="mt-2 grid gap-4">
+                            <ErrorableInput
+                                label="Benutzername"
+                                serverResp={form?.username}
+                                id="username"
+                                type="text"
+                            />
+                            <ErrorableInput
+                                label="Passwort"
+                                id="password"
+                                type="password"
+                                serverResp={form?.password}
+                            />
+                            <Button type="submit" class="w-full">Login</Button>
+                        </div>
+                    </form>
+                {/if}
             </div>
         </Card.Content>
     </Card.Root>

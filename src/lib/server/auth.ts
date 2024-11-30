@@ -30,6 +30,9 @@ export async function loginUser(userName: string, password: string): Promise<str
     if (!user) {
         throw new Error("User does not exist");
     }
+    if (!user.passwordHash) {
+        throw new Error("Local auth disallowed. Login with Microsoft instead.");
+    }
     if (!(await argon2.verify(user.passwordHash, password))) {
         throw new Error("Wrong password!");
     }
