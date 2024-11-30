@@ -1,7 +1,7 @@
 import type { RequestEvent } from "@sveltejs/kit";
 import argon2 from "argon2";
 import db from "$lib/server/prisma-db";
-import type { User, Role } from "@prisma/client";
+import type { User, Role, OAuth } from "@prisma/client";
 
 export type ClientUser = Omit<User, "passwordHash">;
 
@@ -67,4 +67,11 @@ export async function invalidateSession(sessionToken: string): Promise<void> {
     await db.session.delete({
         where: { id: sessionToken }
     });
+}
+
+export async function getOAuthToken(userId: string): Promise<OAuth | null> {
+    const oauth = await db.oAuth.findUnique({
+        where: { userId }
+    });
+    return oauth;
 }

@@ -1,3 +1,5 @@
+import { getOrCreateMSUser } from "$lib/oauth/oauth";
+import { getOAuthToken } from "$lib/server/auth";
 import { getExercises } from "$lib/server/db";
 import pdb from "$lib/server/prisma-db";
 import { error, fail, type Actions, type ServerLoad } from "@sveltejs/kit";
@@ -58,9 +60,19 @@ export const actions: Actions = {
             }
         });
     },
-    addStudent: async ({ request, params }) => {
+    addStudent: async ({ request, params, locals }) => {
         const data = await request.formData();
         const username = data.get("studentUsername")?.toString();
+
+        if (!locals.user) {
+            return fail(401);
+        }
+
+        const oauth = await getOAuthToken(locals.user.id);
+
+        if (!oauth) {
+            return fail(401, { message: "Missing token" });
+        }
 
         if (!username) {
             return fail(400, { message: "Invalid arguments" });
@@ -70,12 +82,14 @@ export const actions: Actions = {
             return fail(500, { message: "Course not found" });
         }
 
+        const user = await getOrCreateMSUser(oauth, username);
+
         await pdb.course.update({
             where: { id: params.courseID },
             data: {
                 students: {
                     connect: {
-                        userName: username
+                        id: user.id
                     }
                 }
             }
