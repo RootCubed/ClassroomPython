@@ -13,7 +13,8 @@
     let formDropdown = false;
 </script>
 
-<div class="flex h-screen w-full items-center justify-center px-4">
+<div class="flex h-full w-full flex-col items-center justify-center gap-6 px-4">
+    <h1 class="text-4xl font-bold">ClassroomPython</h1>
     <Card.Root class="mx-auto max-w-sm">
         <Card.Header>
             <Card.Title class="text-2xl">Login</Card.Title>
