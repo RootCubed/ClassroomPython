@@ -108,11 +108,9 @@
                     <Card.Root class="cursor-pointer hover:bg-accent">
                         <Card.Header>
                             <Card.Title>{exercise.title}</Card.Title>
-                            <Card.Description>{exercise.description}</Card.Description>
+                            <Card.Description>{exercise.subtitle}</Card.Description>
                         </Card.Header>
-                        <Card.Content>
-                            <p>...</p>
-                        </Card.Content>
+                        <Card.Content></Card.Content>
                     </Card.Root>
                 {/each}
             </div>
