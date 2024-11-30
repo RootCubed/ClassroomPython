@@ -27,11 +27,24 @@ export const actions: Actions = {
 
         // Cannot delete own user or ADMIN
         const user = await pdb.user.findUnique({
-            where: { id }
+            where: { id },
+            include: {
+                oauth: true
+            }
         });
         if (user === null || user.id === locals.user?.id || user.role === Role.ADMIN) {
             return fail(400, { message: "Cannot delete this user" });
         }
+
+        await pdb.user.update({
+            where: { id },
+            data: {
+                oauth: { delete: user.oauth != null },
+                sessions: { deleteMany: {} },
+                saves: { deleteMany: {} },
+                testcaseResults: { deleteMany: {} }
+            }
+        });
 
         await pdb.user.delete({
             where: { id }
