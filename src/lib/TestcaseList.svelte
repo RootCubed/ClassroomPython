@@ -38,12 +38,12 @@
         currentTest = null;
     }
 
-    function saveTestcase() {
+    async function saveTestcase() {
         if (!currentTest) {
             return;
         }
         if (currentTest.id == "") {
-            fetch(`${exerciseURL}/testcase/`, {
+            await fetch(`${exerciseURL}/testcase/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -51,7 +51,7 @@
                 body: JSON.stringify(currentTest)
             });
         } else {
-            fetch(`${exerciseURL}/testcase/${currentTest.id}`, {
+            await fetch(`${exerciseURL}/testcase/${currentTest.id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"
@@ -59,6 +59,18 @@
                 body: JSON.stringify(currentTest)
             });
         }
+        invalidateAll();
+    }
+
+    async function deleteTestcase(test: TestcaseView | null) {
+        if (test == null) {
+            return;
+        }
+        testcases = testcases.filter((tc) => tc.id != test.id);
+        currTestcaseNum--;
+        await fetch(`${exerciseURL}/testcase/${test.id}`, {
+            method: "DELETE"
+        });
         invalidateAll();
     }
 
@@ -92,15 +104,7 @@
                     <Button
                         variant="destructive"
                         on:click={() => {
-                            if (currentTest == null) {
-                                return;
-                            }
-                            testcases = testcases.filter((tc) => tc.id != currentTest?.id);
-                            currTestcaseNum--;
-                            fetch(`${exerciseURL}/testcase/${currentTest.id}`, {
-                                method: "DELETE"
-                            });
-                            invalidateAll();
+                            deleteTestcase(currentTest);
                         }}
                     >
                         Löschen
