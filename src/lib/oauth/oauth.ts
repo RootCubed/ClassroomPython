@@ -59,14 +59,16 @@ export async function requestToken(base_url: string, code: string): Promise<OAut
         });
     }
 
-    const createdUser = await pdb.user.create({
-        data: { ...userInfo, role: $Enums.Role.STUDENT }
+    const user = await pdb.user.upsert({
+        where: { userName: userInfo.userName },
+        create: { ...userInfo, role: $Enums.Role.STUDENT },
+        update: userInfo
     });
 
     return await pdb.oAuth.create({
         data: {
             oauthId,
-            userId: createdUser.id,
+            userId: user.id,
             accessToken: tokenData.access_token,
             refreshToken: tokenData.refresh_token
         }
