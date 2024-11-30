@@ -192,7 +192,7 @@
     }
 
     beforeNavigate(async (navigation) => {
-        if (userCode != lastSavedCode) {
+        if (userCode != lastSavedCode && !leaveConfirmWindow.open) {
             if (!navigation.willUnload) {
                 leaveConfirmWindow.open = true;
                 leaveConfirmWindow.destination = navigation.to?.url.toString() ?? "#";
