@@ -27,7 +27,7 @@ export const load: ServerLoad = async ({ params, locals }) => {
     });
 
     if (!exercise) {
-        throw error(404, "Die Aufgabe wurde nicht gefunden.");
+        throw error(404, "The exercise was not found.");
     }
 
     return { exercise };

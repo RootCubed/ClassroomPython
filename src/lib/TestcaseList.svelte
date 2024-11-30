@@ -8,6 +8,7 @@
     import { Button } from "./components/ui/button";
     import { cn } from "./utils";
     import { invalidateAll } from "$app/navigation";
+    import * as m from "$lib/paraglide/messages";
 
     type TestcaseView = ExerciseView["testcases"][0];
 
@@ -87,13 +88,13 @@
 <div class="grid h-full grid-cols-[1fr_auto] grid-rows-1 overflow-hidden">
     {#if currentTest != null}
         <div class="flex flex-col gap-2 bg-zinc-200 p-2 dark:bg-zinc-800">
-            <Label>Programm-Eingaben</Label>
+            <Label>{m.code_testcase_program_inputs()}</Label>
             <AceEditor
                 disabled={!editMode}
                 bind:value={currentTest.input}
                 bind:this={inputEditor}
             />
-            <Label for="expectedOutput">Erwartete Ausgabe</Label>
+            <Label for="expectedOutput">{m.code_testcase_expected_output()}</Label>
             <Input
                 disabled={!editMode}
                 id="expectedOutput"
@@ -107,9 +108,9 @@
                             deleteTestcase(currentTest);
                         }}
                     >
-                        Löschen
+                        {m.global_delete()}
                     </Button>
-                    <Button variant="secondary" on:click={saveTestcase}>Speichern</Button>
+                    <Button variant="secondary" on:click={saveTestcase}>{m.global_save()}</Button>
                 </div>
             {/if}
         </div>
@@ -158,6 +159,8 @@
             {/if}
         </div>
     {:else}
-        <span class="text-center text-sm text-muted-foreground">Keine Testfälle verfügbar</span>
+        <span class="text-center text-sm text-muted-foreground"
+            >{m.code_testcase_no_testcases()}</span
+        >
     {/if}
 </div>

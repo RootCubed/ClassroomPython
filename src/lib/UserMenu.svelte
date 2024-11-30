@@ -6,6 +6,7 @@
     import { Role } from "@prisma/client";
     import { setLanguageTag, languageTag, type AvailableLanguageTag } from "./paraglide/runtime";
     import { cn } from "./utils";
+    import * as m from "$lib/paraglide/messages";
 
     let currLang = languageTag();
     $: setLanguageTag(currLang);
@@ -37,21 +38,23 @@
             <DropdownMenu.Group>
                 {#if $user.role === Role.ADMIN}
                     <DropdownMenu.Item on:click={() => goto("/admin")}
-                        >Admin-Dashboard</DropdownMenu.Item
+                        >{m.menu_admin_dashboard()}</DropdownMenu.Item
                     >
                 {/if}
                 {#if $user.role === Role.ADMIN || $user.role === Role.TEACHER}
                     <DropdownMenu.Item on:click={() => goto("/teacher-admin")}
-                        >Lehrer-Dashboard</DropdownMenu.Item
+                        >{m.menu_teacher_dashboard()}</DropdownMenu.Item
                     >
                 {/if}
                 {#if $user.role === Role.STUDENT}
-                    <DropdownMenu.Item on:click={() => goto("/")}>Meine Kurse</DropdownMenu.Item>
+                    <DropdownMenu.Item on:click={() => goto("/")}
+                        >{m.menu_my_courses()}</DropdownMenu.Item
+                    >
                 {/if}
                 <DropdownMenu.Separator />
             </DropdownMenu.Group>
             <DropdownMenu.Group>
-                <DropdownMenu.Label>Sprache</DropdownMenu.Label>
+                <DropdownMenu.Label>{m.menu_language()}</DropdownMenu.Label>
                 <div class="flex items-center justify-evenly gap-2">
                     {#each langs as { tag, sym }}
                         <button
@@ -68,7 +71,7 @@
             </DropdownMenu.Group>
             <DropdownMenu.Separator />
             <DropdownMenu.Item on:click={() => (window.location.href = "/auth/logout")}
-                >Ausloggen</DropdownMenu.Item
+                >{m.auth_logout()}</DropdownMenu.Item
             >
         </DropdownMenu.Content>
     </DropdownMenu.Root>

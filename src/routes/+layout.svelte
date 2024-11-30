@@ -15,7 +15,7 @@
         $user = data.user;
     }
 
-    export const lang = writable<AvailableLanguageTag>("en", (set) => {
+    export const lang = writable<AvailableLanguageTag>("de-ch", (set) => {
         onSetLanguageTag((l) => {
             set(l);
         });

@@ -19,6 +19,7 @@
     import { page } from "$app/stores";
     import CodeWindowSidebar from "./CodeWindowSidebar.svelte";
     import { user } from "./page-state";
+    import * as m from "$lib/paraglide/messages";
 
     type CodeWindowExerciseView = Omit<ExerciseView, "submissions" | "exerciseGroup">;
 
@@ -205,15 +206,15 @@
 <AlertDialog.Root bind:open={leaveConfirmWindow.open}>
     <AlertDialog.Content>
         <AlertDialog.Header>
-            <AlertDialog.Title>Ungespeicherte Änderungen</AlertDialog.Title>
+            <AlertDialog.Title>{m.code_unsaved_changes_title()}</AlertDialog.Title>
             <AlertDialog.Description>
-                Du hast noch ungespeicherte Änderungen. Möchtest du wirklich fortfahren?
+                {m.code_unsaved_changes_subtitle()}
             </AlertDialog.Description>
         </AlertDialog.Header>
         <AlertDialog.Footer>
             <AlertDialog.Cancel>Abbrechen</AlertDialog.Cancel>
             <AlertDialog.Action on:click={() => goto(leaveConfirmWindow.destination)}
-                >Ohne Speichern fortfahren</AlertDialog.Action
+                >{m.code_unsaved_changes_continue_without()}</AlertDialog.Action
             >
         </AlertDialog.Footer>
     </AlertDialog.Content>
@@ -250,7 +251,7 @@
                                 </div>
 
                                 <Button variant="ghost" type="submit" on:click={saveCode}
-                                    >Speichern</Button
+                                    >{m.global_save()}</Button
                                 >
                             </form>
                         {/if}

@@ -2,8 +2,9 @@
     import { Button } from "$lib/components/ui/button";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
     import * as Tooltip from "$lib/components/ui/tooltip";
-    import { ChevronDown, FileText, Play, Rocket, Save, Square } from "lucide-svelte";
+    import { ChevronDown, Play, Rocket, Save, Square } from "lucide-svelte";
     import LoadingSpinner from "./LoadingSpinner.svelte";
+    import * as m from "$lib/paraglide/messages";
 
     export let onExecute = () => {};
     export let onCancel = () => {};
@@ -62,7 +63,7 @@
                         {/if}
                     </Button>
                 </Tooltip.Trigger>
-                <Tooltip.Content>Code ausführen</Tooltip.Content>
+                <Tooltip.Content>{m.code_execute()}</Tooltip.Content>
                 <span class="inline-block w-px bg-green-600 dark:bg-green-900"></span>
 
                 <DropdownMenu.Root>
@@ -72,23 +73,22 @@
                         <ChevronDown size={16} />
                     </DropdownMenu.Trigger>
                     <DropdownMenu.Content class="w-60">
-                        <DropdownMenu.Label>Eingabe</DropdownMenu.Label>
+                        <DropdownMenu.Label>{m.code_select_input()}</DropdownMenu.Label>
                         <DropdownMenu.Separator />
                         <DropdownMenu.RadioGroup bind:value={inputSource}>
                             <DropdownMenu.RadioItem value="userInput">
                                 <div class="flex flex-col">
-                                    Benutzereingabe
+                                    {m.code_input_user_source_title()}
                                     <span class="text-xs text-gray-500 dark:text-gray-400">
-                                        <code>input()</code> öffnet ein Eingabefeld für Benutzereingaben.
+                                        {@html m.code_input_user_source_description()}
                                     </span>
                                 </div>
                             </DropdownMenu.RadioItem>
                             <DropdownMenu.RadioItem value="fileInput">
                                 <div class="flex flex-col">
-                                    Vordefinierte Eingabe
+                                    {m.code_input_predefined_source_title()}
                                     <span class="text-xs text-gray-500 dark:text-gray-400">
-                                        <code>input()</code> holt sich die Eingabe von vordefinierten
-                                        Testfall-Dateien.
+                                        {@html m.code_input_predefined_source_description()}
                                     </span>
                                 </div>
                             </DropdownMenu.RadioItem>
@@ -114,7 +114,7 @@
                     <Square />
                 </Button></Tooltip.Trigger
             >
-            <Tooltip.Content>Abbrechen</Tooltip.Content>
+            <Tooltip.Content>{m.global_cancel()}</Tooltip.Content>
         {/if}
     </Tooltip.Root>
     <Tooltip.Root>
@@ -132,7 +132,7 @@
                 {/if}
             </Button></Tooltip.Trigger
         >
-        <Tooltip.Content>Code speichern</Tooltip.Content>
+        <Tooltip.Content>{m.code_save()}</Tooltip.Content>
     </Tooltip.Root>
     <Tooltip.Root>
         <Tooltip.Trigger asChild let:builder>
@@ -150,6 +150,6 @@
                 {/if}
             </Button></Tooltip.Trigger
         >
-        <Tooltip.Content>Einreichen</Tooltip.Content>
+        <Tooltip.Content>{m.global_submit()}</Tooltip.Content>
     </Tooltip.Root>
 </div>

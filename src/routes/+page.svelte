@@ -4,20 +4,21 @@
     import * as Card from "$lib/components/ui/card";
     import { user } from "$lib/page-state";
     import { Role } from "@prisma/client";
+    import * as m from "$lib/paraglide/messages";
 
     export let data: PageData;
 </script>
 
 <div class="flex h-full flex-col">
     <div class="flex content-around items-center p-2">
-        <span class="text-lg">ClassroomPython</span>
+        <span class="text-lg">{m.global_app_name()}</span>
         <UserMenu />
     </div>
     <div class="flex h-full items-center justify-center">
         <Card.Root class="mx-5 w-full max-w-lg">
             <Card.Header>
-                <Card.Title class="text-2xl">Kursauswahl</Card.Title>
-                <Card.Description>Wähle einer deiner Kurse aus, um fortzufahren.</Card.Description>
+                <Card.Title class="text-2xl">{m.home_select_course()}</Card.Title>
+                <Card.Description>{m.home_select_course_hint()}</Card.Description>
             </Card.Header>
             <Card.Content>
                 <div class="max-h-96 overflow-y-auto">
@@ -33,15 +34,11 @@
                         {/each}
                     {:else if $user.role === Role.STUDENT}
                         <span class="text-sm italic text-gray-500">
-                            Du bist momentan in keinem Kurs eingeschrieben. Melde dich bei deiner
-                            Lehrperson.
+                            {m.home_no_courses_student()}
                         </span>
                     {:else}
                         <span class="text-sm italic text-gray-500">
-                            Du hast noch keine Kurse erstellt. Erstelle einen neuen Kurs im <a
-                                class="text-blue-400 underline hover:text-blue-300"
-                                href="/teacher-admin">Lehrer-Dashboard</a
-                            >.
+                            {m.home_no_courses_teacher()}
                         </span>
                     {/if}
                 </div>

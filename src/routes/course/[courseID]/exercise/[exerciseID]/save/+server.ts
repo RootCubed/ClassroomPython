@@ -10,7 +10,7 @@ export const POST: RequestHandler = async ({ locals, request, params }) => {
         const code = await request.text();
         await db.saveExercise(params.exerciseID, locals.user.id, code);
     } catch (e) {
-        throw error(500, "Die Aufgabe konnte nicht gespeichert werden.");
+        throw error(500, "The exercise could not be saved.");
     }
 
     return new Response("OK", { status: 200 });

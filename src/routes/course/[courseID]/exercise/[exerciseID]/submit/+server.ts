@@ -11,7 +11,7 @@ export const POST: RequestHandler = async ({ locals, request, params }) => {
         await db.saveExercise(params.exerciseID, locals.user.id, code);
         await db.addSubmission(params.exerciseID, locals.user.id, code);
     } catch (e) {
-        throw error(500, "Die Aufgabe konnte nicht abgegeben werden.");
+        throw error(500, "The exercise could not be submitted.");
     }
 
     return new Response("OK", { status: 200 });

@@ -6,6 +6,7 @@
     import { user } from "./page-state";
     import { Role } from "@prisma/client";
     import { page } from "$app/stores";
+    import * as m from "$lib/paraglide/messages";
 
     export let exercise: Pick<ExerciseView, "id" | "title" | "subtitle" | "submissions">;
     export let selected = false;
@@ -51,9 +52,9 @@
                 </Tooltip.Trigger>
                 <Tooltip.Content>
                     {#if submissionStatus == "not_submitted"}
-                        Noch nicht abgegeben
+                        {m.course_home_not_submitted()}
                     {:else if submissionStatus == "submitted"}
-                        Abgegeben
+                        {m.course_home_submitted()}
                     {/if}
                 </Tooltip.Content>
             </Tooltip.Root>

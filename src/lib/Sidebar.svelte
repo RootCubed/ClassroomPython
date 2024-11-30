@@ -6,12 +6,13 @@
     import ExerciseCard from "./ExerciseCard.svelte";
     import { CogIcon } from "lucide-svelte";
     import { page } from "$app/stores";
+    import * as m from "$lib/paraglide/messages";
 
     export let exercises: ExerciseGroupView;
 </script>
 
 <div class="flex w-full items-center justify-between p-2">
-    <span class="inline-block text-xl font-semibold">Aufgaben</span>
+    <span class="inline-block text-xl font-semibold">{m.home_exercises()}</span>
     {#if $user.role == "TEACHER" || $user.role == "ADMIN"}
         <a href="/teacher-admin/course/{$page.params.courseID}">
             <CogIcon size={20} />

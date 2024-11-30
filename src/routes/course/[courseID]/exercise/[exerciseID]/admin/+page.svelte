@@ -1,21 +1,17 @@
 <script lang="ts">
     import type { PageData } from "./$types";
-    import type { Submission } from "@prisma/client";
     import * as Tabs from "$lib/components/ui/tabs";
     import * as Table from "$lib/components/ui/table";
     import * as Dialog from "$lib/components/ui/dialog";
     import { ChevronRight } from "lucide-svelte";
     import CodeWindow from "$lib/CodeWindow.svelte";
     import { page } from "$app/stores";
+    import * as m from "$lib/paraglide/messages";
 
     export let data: PageData;
 
     function formatTimestamp(timestamp: Date) {
         return new Date(timestamp).toLocaleString();
-    }
-
-    function submissionLink(submission: Submission) {
-        return `/admin/submission/${submission.id}`;
     }
 
     let openSubmission: (typeof data.exercise.submissions)[number] | undefined;
@@ -26,7 +22,11 @@
     {#if openSubmission != undefined}
         <Dialog.Content class="flex h-[90vh] max-w-[90vw] flex-col">
             <Dialog.Header>
-                <Dialog.Title>Viewing submission by {openSubmission.user.userName}</Dialog.Title>
+                <Dialog.Title
+                    >{m.exadmin_submission_author({
+                        name: openSubmission.user.userName
+                    })}</Dialog.Title
+                >
             </Dialog.Header>
             <CodeWindow
                 exercise={{
@@ -43,8 +43,8 @@
 
 <Tabs.Root class="flex h-full min-h-0 flex-col overflow-auto p-2">
     <Tabs.List class="grid w-full grid-cols-2">
-        <Tabs.Trigger value="submissions">Submissions</Tabs.Trigger>
-        <Tabs.Trigger value="edit">Edit</Tabs.Trigger>
+        <Tabs.Trigger value="submissions">{m.exadmin_tab_submissions()}</Tabs.Trigger>
+        <Tabs.Trigger value="edit">{m.exadmin_tab_edit()}</Tabs.Trigger>
     </Tabs.List>
     <Tabs.Content value="submissions" class="h-full overflow-auto">
         <Table.Root>

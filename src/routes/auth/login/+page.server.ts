@@ -1,5 +1,5 @@
 import * as db from "$lib/server/db";
-import { loginUser } from "$lib/server/auth.js";
+import { loginUser } from "$lib/server/auth";
 import { fail, redirect, type Actions, type ServerLoad } from "@sveltejs/kit";
 
 export const load: ServerLoad = async () => {
