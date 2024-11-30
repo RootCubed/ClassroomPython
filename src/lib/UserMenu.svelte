@@ -1,10 +1,19 @@
 <script lang="ts">
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
-    import { Button } from "$lib/components/ui/button";
     import { ChevronDown, User } from "lucide-svelte";
     import { user } from "$lib/page-state";
     import { goto } from "$app/navigation";
     import { Role } from "@prisma/client";
+    import { setLanguageTag, languageTag, type AvailableLanguageTag } from "./paraglide/runtime";
+    import { cn } from "./utils";
+
+    let currLang = languageTag();
+    $: setLanguageTag(currLang);
+
+    const langs: { tag: AvailableLanguageTag; sym: string }[] = [
+        { tag: "en", sym: "🇬🇧" },
+        { tag: "de-ch", sym: "🇩🇪" }
+    ];
 </script>
 
 <div class="ml-auto flex items-center">
@@ -41,6 +50,23 @@
                 {/if}
                 <DropdownMenu.Separator />
             </DropdownMenu.Group>
+            <DropdownMenu.Group>
+                <DropdownMenu.Label>Sprache</DropdownMenu.Label>
+                <div class="flex items-center justify-evenly gap-2">
+                    {#each langs as { tag, sym }}
+                        <button
+                            class={cn(
+                                "flex items-center rounded-sm px-4 py-1 hover:bg-zinc-800",
+                                currLang == tag && "bg-zinc-800"
+                            )}
+                            on:click={() => (currLang = tag)}
+                        >
+                            <span>{sym}</span>
+                        </button>
+                    {/each}
+                </div>
+            </DropdownMenu.Group>
+            <DropdownMenu.Separator />
             <DropdownMenu.Item on:click={() => (window.location.href = "/auth/logout")}
                 >Ausloggen</DropdownMenu.Item
             >

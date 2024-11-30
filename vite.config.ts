@@ -1,3 +1,4 @@
+import { paraglide } from "@inlang/paraglide-vite";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { defineConfig, type Plugin } from "vite";
 
@@ -21,7 +22,11 @@ export default defineConfig({
             interval: 2000
         }
     },
-    plugins: [sveltekit(), viteServerConfig],
+    plugins: [
+        paraglide({ project: "./project.inlang", outdir: "./src/lib/paraglide" }),
+        sveltekit(),
+        viteServerConfig
+    ],
     optimizeDeps: {
         exclude: ["pyodide"]
     },
