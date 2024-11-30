@@ -32,7 +32,7 @@ export const actions: Actions = {
                 oauth: true
             }
         });
-        if (user === null || user.id === locals.user?.id || user.role === Role.ADMIN) {
+        if (user === null || user.id === locals.user?.id) {
             return fail(400, { message: "Cannot delete this user" });
         }
 
