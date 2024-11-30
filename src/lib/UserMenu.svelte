@@ -41,7 +41,9 @@
                 {/if}
                 <DropdownMenu.Separator />
             </DropdownMenu.Group>
-            <DropdownMenu.Item on:click={() => goto("/auth/logout")}>Ausloggen</DropdownMenu.Item>
+            <DropdownMenu.Item on:click={() => (window.location.href = "/auth/logout")}
+                >Ausloggen</DropdownMenu.Item
+            >
         </DropdownMenu.Content>
     </DropdownMenu.Root>
 </div>
