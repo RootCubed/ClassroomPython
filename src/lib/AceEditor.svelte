@@ -47,6 +47,9 @@
         font-size: 14px;
         font-weight: 450;
         font-stretch: expanded;
+    }
+
+    :global(.ace-editor *) {
         font-variant-ligatures: none;
     }
 </style>
