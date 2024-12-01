@@ -62,7 +62,10 @@
                                 "flex items-center rounded-sm px-4 py-1 hover:bg-zinc-800",
                                 currLang == tag && "bg-zinc-800"
                             )}
-                            on:click={() => (currLang = tag)}
+                            on:click={() => {
+                                currLang = tag;
+                                document.documentElement.lang = tag;
+                            }}
                         >
                             <span>{sym}</span>
                         </button>

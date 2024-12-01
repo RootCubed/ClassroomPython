@@ -27,7 +27,7 @@
 </script>
 
 {#key $lang}
-    <div class="h-screen w-full">
+    <div class="h-screen w-full hyphens-auto">
         <slot />
     </div>
 {/key}

@@ -20,7 +20,7 @@
                 bind:value={exercise.description}
             ></textarea>
         {:else}
-            <p class="p-4 text-justify">
+            <p class="p-4 text-justify" lang="de">
                 {exercise.description}
             </p>
         {/if}
