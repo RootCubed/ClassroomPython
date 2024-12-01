@@ -1,7 +1,11 @@
 import pdb from "$lib/server/prisma-db";
-import { error, type Load } from "@sveltejs/kit";
+import { error, type ServerLoad } from "@sveltejs/kit";
 
-export const load: Load = async ({ params }) => {
+export const load: ServerLoad = async ({ params, locals }) => {
+    if (!locals.user) {
+        throw error(401);
+    }
+
     const exercise = await pdb.exercise.findUnique({
         where: {
             id: params.exerciseID
@@ -19,7 +23,9 @@ export const load: Load = async ({ params }) => {
             },
             testcases: {
                 include: {
-                    testcaseResults: true
+                    testcaseResults: {
+                        where: { userId: locals.user.id }
+                    }
                 }
             }
         }
