@@ -19,9 +19,12 @@
                 class="mb-2 w-full flex-1 resize-none bg-zinc-800 p-2 text-white"
                 bind:value={exercise.description}
             ></textarea>
-        {:else}
+        {:else if exercise.description}
             <p class="p-4 text-justify" lang="de">
-                {exercise.description}
+                {#each exercise.description.split("\n") as line}
+                    {line}
+                    <br />
+                {/each}
             </p>
         {/if}
     </div>
