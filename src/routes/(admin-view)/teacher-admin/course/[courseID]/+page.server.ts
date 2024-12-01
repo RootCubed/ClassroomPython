@@ -9,15 +9,19 @@ export const load: ServerLoad = async ({ locals, params }) => {
         throw error(401);
     }
 
-    return {
-        course: await pdb.course.findUnique({
-            where: { id: params.courseID! },
-            include: {
-                students: true
-            }
-        }),
-        exercises: await getExercises(params.courseID!, locals.user)
-    };
+    const course = await pdb.course.findUnique({
+        where: { id: params.courseID! },
+        include: {
+            students: true
+        }
+    });
+    const exercises = await getExercises(params.courseID!, locals.user);
+
+    if (course == null) {
+        throw error(404, "Course not found");
+    }
+
+    return { course, exercises };
 };
 
 export const actions: Actions = {

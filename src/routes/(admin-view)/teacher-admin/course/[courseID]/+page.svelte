@@ -70,7 +70,7 @@
 </Dialog.Root>
 
 <div class="h-full max-w-xl space-y-8 p-8">
-    <h2 class="text-2xl font-bold">Kursmanagement {data.course?.title}</h2>
+    <h2 class="text-2xl font-bold">Kursmanagement {data.course.title}</h2>
     <form
         method="POST"
         action="?/updateCourse"
@@ -85,14 +85,14 @@
                 label="Titel"
                 id="title"
                 type="text"
-                value={data.course?.title}
+                value={data.course.title}
                 serverResp={undefined}
             />
             <ErrorableInput
                 label="Beschreibung"
                 id="description"
                 type="text"
-                value={data.course?.description}
+                value={data.course.description}
                 serverResp={undefined}
             />
             <Button type="submit">Speichern</Button>
@@ -100,30 +100,28 @@
     </form>
     <div class="space-y-4">
         <h3 class="text-xl font-bold">Schüler</h3>
-        {#if data.course}
-            <div class="grid gap-2">
-                {#each data.course.students as s}
-                    <span>- {s.fullName}</span>
-                {/each}
-                <form
-                    method="POST"
-                    action="?/addStudent"
-                    use:enhance
-                    on:submit={invalidateAll}
-                    class="flex flex-row gap-2"
-                >
-                    <ErrorableInput
-                        label="Schüler hinzufügen"
-                        id="studentUsername"
-                        type="text"
-                        serverResp={undefined}
-                    />
-                    <button type="submit">
-                        <Plus />
-                    </button>
-                </form>
-            </div>
-        {/if}
+        <div class="grid gap-2">
+            {#each data.course.students as s}
+                <span>- {s.fullName}</span>
+            {/each}
+            <form
+                method="POST"
+                action="?/addStudent"
+                use:enhance
+                on:submit={invalidateAll}
+                class="flex flex-row gap-2"
+            >
+                <ErrorableInput
+                    label="Schüler hinzufügen"
+                    id="studentUsername"
+                    type="text"
+                    serverResp={undefined}
+                />
+                <button type="submit">
+                    <Plus />
+                </button>
+            </form>
+        </div>
     </div>
     <div class="space-y-4">
         <h3 class="text-xl font-bold">Editor</h3>
