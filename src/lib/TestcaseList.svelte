@@ -91,6 +91,7 @@
             <Label>{m.code_testcase_program_inputs()}</Label>
             <AceEditor
                 disabled={!editMode}
+                lineNumbers={false}
                 bind:value={currentTest.input}
                 bind:this={inputEditor}
             />

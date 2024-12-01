@@ -8,6 +8,7 @@
 
     export let value: string = "";
     export let disabled: boolean = false;
+    export let lineNumbers: boolean = true;
 
     let editorElement: HTMLElement;
     let editor: ace.Ace.Editor;
@@ -18,6 +19,7 @@
     }
 
     $: editor?.setReadOnly(disabled);
+    $: editor?.renderer.setShowGutter(lineNumbers);
 
     onMount(async () => {
         editor = ace.edit(editorElement);
