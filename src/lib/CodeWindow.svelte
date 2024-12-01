@@ -182,6 +182,13 @@
         }
     }
 
+    async function resetCode() {
+        await fetch(`${exerciseURL}/save`, {
+            method: "DELETE"
+        });
+        invalidateAll();
+    }
+
     function refreshCode() {
         if (exercise.saves.length > 0) {
             userCode = exercise.saves[0].code;
@@ -233,6 +240,7 @@
                                 onCancel={cancelExecution}
                                 onSave={saveCode}
                                 onSubmit={submitCode}
+                                onReset={resetCode}
                                 {currTestcaseNum}
                                 bind:inputSource
                             />

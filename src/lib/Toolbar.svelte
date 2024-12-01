@@ -2,7 +2,7 @@
     import { Button } from "$lib/components/ui/button";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
     import * as Tooltip from "$lib/components/ui/tooltip";
-    import { ChevronDown, Play, Rocket, Save, Square } from "lucide-svelte";
+    import { ChevronDown, Play, Rocket, RotateCcw, Save, Square } from "lucide-svelte";
     import LoadingSpinner from "./LoadingSpinner.svelte";
     import * as m from "$lib/paraglide/messages";
 
@@ -10,6 +10,7 @@
     export let onCancel = () => {};
     export let onSave = () => {};
     export let onSubmit = async () => {};
+    export let onReset = () => {};
 
     export let runReady: boolean;
     export let currTestcaseNum: number;
@@ -17,6 +18,7 @@
     let isExecuting = false;
     let isSaving = false;
     let isSubmitting = false;
+    let isResetting = false;
 
     export let inputSource: "userInput" | "fileInput" = "userInput";
 
@@ -41,6 +43,12 @@
         isSubmitting = true;
         await artificialDelay(onSubmit);
         isSubmitting = false;
+    }
+
+    async function handleReset() {
+        isResetting = true;
+        await artificialDelay(onReset);
+        isResetting = false;
     }
 </script>
 
@@ -133,6 +141,23 @@
             </Button></Tooltip.Trigger
         >
         <Tooltip.Content>{m.code_save()}</Tooltip.Content>
+    </Tooltip.Root>
+    <Tooltip.Root>
+        <Tooltip.Trigger asChild let:builder>
+            <Button
+                builders={[builder]}
+                variant="destructive"
+                on:click={handleReset}
+                disabled={isResetting}
+            >
+                {#if isResetting}
+                    <LoadingSpinner />
+                {:else}
+                    <RotateCcw />
+                {/if}
+            </Button></Tooltip.Trigger
+        >
+        <Tooltip.Content>{m.code_reset()}</Tooltip.Content>
     </Tooltip.Root>
     <Tooltip.Root>
         <Tooltip.Trigger asChild let:builder>
