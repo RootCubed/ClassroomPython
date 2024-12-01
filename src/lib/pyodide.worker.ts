@@ -15,7 +15,7 @@ async function getPy() {
     return _py;
 }
 
-let runMode: "userInput" | "fileInput" = "userInput";
+let runMode: "user" | "file" = "user";
 let currentInput: string[] = [];
 
 let stdinReceived: ((s: string) => void) | null = null;
@@ -38,9 +38,9 @@ function untiger(code: string) {
 }
 
 async function handleInput(title: string, datatype: string) {
-    if (runMode === "fileInput") {
+    if (runMode == "file") {
         const input = currentInput.shift();
-        if (input === undefined) {
+        if (input == undefined) {
             return "";
         }
         return input;
@@ -129,7 +129,7 @@ self.onmessage = async (event) => {
 
     if (type === "run") {
         runMode = event.data.inputMode;
-        if (runMode === "fileInput") {
+        if (runMode == "file") {
             currentInput = event.data.inputData.split("\n");
         }
         await runCode(event.data.python);

@@ -2,7 +2,7 @@
     import { Button } from "$lib/components/ui/button";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
     import * as Tooltip from "$lib/components/ui/tooltip";
-    import { ChevronDown, Play, Rocket, RotateCcw, Save, Square } from "lucide-svelte";
+    import { ChevronDown, Play, Rocket, RotateCcw, Save, SkipForward, Square } from "lucide-svelte";
     import LoadingSpinner from "./LoadingSpinner.svelte";
     import * as m from "$lib/paraglide/messages";
 
@@ -20,7 +20,7 @@
     let isSubmitting = false;
     let isResetting = false;
 
-    export let inputSource: "userInput" | "fileInput" = "userInput";
+    export let inputSource: "userInput" | "fileInput" | "runAll" = "userInput";
 
     // So that the spinner is briefly visible even if the submission happens instantly
     async function artificialDelay(func: () => any, amount = 200) {
@@ -66,6 +66,8 @@
                     >
                         {#if !runReady}
                             <LoadingSpinner />
+                        {:else if inputSource == "runAll"}
+                            <SkipForward />
                         {:else}
                             <Play />
                         {/if}
@@ -97,6 +99,14 @@
                                     {m.code_input_predefined_source_title()}
                                     <span class="text-xs text-gray-500 dark:text-gray-400">
                                         {@html m.code_input_predefined_source_description()}
+                                    </span>
+                                </div>
+                            </DropdownMenu.RadioItem>
+                            <DropdownMenu.RadioItem value="runAll">
+                                <div class="flex flex-col">
+                                    {m.code_input_all_testcases_title()}
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">
+                                        {@html m.code_input_all_testcases_description()}
                                     </span>
                                 </div>
                             </DropdownMenu.RadioItem>

@@ -38,7 +38,7 @@
     let detailsPane: PaneAPI;
 
     let currTestcaseNum = 0;
-    let inputSource: "userInput" | "fileInput" = "userInput";
+    let inputSource: "userInput" | "fileInput" | "runAll" = "userInput";
 
     let leaveConfirmWindow = {
         open: false,
@@ -54,6 +54,10 @@
     $: if ($page.url) {
         refreshCode();
         currTestcaseNum = 0;
+    }
+
+    $: if (userCode) {
+        clearResults();
     }
 
     if (browser) {
@@ -92,12 +96,22 @@
         return exercise.saves[0]?.code ?? exercise.codeTemplate;
     }
 
-    async function runCode() {
+    function clearResults() {
+        for (let i = 0; i < exercise.testcases.length; i++) {
+            exercise.testcases[i].testcaseResults = [];
+        }
+    }
+
+    async function runCode(userTriggered: boolean) {
+        if (inputSource == "runAll" && userTriggered) {
+            currTestcaseNum = 0;
+            clearResults();
+        }
         interruptBuffer[0] = 0; // Reset interrupt
         pyodideWorker.postMessage({
             type: "run",
             python: userCode,
-            inputMode: inputSource,
+            inputMode: inputSource == "userInput" ? "user" : "file",
             inputData: exercise.testcases[currTestcaseNum].input
         });
 
@@ -105,7 +119,7 @@
 
         await new Promise((resolve) => {
             codeExecutionResolve = (value: unknown) => {
-                if (inputSource == "fileInput") {
+                if (inputSource == "fileInput" || inputSource == "runAll") {
                     const currentTest = exercise.testcases[currTestcaseNum];
                     const actualOutput = consoleOutput.map((x) => x.text).join("\n");
                     const correctOutput = currentTest.expectedOutput.trim() == actualOutput.trim();
@@ -123,6 +137,16 @@
                             text: correctOutput ? "[OK]" : "[FAIL]"
                         }
                     ];
+                    if (correctOutput) {
+                        if (currTestcaseNum < exercise.testcases.length - 1) {
+                            currTestcaseNum++;
+                            if (inputSource == "runAll") {
+                                resolve(value);
+                                runCode(false);
+                                return;
+                            }
+                        }
+                    }
                 }
                 resolve(value);
             };
@@ -236,7 +260,7 @@
                         {#if !isEditing}
                             <Toolbar
                                 {runReady}
-                                onExecute={runCode}
+                                onExecute={() => runCode(true)}
                                 onCancel={cancelExecution}
                                 onSave={saveCode}
                                 onSubmit={submitCode}
