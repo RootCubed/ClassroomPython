@@ -33,7 +33,7 @@
         currentTest = testcases[currTestcaseNum];
         inputEditor?.setCode(currentTest.input);
     } else if (editMode) {
-        testcases = [{ ...defaultTestcase }];
+        testcases = [{ ...defaultTestcase, orderNum: testcases.length }];
         currentTest = testcases[0];
     } else {
         currentTest = null;
@@ -85,9 +85,9 @@
     }
 </script>
 
-<div class="grid h-full grid-cols-[1fr_auto] grid-rows-1 overflow-hidden">
+<div class="flex flex-1 flex-row overflow-hidden">
     {#if currentTest != null}
-        <div class="flex flex-col gap-2 bg-zinc-200 p-2 dark:bg-zinc-800">
+        <div class="flex flex-1 flex-col gap-2 bg-zinc-200 p-2 dark:bg-zinc-800">
             <Label>{m.code_testcase_program_inputs()}</Label>
             <AceEditor
                 disabled={!editMode}
@@ -152,7 +152,10 @@
                     class="ml-2 flex w-8 cursor-pointer select-none gap-1 bg-zinc-200 px-2 hover:bg-opacity-50 dark:bg-zinc-800"
                     on:click={() => {
                         currTestcaseNum = testcases.length;
-                        testcases = [...testcases, { ...defaultTestcase }];
+                        testcases = [
+                            ...testcases,
+                            { ...defaultTestcase, orderNum: testcases.length }
+                        ];
                     }}
                 >
                     <span class="text-center">+</span>

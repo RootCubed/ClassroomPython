@@ -20,8 +20,11 @@
     import CodeWindowSidebar from "./CodeWindowSidebar.svelte";
     import { user } from "./page-state";
     import * as m from "$lib/paraglide/messages";
+    import { cn } from "./utils";
+    import LoadingSpinner from "./LoadingSpinner.svelte";
 
     type CodeWindowExerciseView = Omit<ExerciseView, "submissions" | "exerciseGroup">;
+    type InputSource = "userInput" | "fileInput" | "runAll";
 
     export let exercise: CodeWindowExerciseView;
     export let exerciseURL: string;
@@ -38,11 +41,17 @@
     let detailsPane: PaneAPI;
 
     let currTestcaseNum = 0;
-    let inputSource: "userInput" | "fileInput" | "runAll" = "userInput";
+    let inputSource: InputSource = "userInput";
 
     let leaveConfirmWindow = {
         open: false,
         destination: ""
+    };
+
+    let submitDialogState = {
+        open: false,
+        resultReady: false,
+        score: 0
     };
 
     let pyodideWorker: Worker;
@@ -102,8 +111,9 @@
         }
     }
 
-    async function runCode(userTriggered: boolean) {
+    async function runCode(inputSource: InputSource, userTriggered: boolean, ignoreFail = false) {
         if (inputSource == "runAll" && userTriggered) {
+            submitDialogState.resultReady = false;
             currTestcaseNum = 0;
             clearResults();
         }
@@ -118,43 +128,61 @@
         consoleOutput = [];
 
         await new Promise((resolve) => {
-            codeExecutionResolve = (value: unknown) => {
-                if (inputSource == "fileInput" || inputSource == "runAll") {
-                    const currentTest = exercise.testcases[currTestcaseNum];
-                    const actualOutput = consoleOutput.map((x) => x.text).join("\n");
-                    const correctOutput = currentTest.expectedOutput.trim() == actualOutput.trim();
-                    const res = {
-                        testcaseId: currentTest.id,
-                        userId: $user.id,
-                        passed: correctOutput
-                    };
-                    currentTest.testcaseResults = [res];
-                    exercise.testcases = exercise.testcases;
-                    consoleOutput = [
-                        ...consoleOutput,
-                        {
-                            type: correctOutput ? "extra" : "stderr",
-                            text: correctOutput ? "[OK]" : "[FAIL]"
-                        }
-                    ];
-                    if (correctOutput) {
-                        if (currTestcaseNum < exercise.testcases.length - 1) {
-                            currTestcaseNum++;
-                            if (inputSource == "runAll") {
-                                resolve(value);
-                                runCode(false);
-                                return;
-                            }
-                        }
-                    }
+            codeExecutionResolve = async (value: unknown) => {
+                if (inputSource == "userInput") {
+                    resolve(value);
+                    return;
                 }
-                resolve(value);
+                const currentTest = exercise.testcases[currTestcaseNum];
+                const actualOutput = consoleOutput.map((x) => x.text).join("\n");
+                const correctOutput = currentTest.expectedOutput.trim() == actualOutput.trim();
+                const res = {
+                    testcaseId: currentTest.id,
+                    userId: $user.id,
+                    passed: correctOutput
+                };
+                currentTest.testcaseResults = [res];
+                exercise.testcases = exercise.testcases;
+                consoleOutput = [
+                    ...consoleOutput,
+                    {
+                        type: correctOutput ? "extra" : "stderr",
+                        text: correctOutput ? "[OK]" : "[FAIL]"
+                    }
+                ];
+                if (!correctOutput && !ignoreFail) {
+                    resolve(value);
+                    return;
+                }
+                if (inputSource == "runAll") {
+                    if (currTestcaseNum < exercise.testcases.length) {
+                        currTestcaseNum++;
+                    }
+                    if (currTestcaseNum < exercise.testcases.length) {
+                        await runCode(inputSource, false, ignoreFail);
+                    } else {
+                        currTestcaseNum = 0;
+                        submitDialogState.resultReady = true;
+                        submitDialogState.score = exercise.testcases.filter(
+                            (x) => x.testcaseResults[0].passed
+                        ).length;
+                        consoleOutput = [];
+                    }
+                } else if (currTestcaseNum < exercise.testcases.length - 1) {
+                    currTestcaseNum++;
+                }
+                resolve(true);
             };
         });
     }
 
     async function cancelExecution() {
         interruptBuffer[0] = 2; // SIGINT
+    }
+
+    async function triggerSubmitFlow() {
+        submitDialogState.open = true;
+        runCode("runAll", true, true);
     }
 
     async function submitCode() {
@@ -251,6 +279,54 @@
     </AlertDialog.Content>
 </AlertDialog.Root>
 
+<AlertDialog.Root bind:open={submitDialogState.open}>
+    <AlertDialog.Content>
+        <AlertDialog.Header>
+            <AlertDialog.Title>{m.code_submit_dialog_title()}</AlertDialog.Title>
+            <AlertDialog.Description class="text-white">
+                <h2 class="text-lg">{m.code_submit_dialog_results_title()}</h2>
+                <div class="flex flex-row gap-px overflow-hidden rounded-md">
+                    {#each exercise.testcases as testcase, i}
+                        <div
+                            class={cn(
+                                "flex h-8 flex-1 items-center justify-center text-white",
+                                !testcase.testcaseResults[0]
+                                    ? "bg-zinc-600"
+                                    : testcase.testcaseResults[0].passed
+                                      ? "bg-green-600"
+                                      : "bg-red-600"
+                            )}
+                        >
+                            {#if !testcase.testcaseResults[0]}
+                                <LoadingSpinner />
+                            {:else}
+                                <span>{i + 1}</span>
+                            {/if}
+                        </div>
+                    {/each}
+                </div>
+                {#if submitDialogState.resultReady}
+                    <p class="mt-2">
+                        {m.code_submit_dialog_results_message({
+                            result: `${submitDialogState.score}/${exercise.testcases.length}`
+                        })}
+                    </p>
+
+                    <p class="mt-2">
+                        {m.code_submit_confirm()}
+                    </p>
+                {/if}
+            </AlertDialog.Description>
+        </AlertDialog.Header>
+        <AlertDialog.Footer>
+            <AlertDialog.Cancel>{m.global_cancel()}</AlertDialog.Cancel>
+            <AlertDialog.Action on:click={submitCode} disabled={!submitDialogState.resultReady}
+                >{m.global_submit()}</AlertDialog.Action
+            >
+        </AlertDialog.Footer>
+    </AlertDialog.Content>
+</AlertDialog.Root>
+
 <Resizable.PaneGroup direction="horizontal">
     <Resizable.Pane>
         <Resizable.PaneGroup direction="vertical">
@@ -260,10 +336,10 @@
                         {#if !isEditing}
                             <Toolbar
                                 {runReady}
-                                onExecute={() => runCode(true)}
+                                onExecute={() => runCode(inputSource, true)}
                                 onCancel={cancelExecution}
                                 onSave={saveCode}
-                                onSubmit={submitCode}
+                                onSubmit={triggerSubmitFlow}
                                 onReset={resetCode}
                                 hasTestcases={exercise.testcases.length > 0}
                                 {currTestcaseNum}

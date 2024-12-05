@@ -20,7 +20,8 @@ export const load: ServerLoad = async ({ params, locals }) => {
                             userId: locals.user.id
                         }
                     }
-                }
+                },
+                orderBy: { orderNum: "asc" }
             },
             exerciseGroup: true
         }

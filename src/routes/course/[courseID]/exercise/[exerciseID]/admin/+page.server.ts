@@ -26,7 +26,8 @@ export const load: ServerLoad = async ({ params, locals }) => {
                     testcaseResults: {
                         where: { userId: locals.user.id }
                     }
-                }
+                },
+                orderBy: { orderNum: "asc" }
             }
         }
     });
