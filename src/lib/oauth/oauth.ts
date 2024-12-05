@@ -5,6 +5,19 @@ import { $Enums, type OAuth } from "@prisma/client";
 import { SCOPE_REQUEST, OAUTH_ENDPOINT } from "./constants";
 import type { ClientUser } from "$lib/server/auth";
 
+function decodeBase64(base64: string) {
+    // In order to properly decode UTF-8 strings, we need to use
+    // TextDecoder, which provides UTF-8 decoding capabilities,
+    // as opposed to the atob function, which only decodes to ASCII.
+    const text = atob(base64);
+    const bytes = new Uint8Array(text.length);
+    for (let i = 0; i < text.length; i++) {
+        bytes[i] = text.charCodeAt(i);
+    }
+    const decoder = new TextDecoder();
+    return decoder.decode(bytes);
+}
+
 export async function requestToken(base_url: string, code: string): Promise<OAuth | null> {
     const tokenURL = new URL(OAUTH_ENDPOINT + "/token");
 
@@ -32,7 +45,7 @@ export async function requestToken(base_url: string, code: string): Promise<OAut
     }
 
     const tokenData = await tokenResponse.json();
-    const idPayload = JSON.parse(atob(tokenData.id_token.split(".")[1]));
+    const idPayload = JSON.parse(decodeBase64(tokenData.id_token.split(".")[1]));
 
     const oauthId = idPayload.oid;
     const userInfo = {
