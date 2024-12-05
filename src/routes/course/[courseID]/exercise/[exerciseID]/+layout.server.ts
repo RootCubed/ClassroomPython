@@ -29,7 +29,8 @@ export const load: ServerLoad = async ({ params, locals }) => {
         where: {
             testcase: {
                 exerciseId: exercise.id
-            }
+            },
+            userId: locals.user.id
         }
     });
 
