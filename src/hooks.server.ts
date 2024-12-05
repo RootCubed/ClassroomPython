@@ -3,8 +3,8 @@ import { authUser } from "$lib/server/auth";
 import { Role } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 
-const adminOnlyRoutes = ["/exercise/[id]/admin/", "/admin"];
-const nonStudentRoutes = ["/course-admin"];
+const adminOnlyRoutes = ["/exercise/[id]/admin/", "/(admin-view)/admin/"];
+const nonStudentRoutes = ["/(admin-view)/teacher-admin/"];
 const nonLoggedInAllowedRoutes = ["/auth/"];
 
 function isRouteMatch(route: string | null, filter: string[]) {
