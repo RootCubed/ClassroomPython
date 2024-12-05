@@ -46,6 +46,7 @@ model Session {
 
 model Testcase {
   id             String @id @default(uuid())
+  orderNum       Int    @default(autoincrement())
   input          String
   expectedOutput String
 
