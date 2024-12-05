@@ -8,17 +8,23 @@
     import { page } from "$app/stores";
     import * as m from "$lib/paraglide/messages";
 
-    export let exercise: Pick<ExerciseView, "id" | "title" | "subtitle" | "submissions">;
+    export let exercise: Pick<
+        ExerciseView,
+        "id" | "title" | "subtitle" | "submissions" | "testcases"
+    >;
     export let selected = false;
 
     $: submissionStatus = exercise.submissions.length === 0 ? "not_submitted" : "submitted";
+    $: correctSubmission = exercise.testcases.every((tc) => tc.testcaseResult?.passed);
 </script>
 
 <div
     class={cn(
-        "flex min-h-16 flex-row rounded-lg bg-zinc-100 transition-all hover:bg-opacity-75 dark:bg-zinc-800",
-        selected && "bg-zinc-300 text-accent-foreground dark:bg-zinc-700"
-        // exercise.submissionStatus == "submitted" && "bg-emerald-700"
+        "flex min-h-16 flex-row rounded-lg bg-zinc-100 transition-all hover:!bg-opacity-85 dark:bg-zinc-800",
+        selected && "bg-zinc-300 text-accent-foreground dark:bg-zinc-700",
+        submissionStatus == "submitted" && "border-r-8",
+        submissionStatus == "submitted" &&
+            (correctSubmission ? "border-emerald-700" : "border-rose-700")
     )}
 >
     <a
@@ -45,8 +51,7 @@
                     <span
                         class={cn(
                             "mr-2 flex h-2 w-2 rounded-full",
-                            submissionStatus == "not_submitted" && "bg-yellow-600",
-                            submissionStatus == "submitted" && "bg-green-600"
+                            submissionStatus == "not_submitted" && "bg-yellow-600"
                         )}
                     ></span>
                 </Tooltip.Trigger>

@@ -107,17 +107,36 @@ export async function getSubmissions(exerciseId: string): Promise<Submission[]> 
 }
 
 export async function getExercises(courseId: string, user: ClientUser) {
-    return await db.exerciseGroup.findMany({
+    const exercises = await db.exerciseGroup.findMany({
         where: { courseId },
         include: {
             exercises: {
                 include: {
                     saves: { where: { userId: user.id } },
                     submissions: { where: { userId: user.id } },
-                    exerciseGroup: true
+                    exerciseGroup: true,
+                    testcases: true
                 },
                 orderBy: { orderNum: "asc" }
             }
         }
     });
+
+    // Separate query because only only want have one result per testcase
+    const testcaseResults = await db.testcaseResult.findMany({
+        where: {
+            userId: user.id
+        }
+    });
+
+    return exercises.map((group) => ({
+        ...group,
+        exercises: group.exercises.map((exercise) => ({
+            ...exercise,
+            testcases: exercise.testcases.map((tc) => ({
+                ...tc,
+                testcaseResult: testcaseResults.find((r) => r.testcaseId == tc.id) || null
+            }))
+        }))
+    }));
 }
