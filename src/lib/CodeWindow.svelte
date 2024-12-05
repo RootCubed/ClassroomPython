@@ -109,7 +109,7 @@
     }
 
     async function runCode(inputSource: InputSource, userTriggered: boolean, ignoreFail = false) {
-        if (inputSource != "userInput" && userTriggered) {
+        if (inputSource == "runAll" && userTriggered) {
             submitDialogState.resultReady = false;
             currTestcaseNum = 0;
             clearResults();
