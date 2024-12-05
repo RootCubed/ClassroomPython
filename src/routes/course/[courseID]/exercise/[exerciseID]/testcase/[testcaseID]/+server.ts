@@ -25,10 +25,9 @@ export const PATCH: RequestHandler = async ({ locals, request, params }) => {
             id: params.testcaseID
         },
         data: {
-            ...data,
-            id: undefined,
-            testcaseResults: undefined,
-            exerciseId: params.exerciseID
+            orderNum: data.orderNum,
+            input: data.input,
+            expectedOutput: data.expectedOutput
         }
     });
 

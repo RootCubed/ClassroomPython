@@ -17,18 +17,25 @@ export const POST: RequestHandler = async ({ locals, request, params }) => {
         if (!testcaseResults) {
             throw error(400, "The testcase results are missing.");
         }
-        await db.saveExercise(params.exerciseID, locals.user.id, code);
-        await db.addSubmission(params.exerciseID, locals.user.id, code);
+        const submitAs = json.submitAs;
+        if (submitAs && locals.user.role == "STUDENT") {
+            throw error(403, "You are not allowed to submit as another user.");
+        }
+        if (!submitAs) {
+            await db.saveExercise(params.exerciseID, locals.user.id, code);
+            await db.addSubmission(params.exerciseID, locals.user.id, code);
+        }
+        const userID = submitAs || locals.user.id;
         for (const tc of testcaseResults) {
             await pdb.testcaseResult.upsert({
                 where: {
                     testcaseId_userId: {
-                        userId: locals.user.id,
+                        userId: userID,
                         testcaseId: tc.id
                     }
                 },
                 create: {
-                    userId: locals.user.id,
+                    userId: userID,
                     testcaseId: tc.id,
                     passed: tc.passed
                 },

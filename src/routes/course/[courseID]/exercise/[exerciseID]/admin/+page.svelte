@@ -36,6 +36,7 @@
                 }}
                 exerciseURL="/course/{$page.params.courseID}/exercise/{data.exercise.id}"
                 mode="SUBMISSION_VIEW"
+                submitAs={openSubmission.user.id}
             />
         </Dialog.Content>
     {/if}

@@ -29,6 +29,7 @@
     export let exercise: CodeWindowExerciseView;
     export let exerciseURL: string;
     export let mode: "USER" | "SUBMISSION_VIEW" | "EDIT" = "USER";
+    export let submitAs: string | undefined = undefined;
 
     $: isEditing = mode == "EDIT";
 
@@ -196,7 +197,8 @@
                 testcaseResults: exercise.testcases.map((x) => ({
                     id: x.id,
                     passed: x.testcaseResult?.passed
-                }))
+                })),
+                submitAs
             })
         });
         if (resp.ok) {
