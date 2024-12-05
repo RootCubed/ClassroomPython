@@ -22,11 +22,6 @@ export const load: ServerLoad = async ({ params, locals }) => {
                 }
             },
             testcases: {
-                include: {
-                    testcaseResults: {
-                        where: { userId: locals.user.id }
-                    }
-                },
                 orderBy: { orderNum: "asc" }
             }
         }
@@ -36,5 +31,13 @@ export const load: ServerLoad = async ({ params, locals }) => {
         throw error(404, "Exercise not found");
     }
 
-    return { exercise };
+    return {
+        exercise: {
+            ...exercise,
+            testcases: exercise.testcases.map((tc) => ({
+                ...tc,
+                testcaseResult: null
+            }))
+        }
+    };
 };

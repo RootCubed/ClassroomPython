@@ -25,7 +25,7 @@
         input: "",
         expectedOutput: "",
         exerciseId: "",
-        testcaseResults: []
+        testcaseResult: null
     };
 
     let currentTest: TestcaseView | null = null;
@@ -76,10 +76,10 @@
     }
 
     function testcaseCol(tc: TestcaseView) {
-        if (tc.testcaseResults.length == 0) {
+        if (tc.testcaseResult == null) {
             return "bg-zinc-300 dark:bg-zinc-600";
         }
-        return tc.testcaseResults[0].passed
+        return tc.testcaseResult.passed
             ? "bg-green-400 dark:bg-green-800"
             : "bg-red-400 dark:bg-red-800";
     }
@@ -136,9 +136,9 @@
                                 i != currTestcaseNum && "ml-2 bg-opacity-50"
                             )}
                         >
-                            {#if tc.testcaseResults.length == 0}
+                            {#if tc.testcaseResult == null}
                                 <CircleDashed size={14} />
-                            {:else if tc.testcaseResults[0].passed}
+                            {:else if tc.testcaseResult.passed}
                                 <Check size={14} />
                             {:else}
                                 <X size={14} />

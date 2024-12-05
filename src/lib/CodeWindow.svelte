@@ -65,10 +65,6 @@
         currTestcaseNum = 0;
     }
 
-    $: if (userCode) {
-        clearResults();
-    }
-
     if (browser) {
         pyodideWorker = new PyodideWorker();
         interruptBuffer = new Uint8Array(new SharedArrayBuffer(1));
@@ -107,12 +103,12 @@
 
     function clearResults() {
         for (let i = 0; i < exercise.testcases.length; i++) {
-            exercise.testcases[i].testcaseResults = [];
+            exercise.testcases[i].testcaseResult = null;
         }
     }
 
     async function runCode(inputSource: InputSource, userTriggered: boolean, ignoreFail = false) {
-        if (inputSource == "runAll" && userTriggered) {
+        if (inputSource != "userInput" && userTriggered) {
             submitDialogState.resultReady = false;
             currTestcaseNum = 0;
             clearResults();
@@ -141,7 +137,7 @@
                     userId: $user.id,
                     passed: correctOutput
                 };
-                currentTest.testcaseResults = [res];
+                currentTest.testcaseResult = res;
                 exercise.testcases = exercise.testcases;
                 consoleOutput = [
                     ...consoleOutput,
@@ -164,7 +160,7 @@
                         currTestcaseNum = 0;
                         submitDialogState.resultReady = true;
                         submitDialogState.score = exercise.testcases.filter(
-                            (x) => x.testcaseResults[0].passed
+                            (x) => x.testcaseResult?.passed
                         ).length;
                         consoleOutput = [];
                     }
@@ -195,7 +191,13 @@
             headers: {
                 "Content-Type": "text/plain"
             },
-            body: userCode
+            body: JSON.stringify({
+                code: userCode,
+                testcaseResults: exercise.testcases.map((x) => ({
+                    id: x.id,
+                    passed: x.testcaseResult?.passed
+                }))
+            })
         });
         if (resp.ok) {
             lastSavedCode = userCode;
@@ -290,14 +292,14 @@
                         <div
                             class={cn(
                                 "flex h-8 flex-1 items-center justify-center text-white",
-                                !testcase.testcaseResults[0]
+                                testcase.testcaseResult == null
                                     ? "bg-zinc-600"
-                                    : testcase.testcaseResults[0].passed
+                                    : testcase.testcaseResult.passed
                                       ? "bg-green-600"
                                       : "bg-red-600"
                             )}
                         >
-                            {#if !testcase.testcaseResults[0]}
+                            {#if testcase.testcaseResult == null}
                                 <LoadingSpinner />
                             {:else}
                                 <span>{i + 1}</span>
