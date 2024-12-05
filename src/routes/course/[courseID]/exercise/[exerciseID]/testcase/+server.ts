@@ -10,9 +10,9 @@ export const POST: RequestHandler = async ({ locals, request, params }) => {
     const data = await request.json();
     await pdb.testcase.create({
         data: {
-            ...data,
-            id: undefined,
-            testcaseResults: undefined,
+            orderNum: data.orderNum,
+            input: data.input,
+            expectedOutput: data.expectedOutput,
             exerciseId: params.exerciseID
         }
     });
