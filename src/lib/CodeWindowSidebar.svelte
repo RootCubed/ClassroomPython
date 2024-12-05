@@ -12,7 +12,7 @@
 </script>
 
 <div class="flex h-full flex-col p-2">
-    <div class="flex flex-1 flex-col">
+    <div class="flex flex-1 flex-col overflow-auto">
         <h2 class="text-center text-lg">{m.code_task_description()}</h2>
         {#if editMode}
             <textarea
