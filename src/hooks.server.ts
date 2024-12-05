@@ -3,7 +3,7 @@ import { authUser } from "$lib/server/auth";
 import { Role } from "@prisma/client";
 import { Prisma } from "@prisma/client";
 
-const adminOnlyRoutes = ["/exercise/[id]/admin/", "/(admin-view)/admin/"];
+const adminOnlyRoutes = ["/exercise/[id]/admin/", "/(admin-view)/admin/", "/auth/loginas"];
 const nonStudentRoutes = ["/(admin-view)/teacher-admin/"];
 const nonLoggedInAllowedRoutes = ["/auth/"];
 

@@ -3,7 +3,7 @@
     import { Button } from "$lib/components/ui/button";
     import { Label } from "$lib/components/ui/label";
     import * as Table from "$lib/components/ui/table";
-    import { PlusSquare, Trash } from "lucide-svelte";
+    import { DoorOpen, PlusSquare, Trash } from "lucide-svelte";
     import type { ActionData, PageData } from "./$types";
     import { enhance } from "$app/forms";
     import ErrorableInput from "$lib/ErrorableInput.svelte";
@@ -105,6 +105,7 @@
                         <Table.Head>Benutzername</Table.Head>
                         <Table.Head>Name</Table.Head>
                         <Table.Head>Benutzertyp</Table.Head>
+                        <Table.Head>Login as</Table.Head>
                         <Table.Head></Table.Head>
                     </Table.Row>
                 </Table.Header>
@@ -114,6 +115,21 @@
                             <Table.Cell>{user.userName}</Table.Cell>
                             <Table.Cell>{user.fullName}</Table.Cell>
                             <Table.Cell>{user.role}</Table.Cell>
+                            <Table.Cell>
+                                <form method="POST" action="/auth/loginas" use:enhance>
+                                    <Input
+                                        id="userId"
+                                        name="userId"
+                                        type="text"
+                                        value={user.id}
+                                        readonly
+                                        class="hidden"
+                                    />
+                                    <Button type="submit" variant="secondary" class="p-2">
+                                        <DoorOpen class="w-4" />
+                                    </Button>
+                                </form>
+                            </Table.Cell>
                             <Table.Cell>
                                 <form method="POST" action="?/deleteUser" use:enhance>
                                     <Input
