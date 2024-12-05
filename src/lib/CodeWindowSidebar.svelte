@@ -3,12 +3,18 @@
     import Separator from "./components/ui/separator/separator.svelte";
     import TestcaseList from "./TestcaseList.svelte";
     import * as m from "$lib/paraglide/messages";
+    import { Markdown, type Plugin } from "svelte-exmarkdown";
+    import remarkMath from "remark-math";
+    import rehypeKatex from "rehype-katex";
+    import "katex/dist/katex.min.css";
 
     export let editMode: boolean = false;
     export let exercise: Pick<ExerciseView, "description" | "testcases">;
     export let exerciseURL: string;
 
     export let currTestcaseNum: number;
+
+    const mdPlugins: Plugin[] = [{ remarkPlugin: [remarkMath], rehypePlugin: [rehypeKatex] }];
 </script>
 
 <div class="grid h-full grid-rows-2 p-2">
@@ -20,12 +26,9 @@
                 bind:value={exercise.description}
             ></textarea>
         {:else if exercise.description}
-            <p class="p-4 text-justify" lang="de">
-                {#each exercise.description.split("\n") as line}
-                    {line}
-                    <br />
-                {/each}
-            </p>
+            <div class="md-container flex flex-col gap-2 p-4" lang="de">
+                <Markdown md={exercise.description} plugins={mdPlugins} />
+            </div>
         {/if}
     </div>
     <div class="flex flex-1 flex-col overflow-hidden">
@@ -41,3 +44,11 @@
         />
     </div>
 </div>
+
+<style>
+    :global {
+        .md-container li {
+            list-style: inside;
+        }
+    }
+</style>
