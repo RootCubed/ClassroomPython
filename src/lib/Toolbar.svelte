@@ -14,13 +14,14 @@
 
     export let runReady: boolean;
     export let currTestcaseNum: number;
+    export let hasTestcases: boolean;
 
     let isExecuting = false;
     let isSaving = false;
     let isSubmitting = false;
     let isResetting = false;
 
-    export let inputSource: "userInput" | "fileInput" | "runAll" = "userInput";
+    export let inputSource: "userInput" | "fileInput" | "runAll" = "runAll";
 
     // So that the spinner is briefly visible even if the submission happens instantly
     async function artificialDelay(func: () => any, amount = 200) {
@@ -94,7 +95,7 @@
                                     </span>
                                 </div>
                             </DropdownMenu.RadioItem>
-                            <DropdownMenu.RadioItem value="fileInput">
+                            <DropdownMenu.RadioItem value="fileInput" disabled={!hasTestcases}>
                                 <div class="flex flex-col">
                                     {m.code_input_predefined_source_title()}
                                     <span class="text-xs text-gray-500 dark:text-gray-400">
@@ -102,7 +103,7 @@
                                     </span>
                                 </div>
                             </DropdownMenu.RadioItem>
-                            <DropdownMenu.RadioItem value="runAll">
+                            <DropdownMenu.RadioItem value="runAll" disabled={!hasTestcases}>
                                 <div class="flex flex-col">
                                     {m.code_input_all_testcases_title()}
                                     <span class="text-xs text-gray-500 dark:text-gray-400">

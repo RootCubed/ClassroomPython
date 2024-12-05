@@ -112,7 +112,7 @@
             type: "run",
             python: userCode,
             inputMode: inputSource == "userInput" ? "user" : "file",
-            inputData: exercise.testcases[currTestcaseNum].input
+            inputData: exercise.testcases[currTestcaseNum]?.input
         });
 
         consoleOutput = [];
@@ -265,6 +265,7 @@
                                 onSave={saveCode}
                                 onSubmit={submitCode}
                                 onReset={resetCode}
+                                hasTestcases={exercise.testcases.length > 0}
                                 {currTestcaseNum}
                                 bind:inputSource
                             />
