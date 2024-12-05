@@ -78,11 +78,16 @@ async function runCode(code: string) {
     py.globals.set("input", async (title: string) => {
         return handleInput(title, "str");
     });
+    py.globals.set("inputString", async (title: string) => {
+        return handleInput(title, "str");
+    });
     py.globals.set("inputInt", async (title: string) => {
         return parseInt(await handleInput(title, "int"));
     });
-    code = code.replace(/\binput\s*[(]/g, "await $&");
-    code = code.replace(/\binputInt\s*[(]/g, "await $&");
+    py.globals.set("inputFloat", async (title: string) => {
+        return parseFloat(await handleInput(title, "float"));
+    });
+    code = code.replace(/\binput(Int|String|Float)?\s*[(]/g, "await $&");
     code = untiger(code);
     try {
         await py.runPythonAsync(code);
