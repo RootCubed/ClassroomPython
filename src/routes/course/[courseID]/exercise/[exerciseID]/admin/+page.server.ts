@@ -19,7 +19,8 @@ export const load: ServerLoad = async ({ params, locals }) => {
                             testcases: true
                         }
                     }
-                }
+                },
+                orderBy: { timestamp: "desc" }
             },
             testcases: {
                 orderBy: { orderNum: "asc" }
@@ -31,11 +32,30 @@ export const load: ServerLoad = async ({ params, locals }) => {
         throw error(404, "Exercise not found");
     }
 
+    const testcaseResults = (
+        await pdb.testcaseResult.findMany({
+            where: {
+                testcase: {
+                    exerciseId: exercise.id
+                }
+            }
+        })
+    ).map((r) => ({ ...r, used: false }));
+
     return {
         exercise: {
             ...exercise,
-            testcases: exercise.testcases.map((tc) => ({
-                ...tc,
+            submissions: exercise.submissions.map((s) => ({
+                ...s,
+                results: testcaseResults
+                    .filter((r) => !r.used && r.userId == s.userId)
+                    .map((r) => {
+                        r.used = true;
+                        return r;
+                    })
+            })),
+            testcases: exercise.testcases.map((t) => ({
+                ...t,
                 testcaseResult: null
             }))
         }

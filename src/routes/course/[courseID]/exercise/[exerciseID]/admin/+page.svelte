@@ -18,15 +18,48 @@
         return new Date(timestamp).toLocaleString("de-CH");
     }
 
-    let openSubmission: (typeof data.exercise.submissions)[number] | undefined = $state();
+    let openSubmission: (typeof data.exercise.submissions)[number] | null = $state(null);
     let submissionViewing = $state(false);
     $effect(() => {
-        submissionViewing = openSubmission != undefined;
+        submissionViewing = openSubmission != null;
+    });
+
+    let openSubExercise = $derived.by(() => {
+        if (openSubmission == null) {
+            return null;
+        }
+        const sub = openSubmission;
+        return {
+            ...data.exercise,
+            codeTemplate: sub.code,
+            save: null,
+            testcases: data.exercise.testcases.map((testcase) => ({
+                ...testcase,
+                testcaseResult:
+                    sub.results.find(
+                        (result) => result.testcaseId == testcase.id && result.userId == sub.user.id
+                    ) ?? null
+            }))
+        };
     });
 </script>
 
+{#snippet submissionScore(submission: Exclude<typeof openSubmission, null>)}
+    {#if submission.results.length == 0}
+        <span class="text-gray-500">(Old submission)</span>
+    {:else}
+        {@const score = submission.results.reduce(
+            (acc, result) => acc + (result.passed ? 1 : 0),
+            0
+        )}
+        <span class={score == submission.results.length ? "text-green-500" : "text-red-500"}>
+            {score}/{submission.results.length}
+        </span>
+    {/if}
+{/snippet}
+
 <Dialog.Root bind:open={submissionViewing}>
-    {#if openSubmission != undefined}
+    {#if openSubmission != null && openSubExercise != null}
         <Dialog.Content class="flex h-[90vh] max-w-[90vw] flex-col">
             <Dialog.Header>
                 <Dialog.Title
@@ -36,11 +69,7 @@
                 >
             </Dialog.Header>
             <CodeWindow
-                exercise={{
-                    ...data.exercise,
-                    codeTemplate: openSubmission.code,
-                    save: null
-                }}
+                exercise={openSubExercise}
                 exerciseURL="/course/{$page.params.courseID}/exercise/{data.exercise.id}"
                 mode="SUBMISSION_VIEW"
                 submitAs={openSubmission.user.id}
@@ -74,6 +103,7 @@
                     >
                         <Table.Cell>{submission.user.userName}</Table.Cell>
                         <Table.Cell>{formatTimestamp(submission.timestamp)}</Table.Cell>
+                        <Table.Cell>{@render submissionScore(submission)}</Table.Cell>
                         <Table.Cell><ChevronRight class="float-right" /></Table.Cell>
                     </Table.Row>
                 {/each}
