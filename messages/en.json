@@ -56,5 +56,9 @@
     "code_submit_confirm": "Do you want to submit your code? You can submit this exercise as many times as you like.",
     "code_submit_toast_error": "An error occurred while submitting your solution. Please try again.",
     "code_submit_toast_success": "Your solution has been submitted.",
-    "code_submit_toast_in_progress": "Submitting solution..."
+    "code_submit_toast_in_progress": "Submitting solution...",
+    "code_admin_save_toast_error": "An error occurred while saving the exercise. Please try again.",
+    "code_admin_save_toast_success": "Exercise saved successfully.",
+    "code_admin_save_toast_in_progress": "Saving exercise...",
+    "code_save_toast_error": "An error occurred while saving your code. Please try again."
 }

@@ -56,5 +56,9 @@
     "code_submit_confirm": "Möchtest du deinen Code abgeben? Du kannst diese Aufgabe beliebig oft abgeben.",
     "code_submit_toast_error": "Ein Fehler ist beim Einreichen deiner Lösung aufgetreten. Bitte versuche es erneut.",
     "code_submit_toast_success": "Deine Lösung wurde eingereicht.",
-    "code_submit_toast_in_progress": "Lösung wird eingereicht..."
+    "code_submit_toast_in_progress": "Lösung wird eingereicht...",
+    "code_admin_save_toast_error": "Beim Speichern der Aufgabe ist ein Fehler aufgetreten. Bitte versuche es erneut.",
+    "code_admin_save_toast_success": "Aufgabe erfolgreich gespeichert.",
+    "code_admin_save_toast_in_progress": "Aufgabe wird gespeichert...",
+    "code_save_toast_error": "Beim Speichern ist ein Fehler aufgetreten. Bitte versuche es erneut."
 }

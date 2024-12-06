@@ -166,32 +166,38 @@
 
     async function saveCode() {
         let resp: Response;
-        if (isEditing) {
-            resp = await fetch(`${exerciseURL}/admin-save`, {
-                method: "POST",
-                body: JSON.stringify({
-                    description: exercise.description,
-                    codeTemplate: codeEditor.getValue(),
-                    title: exercise.title,
-                    subtitle: exercise.subtitle,
-                    testcases: exercise.testcases
-                })
-            });
-        } else {
-            resp = await fetch(`${exerciseURL}/save`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "text/plain"
-                },
-                body: codeEditor.getValue()
-            });
-            exercise.save = { userId: "", exerciseId: "", code: codeEditor.getValue() };
-        }
+        resp = await fetch(`${exerciseURL}/save`, {
+            method: "POST",
+            body: codeEditor.getValue()
+        });
+        exercise.save = { userId: "", exerciseId: "", code: codeEditor.getValue() };
         if (resp.ok) {
             lastSavedCode = codeEditor.getValue();
         } else {
-            console.error("Failed to submit code");
+            toast.error(m.code_save_toast_error());
         }
+    }
+
+    async function adminSave() {
+        const req = fetch(`${exerciseURL}/admin-save`, {
+            method: "POST",
+            body: JSON.stringify({
+                description: exercise.description,
+                codeTemplate: codeEditor.getValue(),
+                title: exercise.title,
+                subtitle: exercise.subtitle,
+                testcases: exercise.testcases
+            })
+        });
+        toast.promise(req, {
+            loading: m.code_admin_save_toast_in_progress(),
+            success: () => {
+                lastSavedCode = codeEditor.getValue();
+                invalidateAll();
+                return m.code_admin_save_toast_success();
+            },
+            error: m.code_admin_save_toast_error()
+        });
     }
 
     async function resetCode() {
@@ -314,7 +320,7 @@
                                     <Input id="edit-subtitle" bind:value={exercise.subtitle} />
                                 </div>
 
-                                <Button variant="ghost" type="submit" onclick={saveCode}
+                                <Button variant="ghost" type="submit" onclick={adminSave}
                                     >{m.global_save()}</Button
                                 >
                             </div>
