@@ -248,7 +248,7 @@
 
     beforeNavigate(async (navigation) => {
         if (codeEditor.getValue() != lastSavedCode && !leaveConfirmWindow.open) {
-            if (!navigation.willUnload) {
+            if (!navigation.willUnload && navigation.to?.url.toString() != window.location.href) {
                 leaveConfirmWindow.open = true;
                 leaveConfirmWindow.destination = navigation.to?.url.toString() ?? "#";
             }
