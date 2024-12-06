@@ -315,8 +315,14 @@
         </AlertDialog.Header>
         <AlertDialog.Footer>
             <AlertDialog.Cancel>{m.global_cancel()}</AlertDialog.Cancel>
-            <AlertDialog.Action onclick={submitCode} disabled={!submitDialogState.resultReady}
-                >{m.global_submit()}</AlertDialog.Action
+            <AlertDialog.Action
+                onclick={() => {
+                    submitDialogState.resultReady = false;
+                    submitCode().then(() => {
+                        submitDialogState.open = false;
+                    });
+                }}
+                disabled={!submitDialogState.resultReady}>{m.global_submit()}</AlertDialog.Action
             >
         </AlertDialog.Footer>
     </AlertDialog.Content>
