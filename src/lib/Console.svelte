@@ -1,10 +1,7 @@
 <script lang="ts">
-    import * as m from "$lib/paraglide/messages";
+    import type { ConsoleOutput } from "./pyodide-mgr.svelte";
 
-    interface ConsoleOutput {
-        type: "stdout" | "stderr" | "extra";
-        text: string;
-    }
+    import * as m from "$lib/paraglide/messages";
 
     let { consoleOutput = [] }: { consoleOutput: ConsoleOutput[] } = $props();
 </script>

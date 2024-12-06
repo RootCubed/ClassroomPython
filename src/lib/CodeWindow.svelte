@@ -1,8 +1,5 @@
 <script lang="ts">
     import { beforeNavigate, goto, invalidateAll } from "$app/navigation";
-    import { browser } from "$app/environment";
-
-    import PyodideWorker from "$lib/pyodide.worker?worker";
 
     import * as Resizable from "$lib/components/ui/resizable";
     import * as AlertDialog from "$lib/components/ui/alert-dialog";
@@ -14,8 +11,9 @@
 
     import { PanelRightOpen } from "lucide-svelte";
 
-    import { user } from "./page-state";
+    import { user, pyodide } from "./page-state";
     import type { ExerciseView } from "./page-types";
+    import type { ConsoleOutput } from "./pyodide-mgr.svelte";
     import AceEditor from "./AceEditor.svelte";
     import CodeWindowSidebar from "./CodeWindowSidebar.svelte";
     import Console from "./Console.svelte";
@@ -60,43 +58,8 @@
         score: 0
     });
 
-    let pyodideWorker: Worker;
-    let interruptBuffer: Uint8Array; // For interrupting the Python code
-    let codeExecutionResolve: (value: unknown) => void; // Callback for when the code execution is done
-    let consoleOutput: { type: "stdout" | "stderr" | "extra"; text: string }[] = $state([]);
-    let runReady = $state(false); // Whether Pyodide is ready
-
-    if (browser) {
-        pyodideWorker = new PyodideWorker();
-        interruptBuffer = new Uint8Array(new SharedArrayBuffer(1));
-
-        pyodideWorker.addEventListener("message", (ev) => {
-            if (ev.data.type == "ready") {
-                runReady = true;
-                pyodideWorker.postMessage({
-                    type: "setInterruptBuffer",
-                    buffer: interruptBuffer
-                });
-            } else if (ev.data.type == "done") {
-                codeExecutionResolve(true);
-            } else if (ev.data.type == "inputReq") {
-                // TODO: Use a nicer prompt box
-                const response = prompt(ev.data.content);
-                pyodideWorker.postMessage({
-                    type: "stdinResp",
-                    buffer: response
-                });
-            } else {
-                consoleOutput = [
-                    ...consoleOutput,
-                    {
-                        type: ev.data.type,
-                        text: ev.data.content
-                    }
-                ];
-            }
-        });
-    }
+    let consoleOutput: ConsoleOutput[] = $state([]);
+    let runReady = $derived($pyodide.ready);
 
     function getCode(exercise: CodeWindowExerciseView) {
         return exercise.saves[0]?.code ?? exercise.codeTemplate;
@@ -114,67 +77,55 @@
             currTestcaseNum = 0;
             clearResults();
         }
-        interruptBuffer[0] = 0; // Reset interrupt
-        pyodideWorker.postMessage({
-            type: "run",
-            python: codeEditor.getValue(),
-            inputMode: inputSource == "userInput" ? "user" : "file",
-            inputData: exercise.testcases[currTestcaseNum]?.input
-        });
+        $pyodide.interrupt();
 
         consoleOutput = [];
+        await $pyodide.runCode(
+            codeEditor.getValue(),
+            inputSource == "userInput" ? "user" : "file",
+            exercise.testcases[currTestcaseNum]?.input,
+            consoleOutput
+        );
 
-        await new Promise((resolve) => {
-            codeExecutionResolve = async (value: unknown) => {
-                if (inputSource == "userInput") {
-                    resolve(value);
-                    return;
-                }
-                const currentTest = exercise.testcases[currTestcaseNum];
-                const actualOutput = consoleOutput.map((x) => x.text).join("\n");
-                const correctOutput = currentTest.expectedOutput.trim() == actualOutput.trim();
-                const res = {
-                    testcaseId: currentTest.id,
-                    userId: $user.id,
-                    passed: correctOutput
-                };
-                currentTest.testcaseResult = res;
-                exercise.testcases = exercise.testcases;
-                consoleOutput = [
-                    ...consoleOutput,
-                    {
-                        type: correctOutput ? "extra" : "stderr",
-                        text: correctOutput ? "[OK]" : "[FAIL]"
-                    }
-                ];
-                if (!correctOutput && !ignoreFail) {
-                    resolve(value);
-                    return;
-                }
-                if (inputSource == "runAll") {
-                    if (currTestcaseNum < exercise.testcases.length) {
-                        currTestcaseNum++;
-                    }
-                    if (currTestcaseNum < exercise.testcases.length) {
-                        await runCode(inputSource, false, ignoreFail);
-                    } else {
-                        currTestcaseNum = 0;
-                        submitDialogState.resultReady = true;
-                        submitDialogState.score = exercise.testcases.filter(
-                            (x) => x.testcaseResult?.passed
-                        ).length;
-                        consoleOutput = [];
-                    }
-                } else if (currTestcaseNum < exercise.testcases.length - 1) {
-                    currTestcaseNum++;
-                }
-                resolve(true);
-            };
+        if (inputSource == "userInput") {
+            return;
+        }
+        const currentTest = exercise.testcases[currTestcaseNum];
+        const actualOutput = consoleOutput.map((x) => x.text).join("\n");
+        const correctOutput = currentTest.expectedOutput.trim() == actualOutput.trim();
+        const res = {
+            testcaseId: currentTest.id,
+            userId: $user.id,
+            passed: correctOutput
+        };
+        currentTest.testcaseResult = res;
+        consoleOutput.push({
+            type: correctOutput ? "extra" : "stderr",
+            text: correctOutput ? "[OK]" : "[FAIL]"
         });
+        if (!correctOutput && !ignoreFail) {
+            return;
+        }
+        if (inputSource == "runAll") {
+            if (currTestcaseNum < exercise.testcases.length) {
+                currTestcaseNum++;
+            }
+            if (currTestcaseNum < exercise.testcases.length) {
+                await runCode(inputSource, false, ignoreFail);
+            } else {
+                currTestcaseNum = 0;
+                submitDialogState.resultReady = true;
+                submitDialogState.score = exercise.testcases.filter(
+                    (x) => x.testcaseResult?.passed
+                ).length;
+            }
+        } else if (currTestcaseNum < exercise.testcases.length - 1) {
+            currTestcaseNum++;
+        }
     }
 
     async function cancelExecution() {
-        interruptBuffer[0] = 2; // SIGINT
+        $pyodide.interrupt(2);
     }
 
     async function triggerSubmitFlow() {

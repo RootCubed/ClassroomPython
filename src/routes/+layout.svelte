@@ -1,11 +1,16 @@
 <script lang="ts">
     import "../app.css";
 
+    import PyodideWorker from "$lib/pyodide.worker?worker";
+
+    import { browser } from "$app/environment";
     import type { Snippet } from "svelte";
     import { writable } from "svelte/store";
     import type { LayoutData } from "./$types";
 
-    import { user } from "$lib/page-state";
+    import { user, pyodide } from "$lib/page-state";
+    import { Pyodide } from "$lib/pyodide-mgr.svelte";
+
     import {
         onSetLanguageTag,
         setLanguageTag,
@@ -32,6 +37,10 @@
     lang.subscribe((l) => {
         setLanguageTag(l);
     });
+
+    if (browser) {
+        $pyodide = new Pyodide(new PyodideWorker());
+    }
 </script>
 
 {#key $lang}
