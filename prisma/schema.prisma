@@ -35,12 +35,12 @@ model OAuth {
   accessToken  String
   refreshToken String
   userId       String @unique
-  user         User   @relation(fields: [userId], references: [id])
+  user         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Session {
   id     String @id @default(uuid())
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 }
 
@@ -50,7 +50,7 @@ model Testcase {
   input          String
   expectedOutput String
 
-  exercise        Exercise         @relation(fields: [exerciseId], references: [id])
+  exercise        Exercise         @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
   exerciseId      String
   testcaseResults TestcaseResult[]
 }
@@ -73,9 +73,9 @@ model Exercise {
 }
 
 model TestcaseResult {
-  testcase   Testcase @relation(fields: [testcaseId], references: [id])
+  testcase   Testcase @relation(fields: [testcaseId], references: [id], onDelete: Cascade)
   testcaseId String
-  user       User     @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String
   passed     Boolean
 
@@ -111,9 +111,9 @@ model Course {
 }
 
 model Save {
-  user       User     @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String
-  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
   exerciseId String
   code       String
 
@@ -122,9 +122,9 @@ model Save {
 
 model Submission {
   id         String   @id @default(uuid())
-  user       User     @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String
-  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
   exerciseId String
   code       String
   timestamp  DateTime @default(now())
