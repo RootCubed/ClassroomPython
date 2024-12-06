@@ -1,7 +1,12 @@
 <script lang="ts">
     import * as m from "$lib/paraglide/messages";
 
-    export let consoleOutput: { type: "stdout" | "stderr" | "extra"; text: string }[] = [];
+    interface ConsoleOutput {
+        type: "stdout" | "stderr" | "extra";
+        text: string;
+    }
+
+    let { consoleOutput = [] }: { consoleOutput: ConsoleOutput[] } = $props();
 </script>
 
 <div class="flex h-full flex-col bg-zinc-300 text-gray-900 dark:bg-zinc-900 dark:text-gray-300">

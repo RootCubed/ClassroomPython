@@ -1,15 +1,18 @@
 <script lang="ts">
-    import * as Card from "$lib/components/ui/card";
-    import { Plus } from "lucide-svelte";
     import type { PageData } from "./$types";
-    import * as Dialog from "$lib/components/ui/dialog";
-    import ErrorableInput from "$lib/ErrorableInput.svelte";
-    import { Button } from "$lib/components/ui/button";
+
     import { enhance } from "$app/forms";
 
-    export let data: PageData;
+    import { Button } from "$lib/components/ui/button";
+    import * as Card from "$lib/components/ui/card";
+    import * as Dialog from "$lib/components/ui/dialog";
+    import { Plus } from "lucide-svelte";
 
-    let createCourse = false;
+    import ErrorableInput from "$lib/ErrorableInput.svelte";
+
+    let { data }: { data: PageData } = $props();
+
+    let createCourse = $state(false);
 </script>
 
 <Dialog.Root bind:open={createCourse}>
@@ -60,8 +63,8 @@
 
         <Card.Root class="cursor-pointer hover:bg-accent">
             <div
-                on:click={() => (createCourse = true)}
-                on:keypress={() => (createCourse = true)}
+                onclick={() => (createCourse = true)}
+                onkeypress={() => (createCourse = true)}
                 class="contents"
                 aria-label="Neuen Kurs erstellen"
                 role="button"

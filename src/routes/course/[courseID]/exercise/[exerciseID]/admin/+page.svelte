@@ -1,21 +1,28 @@
 <script lang="ts">
     import type { PageData } from "./$types";
+
+    import { page } from "$app/stores";
+
     import * as Tabs from "$lib/components/ui/tabs";
     import * as Table from "$lib/components/ui/table";
     import * as Dialog from "$lib/components/ui/dialog";
     import { ChevronRight } from "lucide-svelte";
+
     import CodeWindow from "$lib/CodeWindow.svelte";
-    import { page } from "$app/stores";
+
     import * as m from "$lib/paraglide/messages";
 
-    export let data: PageData;
+    let { data }: { data: PageData } = $props();
 
     function formatTimestamp(timestamp: Date) {
         return new Date(timestamp).toLocaleString();
     }
 
-    let openSubmission: (typeof data.exercise.submissions)[number] | undefined;
-    $: submissionViewing = openSubmission != undefined;
+    let openSubmission: (typeof data.exercise.submissions)[number] | undefined = $state();
+    let submissionViewing = $state(false);
+    $effect(() => {
+        submissionViewing = openSubmission != undefined;
+    });
 </script>
 
 <Dialog.Root bind:open={submissionViewing}>
@@ -42,7 +49,7 @@
     {/if}
 </Dialog.Root>
 
-<Tabs.Root class="flex h-full min-h-0 flex-col overflow-auto p-2">
+<Tabs.Root class="flex h-full min-h-0 flex-col overflow-auto p-2" value="submissions">
     <Tabs.List class="grid w-full grid-cols-2">
         <Tabs.Trigger value="submissions">{m.exadmin_tab_submissions()}</Tabs.Trigger>
         <Tabs.Trigger value="edit">{m.exadmin_tab_edit()}</Tabs.Trigger>
@@ -59,8 +66,8 @@
             <Table.Body>
                 {#each data.exercise.submissions as submission, i}
                     <div
-                        on:click={() => (openSubmission = submission)}
-                        on:keypress={() => (openSubmission = submission)}
+                        onclick={() => (openSubmission = submission)}
+                        onkeypress={() => (openSubmission = submission)}
                         class="contents"
                         aria-label="Open submission"
                         role="button"

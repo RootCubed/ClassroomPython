@@ -1,12 +1,14 @@
 <script lang="ts">
     import type { PageData } from "./$types";
-    import UserMenu from "$lib/UserMenu.svelte";
-    import * as Card from "$lib/components/ui/card";
-    import { user } from "$lib/page-state";
     import { Role } from "@prisma/client";
+
+    import * as Card from "$lib/components/ui/card";
+    import UserMenu from "$lib/UserMenu.svelte";
+    import { user } from "$lib/page-state";
+
     import * as m from "$lib/paraglide/messages";
 
-    export let data: PageData;
+    let { data }: { data: PageData } = $props();
 </script>
 
 <div class="flex h-full flex-col">

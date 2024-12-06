@@ -8,8 +8,8 @@
     import { cn } from "./utils";
     import * as m from "$lib/paraglide/messages";
 
-    let currLang = languageTag();
-    $: setLanguageTag(currLang);
+    let currLang = $state(languageTag());
+    $effect(() => setLanguageTag(currLang));
 
     const langs: { tag: AvailableLanguageTag; sym: string }[] = [
         { tag: "en", sym: "🇬🇧" },
@@ -37,17 +37,17 @@
             <DropdownMenu.Separator />
             <DropdownMenu.Group>
                 {#if $user.role === Role.ADMIN}
-                    <DropdownMenu.Item on:click={() => goto("/admin")}
+                    <DropdownMenu.Item onclick={() => goto("/admin")}
                         >{m.menu_admin_dashboard()}</DropdownMenu.Item
                     >
                 {/if}
                 {#if $user.role === Role.ADMIN || $user.role === Role.TEACHER}
-                    <DropdownMenu.Item on:click={() => goto("/teacher-admin")}
+                    <DropdownMenu.Item onclick={() => goto("/teacher-admin")}
                         >{m.menu_teacher_dashboard()}</DropdownMenu.Item
                     >
                 {/if}
                 {#if $user.role === Role.STUDENT}
-                    <DropdownMenu.Item on:click={() => goto("/")}
+                    <DropdownMenu.Item onclick={() => goto("/")}
                         >{m.menu_my_courses()}</DropdownMenu.Item
                     >
                 {/if}
@@ -62,7 +62,7 @@
                                 "flex items-center rounded-sm px-4 py-1 hover:bg-zinc-800",
                                 currLang == tag && "bg-zinc-800"
                             )}
-                            on:click={() => {
+                            onclick={() => {
                                 currLang = tag;
                                 document.documentElement.lang = tag;
                             }}
@@ -73,7 +73,7 @@
                 </div>
             </DropdownMenu.Group>
             <DropdownMenu.Separator />
-            <DropdownMenu.Item on:click={() => (window.location.href = "/auth/logout")}
+            <DropdownMenu.Item onclick={() => (window.location.href = "/auth/logout")}
                 >{m.auth_logout()}</DropdownMenu.Item
             >
         </DropdownMenu.Content>

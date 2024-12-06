@@ -1,40 +1,56 @@
 <script lang="ts">
     import { onMount } from "svelte";
+
     import ace from "ace-builds";
     import "ace-builds/src-min-noconflict/mode-python";
     import "ace-builds/src-min-noconflict/theme-one_dark";
     import "ace-builds/src-min-noconflict/ext-searchbox";
     import "ace-builds/src-min-noconflict/ext-language_tools";
 
-    export let value: string = "";
-    export let disabled: boolean = false;
-    export let lineNumbers: boolean = true;
+    interface Props {
+        initialValue: string;
+        disabled?: boolean;
+        lineNumbers?: boolean;
+        onUpdate?: (value: string) => void;
+    }
+
+    let {
+        initialValue,
+        disabled = false,
+        lineNumbers = true,
+        onUpdate = () => {}
+    }: Props = $props();
 
     let editorElement: HTMLElement;
     let editor: ace.Ace.Editor;
 
-    export function setCode(code: string) {
-        value = code;
-        editor.setValue(code, 2);
+    let value = $state(initialValue);
+
+    export function getValue() {
+        return value;
     }
 
-    $: editor?.setReadOnly(disabled);
-    $: editor?.renderer.setShowGutter(lineNumbers);
+    $effect(() => onUpdate(value));
 
     onMount(async () => {
         editor = ace.edit(editorElement);
 
         editor.getSession().setMode("ace/mode/python");
         editor.setTheme("ace/theme/one_dark");
-        setCode(value);
 
         editor.setOptions({
             enableBasicAutocompletion: true
         });
 
+        editor.setValue(initialValue, -1);
+
         editor.on("change", () => {
+            console.log("change");
             value = editor.getValue();
         });
+
+        $effect(() => editor.setReadOnly(disabled));
+        $effect(() => editor.renderer.setShowGutter(lineNumbers));
     });
 </script>
 

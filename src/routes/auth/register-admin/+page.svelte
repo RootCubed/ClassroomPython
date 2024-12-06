@@ -1,12 +1,13 @@
 <script lang="ts">
+    import type { ActionData } from "./$types";
+
     import { Button } from "$lib/components/ui/button";
     import * as Card from "$lib/components/ui/card";
-
-    import type { ActionData } from "./$types";
     import ErrorableInput from "$lib/ErrorableInput.svelte";
+
     import * as m from "$lib/paraglide/messages";
 
-    export let form: ActionData;
+    let { form }: { form: ActionData } = $props();
 </script>
 
 <div class="flex h-screen w-full items-center justify-center px-4">

@@ -8,7 +8,7 @@
     import { page } from "$app/stores";
     import * as m from "$lib/paraglide/messages";
 
-    export let exercises: ExerciseGroupView;
+    let { exercises }: { exercises: ExerciseGroupView } = $props();
 </script>
 
 <div class="flex w-full items-center justify-between p-2">
@@ -20,7 +20,7 @@
     {/if}
 </div>
 <Separator class="mt-2" />
-<Accordion.Root value={$loadedExercise?.exerciseGroup.id}>
+<Accordion.Root value={$loadedExercise?.exerciseGroup.id} type="single">
     {#each exercises as group (group.id)}
         {#key group}
             <Accordion.Item value={group.id} class="text-sm">

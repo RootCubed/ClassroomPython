@@ -8,14 +8,17 @@
     import { page } from "$app/stores";
     import * as m from "$lib/paraglide/messages";
 
-    export let exercise: Pick<
-        ExerciseView,
-        "id" | "title" | "subtitle" | "submissions" | "testcases"
-    >;
-    export let selected = false;
+    interface Props {
+        exercise: Pick<ExerciseView, "id" | "title" | "subtitle" | "submissions" | "testcases">;
+        selected?: boolean;
+    }
 
-    $: submissionStatus = exercise.submissions.length === 0 ? "not_submitted" : "submitted";
-    $: correctSubmission = exercise.testcases.every((tc) => tc.testcaseResult?.passed);
+    let { exercise, selected = false }: Props = $props();
+
+    let submissionStatus = $derived(
+        exercise.submissions.length === 0 ? "not_submitted" : "submitted"
+    );
+    let correctSubmission = $derived(exercise.testcases.every((tc) => tc.testcaseResult?.passed));
 </script>
 
 <div

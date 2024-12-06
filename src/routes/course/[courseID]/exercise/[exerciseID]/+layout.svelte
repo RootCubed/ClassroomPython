@@ -1,9 +1,19 @@
 <script lang="ts">
-    import { loadedExercise } from "$lib/page-state";
     import type { LayoutData } from "./$types";
 
-    export let data: LayoutData;
-    $: $loadedExercise = data.exercise;
+    import type { Snippet } from "svelte";
+
+    import { loadedExercise } from "$lib/page-state";
+
+    interface Props {
+        data: LayoutData;
+        children: Snippet;
+    }
+
+    let { data, children }: Props = $props();
+    $effect(() => {
+        $loadedExercise = data.exercise;
+    });
 </script>
 
-<slot />
+{@render children()}

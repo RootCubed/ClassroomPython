@@ -1,18 +1,29 @@
 <script lang="ts">
-    import type { ExerciseView } from "./page-types";
-    import Separator from "./components/ui/separator/separator.svelte";
-    import TestcaseList from "./TestcaseList.svelte";
-    import * as m from "$lib/paraglide/messages";
     import { Markdown, type Plugin } from "svelte-exmarkdown";
     import remarkMath from "remark-math";
     import rehypeKatex from "rehype-katex";
     import "katex/dist/katex.min.css";
 
-    export let editMode: boolean = false;
-    export let exercise: Pick<ExerciseView, "description" | "testcases">;
-    export let exerciseURL: string;
+    import Separator from "./components/ui/separator/separator.svelte";
 
-    export let currTestcaseNum: number;
+    import TestcaseList from "./TestcaseList.svelte";
+    import type { ExerciseView } from "./page-types";
+
+    import * as m from "$lib/paraglide/messages";
+
+    interface Props {
+        editMode?: boolean;
+        exercise: Pick<ExerciseView, "description" | "testcases">;
+        exerciseURL: string;
+        currTestcaseNum: number;
+    }
+
+    let {
+        editMode = false,
+        exercise = $bindable(),
+        exerciseURL,
+        currTestcaseNum = $bindable()
+    }: Props = $props();
 
     const mdPlugins: Plugin[] = [{ remarkPlugin: [remarkMath], rehypePlugin: [rehypeKatex] }];
 </script>

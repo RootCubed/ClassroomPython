@@ -1,24 +1,28 @@
 <script lang="ts">
     import type { PageData } from "./$types";
+
+    import { enhance } from "$app/forms";
+    import { invalidateAll } from "$app/navigation";
+    import type { ExerciseGroup } from "@prisma/client";
+
+    import { Button } from "$lib/components/ui/button";
     import * as Card from "$lib/components/ui/card";
     import * as Dialog from "$lib/components/ui/dialog";
-    import { enhance } from "$app/forms";
-    import ErrorableInput from "$lib/ErrorableInput.svelte";
-    import { Button } from "$lib/components/ui/button";
-    import { Plus } from "lucide-svelte";
-
-    import AceEditor from "$lib/AceEditor.svelte";
     import Label from "$lib/components/ui/label/label.svelte";
-    import type { ExerciseGroup } from "@prisma/client";
-    import { invalidateAll } from "$app/navigation";
+    import { Plus } from "lucide-svelte";
+    import AceEditor from "$lib/AceEditor.svelte";
+    import ErrorableInput from "$lib/ErrorableInput.svelte";
 
-    export let data: PageData;
+    let { data }: { data: PageData } = $props();
 
-    let code = "";
-    let createExercise = false;
-    let editor: AceEditor | undefined;
+    let code = $state("");
+    let createExercise = $state(false);
 
-    let groupSelect = "";
+    let groupSelect = $state("");
+
+    function onCodeUpdate(newCode: string) {
+        code = newCode;
+    }
 
     let availExerciseGroups = data.exercises.reduce((acc, exercise) => {
         if (!acc.find((g) => g.id === exercise.id)) {
@@ -59,7 +63,7 @@
                     {/if}
                     <Label for="code">Code-Vorlage</Label>
                     <div class="h-80">
-                        <AceEditor bind:value={code} bind:this={editor} />
+                        <AceEditor initialValue="" onUpdate={onCodeUpdate} />
                     </div>
                     <input type="hidden" id="code" name="code" value={code} />
                     <Button type="submit" class="w-full">Erstellen</Button>
@@ -108,7 +112,7 @@
                 method="POST"
                 action="?/addStudent"
                 use:enhance
-                on:submit={invalidateAll}
+                onsubmit={invalidateAll}
                 class="flex flex-row gap-2"
             >
                 <ErrorableInput
@@ -143,8 +147,8 @@
 
         <Card.Root class="cursor-pointer hover:bg-accent">
             <div
-                on:click={() => (createExercise = true)}
-                on:keypress={() => (createExercise = true)}
+                onclick={() => (createExercise = true)}
+                onkeypress={() => (createExercise = true)}
                 class="contents"
                 aria-label="Neuen Kurs erstellen"
                 role="button"

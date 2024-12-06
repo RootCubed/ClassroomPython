@@ -1,17 +1,19 @@
 <script lang="ts">
+    import type { ActionData } from "./$types";
+
     import { Button } from "$lib/components/ui/button";
     import * as Card from "$lib/components/ui/card";
+    import { cn } from "$lib/utils";
 
-    import type { ActionData } from "./$types";
     import ErrorableInput from "$lib/ErrorableInput.svelte";
     import LoginWithMicrosoftButton from "$lib/oauth/LoginWithMicrosoftButton.svelte";
     import { ArrowRight } from "lucide-svelte";
-    import { cn } from "$lib/utils";
+
     import * as m from "$lib/paraglide/messages";
 
-    export let form: ActionData;
+    let { form }: { form: ActionData } = $props();
 
-    let formDropdown = false;
+    let formDropdown = $state(false);
 </script>
 
 <div class="flex h-full w-full flex-col items-center justify-center gap-6 px-4">
@@ -37,7 +39,7 @@
 
                 <button
                     class="flex w-full items-center justify-between border-b py-2 text-left text-sm"
-                    on:click={() => (formDropdown = !formDropdown)}
+                    onclick={() => (formDropdown = !formDropdown)}
                 >
                     {m.auth_login_username_password()}
                     <ArrowRight

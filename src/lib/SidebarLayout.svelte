@@ -1,4 +1,6 @@
 <script lang="ts">
+    import type { Snippet } from "svelte";
+
     import type { ExerciseGroupView } from "$lib/page-types";
     import Sidebar from "./Sidebar.svelte";
     import * as Sheet from "$lib/components/ui/sheet";
@@ -6,14 +8,21 @@
     import { Button } from "$lib/components/ui/button";
     import { page } from "$app/stores";
 
-    export let exercises: ExerciseGroupView;
-
-    let popoverOpen = false;
-
-    $: if ($page.url) {
-        // User clicked on an exercise
-        popoverOpen = false;
+    interface Props {
+        exercises: ExerciseGroupView;
+        children: Snippet;
     }
+
+    let { exercises, children }: Props = $props();
+
+    let popoverOpen = $state(false);
+
+    $effect(() => {
+        // User clicked on an exercise
+        if ($page.url) {
+            popoverOpen = false;
+        }
+    });
 </script>
 
 <div class="flex h-full w-full">
@@ -27,20 +36,20 @@
         </div>
         <div class="absolute left-0 top-0 m-2 md:hidden">
             <Sheet.Root bind:open={popoverOpen}>
-                <Sheet.Trigger asChild let:builder>
-                    <Button variant="ghost" builders={[builder]}>
-                        <Menu size={24} />
-                    </Button>
+                <Sheet.Trigger>
+                    {#snippet child({ props })}
+                        <Button {...props} variant="ghost">
+                            <Menu size={24} />
+                        </Button>
+                    {/snippet}
                 </Sheet.Trigger>
-                <Sheet.Portal class="md:hidden">
-                    <Sheet.Content side="left">
-                        <Sidebar {exercises} />
-                    </Sheet.Content>
-                </Sheet.Portal>
+                <Sheet.Content class="md:hidden" side="left">
+                    <Sidebar {exercises} />
+                </Sheet.Content>
             </Sheet.Root>
         </div>
     {/if}
     <div class="flex h-full flex-1 flex-col">
-        <slot></slot>
+        {@render children()}
     </div>
 </div>

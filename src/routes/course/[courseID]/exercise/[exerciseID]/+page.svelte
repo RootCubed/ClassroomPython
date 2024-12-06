@@ -5,9 +5,11 @@
     import { loadedExercise } from "$lib/page-state";
 </script>
 
-{#if $loadedExercise}
-    <CodeWindow
-        exercise={$loadedExercise}
-        exerciseURL="/course/{$page.params.courseID}/exercise/{$loadedExercise.id}"
-    />
-{/if}
+{#key $loadedExercise?.id}
+    {#if $loadedExercise}
+        <CodeWindow
+            exercise={$loadedExercise}
+            exerciseURL="/course/{$page.params.courseID}/exercise/{$loadedExercise.id}"
+        />
+    {/if}
+{/key}

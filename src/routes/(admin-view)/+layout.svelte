@@ -1,6 +1,10 @@
 <script lang="ts">
+    import type { Snippet } from "svelte";
+
     import UserMenu from "$lib/UserMenu.svelte";
     import * as m from "$lib/paraglide/messages";
+
+    let { children }: { children: Snippet } = $props();
 </script>
 
 <div class="flex h-full w-full flex-col">
@@ -8,5 +12,5 @@
         <a class="text-lg" href="/">{m.global_app_name()}</a>
         <UserMenu />
     </div>
-    <slot />
+    {@render children()}
 </div>

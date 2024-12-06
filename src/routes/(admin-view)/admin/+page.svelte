@@ -14,11 +14,15 @@
         invalidateAll();
     }
 
-    export let data: PageData;
-    export let form: ActionData;
+    interface Props {
+        data: PageData;
+        form: ActionData;
+    }
 
-    let files: FileList;
-    let singleFile: FileList;
+    let { data, form }: Props = $props();
+
+    let files: FileList | undefined = $state();
+    let singleFile: FileList | undefined = $state();
 
     async function importExercise(file: File) {
         const lines = (await file.text()).replace(/\r/g, "").split("\n");
@@ -52,40 +56,37 @@
         });
     }
 
-    $: if (files) {
-        (async () => {
-            const codeFiles = [];
-            let usersFile = null;
-            for (const file of files) {
-                if (file.name == "users.json") {
-                    usersFile = await file.text();
-                } else if (file.name.includes(".py")) {
-                    codeFiles.push(file);
+    $effect(() => {
+        if (files) {
+            (async () => {
+                const codeFiles = [];
+                let usersFile = null;
+                for (const file of files) {
+                    if (file.name == "users.json") {
+                        usersFile = await file.text();
+                    } else if (file.name.includes(".py")) {
+                        codeFiles.push(file);
+                    }
                 }
-            }
-            for (const file of codeFiles) {
-                await importExercise(file);
-            }
-            await fetch("/api/import-users", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: usersFile
-            });
-        })();
-    }
+                for (const file of codeFiles) {
+                    await importExercise(file);
+                }
+                await fetch("/api/import-users", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: usersFile
+                });
+            })();
+        }
+    });
 
-    $: if (singleFile && singleFile[0]) {
-        console.log("File:", singleFile[0]);
-        importExercise(singleFile[0]);
-    }
-
-    /* The current Svelte version throws an error if these props are included directly */
-    const directoryUploadProps = {
-        webkitdirectory: true,
-        mozdirectory: true
-    };
+    $effect(() => {
+        if (singleFile && singleFile[0]) {
+            importExercise(singleFile[0]);
+        }
+    });
 </script>
 
 <div class="h-full space-y-8 p-8">
@@ -215,12 +216,12 @@
                 bind:files
                 id="clpy-course-upload"
                 type="file"
-                {...directoryUploadProps}
+                webkitdirectory={true}
             />
         </div>
     </div>
     <div class="space-y-2">
         <h3 class="text-xl font-bold">Datenbank zurücksetzen</h3>
-        <Button variant="destructive" on:click={resetDatabase}>Datenbank zurücksetzen</Button>
+        <Button variant="destructive" onclick={resetDatabase}>Datenbank zurücksetzen</Button>
     </div>
 </div>

@@ -1,15 +1,23 @@
 <script lang="ts">
     import "../app.css";
-    import { user } from "$lib/page-state";
+
+    import type { Snippet } from "svelte";
+    import { writable } from "svelte/store";
     import type { LayoutData } from "./$types";
+
+    import { user } from "$lib/page-state";
     import {
-        setLanguageTag,
         onSetLanguageTag,
+        setLanguageTag,
         type AvailableLanguageTag
     } from "$lib/paraglide/runtime";
-    import { writable } from "svelte/store";
 
-    export let data: LayoutData;
+    interface Props {
+        data: LayoutData;
+        children: Snippet;
+    }
+
+    let { data, children }: Props = $props();
 
     if (data.user !== null) {
         $user = data.user;
@@ -28,6 +36,6 @@
 
 {#key $lang}
     <div class="h-screen w-full hyphens-auto">
-        <slot />
+        {@render children()}
     </div>
 {/key}

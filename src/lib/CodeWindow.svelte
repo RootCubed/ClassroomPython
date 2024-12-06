@@ -1,70 +1,69 @@
 <script lang="ts">
+    import { beforeNavigate, goto, invalidateAll } from "$app/navigation";
+    import { browser } from "$app/environment";
+
     import PyodideWorker from "$lib/pyodide.worker?worker";
 
     import * as Resizable from "$lib/components/ui/resizable";
     import * as AlertDialog from "$lib/components/ui/alert-dialog";
+    import { Label } from "$lib/components/ui/label";
+    import { Button } from "$lib/components/ui/button";
+    import Input from "$lib/components/ui/input/input.svelte";
+    import type { PaneAPI } from "paneforge";
+    import { cn } from "$lib/utils";
 
+    import { PanelRightOpen } from "lucide-svelte";
+
+    import { user } from "./page-state";
+    import type { ExerciseView } from "./page-types";
     import AceEditor from "./AceEditor.svelte";
+    import CodeWindowSidebar from "./CodeWindowSidebar.svelte";
     import Console from "./Console.svelte";
+    import LoadingSpinner from "./LoadingSpinner.svelte";
     import Toolbar from "./Toolbar.svelte";
 
-    import { beforeNavigate, goto, invalidateAll } from "$app/navigation";
-    import { browser } from "$app/environment";
-    import { PanelRightOpen } from "lucide-svelte";
-    import type { PaneAPI } from "paneforge";
-    import type { ExerciseView } from "./page-types";
-    import { Label } from "./components/ui/label";
-    import { Button } from "./components/ui/button";
-    import Input from "./components/ui/input/input.svelte";
-    import { page } from "$app/stores";
-    import CodeWindowSidebar from "./CodeWindowSidebar.svelte";
-    import { user } from "./page-state";
     import * as m from "$lib/paraglide/messages";
-    import { cn } from "./utils";
-    import LoadingSpinner from "./LoadingSpinner.svelte";
 
     type CodeWindowExerciseView = Omit<ExerciseView, "submissions" | "exerciseGroup">;
     type InputSource = "userInput" | "fileInput" | "runAll";
 
-    export let exercise: CodeWindowExerciseView;
-    export let exerciseURL: string;
-    export let mode: "USER" | "SUBMISSION_VIEW" | "EDIT" = "USER";
-    export let submitAs: string | undefined = undefined;
+    interface Props {
+        exercise: CodeWindowExerciseView;
+        exerciseURL: string;
+        mode?: "USER" | "SUBMISSION_VIEW" | "EDIT";
+        submitAs?: string;
+    }
 
-    $: isEditing = mode == "EDIT";
+    let { exercise, exerciseURL, mode = "USER", submitAs }: Props = $props();
 
-    let editor: AceEditor | undefined;
+    let isEditing = $derived(mode == "EDIT");
 
-    let userCode = getCode(exercise);
-    let lastSavedCode = userCode;
+    let lastSavedCode = getCode(exercise);
 
-    let collapsed = false;
-    let detailsPane: PaneAPI;
+    let codeEditor: AceEditor;
 
-    let currTestcaseNum = 0;
-    let inputSource: InputSource = "userInput";
+    let collapsed = $state(false);
+    let detailsPane: PaneAPI | undefined = $state(undefined);
 
-    let leaveConfirmWindow = {
+    let currTestcaseNum = $state(0);
+    let inputSource: InputSource = $state("userInput");
+
+    let leaveConfirmWindow = $state({
         open: false,
         destination: ""
-    };
+    });
 
-    let submitDialogState = {
+    let submitDialogState = $state({
         open: false,
         resultReady: false,
         score: 0
-    };
+    });
 
     let pyodideWorker: Worker;
     let interruptBuffer: Uint8Array; // For interrupting the Python code
     let codeExecutionResolve: (value: unknown) => void; // Callback for when the code execution is done
-    let consoleOutput: { type: "stdout" | "stderr" | "extra"; text: string }[] = [];
-    let runReady = false; // Whether Pyodide is ready
-
-    $: if ($page.url) {
-        refreshCode();
-        currTestcaseNum = 0;
-    }
+    let consoleOutput: { type: "stdout" | "stderr" | "extra"; text: string }[] = $state([]);
+    let runReady = $state(false); // Whether Pyodide is ready
 
     if (browser) {
         pyodideWorker = new PyodideWorker();
@@ -117,7 +116,7 @@
         interruptBuffer[0] = 0; // Reset interrupt
         pyodideWorker.postMessage({
             type: "run",
-            python: userCode,
+            python: codeEditor.getValue(),
             inputMode: inputSource == "userInput" ? "user" : "file",
             inputData: exercise.testcases[currTestcaseNum]?.input
         });
@@ -193,7 +192,7 @@
                 "Content-Type": "text/plain"
             },
             body: JSON.stringify({
-                code: userCode,
+                code: codeEditor.getValue(),
                 testcaseResults: exercise.testcases.map((x) => ({
                     id: x.id,
                     passed: x.testcaseResult?.passed
@@ -202,7 +201,7 @@
             })
         });
         if (resp.ok) {
-            lastSavedCode = userCode;
+            lastSavedCode = codeEditor.getValue();
             invalidateAll();
         } else {
             console.error("Failed to submit code");
@@ -216,9 +215,10 @@
                 method: "POST",
                 body: JSON.stringify({
                     description: exercise.description,
-                    codeTemplate: userCode,
+                    codeTemplate: codeEditor.getValue(),
                     title: exercise.title,
-                    subtitle: exercise.subtitle
+                    subtitle: exercise.subtitle,
+                    testcases: exercise.testcases
                 })
             });
             invalidateAll();
@@ -228,11 +228,11 @@
                 headers: {
                     "Content-Type": "text/plain"
                 },
-                body: userCode
+                body: codeEditor.getValue()
             });
         }
         if (resp.ok) {
-            lastSavedCode = userCode;
+            lastSavedCode = codeEditor.getValue();
         } else {
             console.error("Failed to submit code");
         }
@@ -245,18 +245,8 @@
         invalidateAll();
     }
 
-    function refreshCode() {
-        if (exercise.saves.length > 0) {
-            userCode = exercise.saves[0].code;
-        } else {
-            userCode = exercise.codeTemplate;
-        }
-        editor?.setCode(userCode);
-        lastSavedCode = userCode;
-    }
-
     beforeNavigate(async (navigation) => {
-        if (userCode != lastSavedCode && !leaveConfirmWindow.open) {
+        if (codeEditor.getValue() != lastSavedCode && !leaveConfirmWindow.open) {
             if (!navigation.willUnload) {
                 leaveConfirmWindow.open = true;
                 leaveConfirmWindow.destination = navigation.to?.url.toString() ?? "#";
@@ -276,7 +266,7 @@
         </AlertDialog.Header>
         <AlertDialog.Footer>
             <AlertDialog.Cancel>Abbrechen</AlertDialog.Cancel>
-            <AlertDialog.Action on:click={() => goto(leaveConfirmWindow.destination)}
+            <AlertDialog.Action onclick={() => goto(leaveConfirmWindow.destination)}
                 >{m.code_unsaved_changes_continue_without()}</AlertDialog.Action
             >
         </AlertDialog.Footer>
@@ -324,7 +314,7 @@
         </AlertDialog.Header>
         <AlertDialog.Footer>
             <AlertDialog.Cancel>{m.global_cancel()}</AlertDialog.Cancel>
-            <AlertDialog.Action on:click={submitCode} disabled={!submitDialogState.resultReady}
+            <AlertDialog.Action onclick={submitCode} disabled={!submitDialogState.resultReady}
                 >{m.global_submit()}</AlertDialog.Action
             >
         </AlertDialog.Footer>
@@ -350,10 +340,7 @@
                                 bind:inputSource
                             />
                         {:else}
-                            <form
-                                on:submit|preventDefault={saveCode}
-                                class="flex w-full items-center justify-between gap-2 px-2"
-                            >
+                            <div class="flex w-full items-center justify-between gap-2 px-2">
                                 <div>
                                     <Label for="edit-title">Titel</Label>
                                     <Input id="edit-title" bind:value={exercise.title} />
@@ -363,22 +350,22 @@
                                     <Input id="edit-subtitle" bind:value={exercise.subtitle} />
                                 </div>
 
-                                <Button variant="ghost" type="submit" on:click={saveCode}
+                                <Button variant="ghost" type="submit" onclick={saveCode}
                                     >{m.global_save()}</Button
                                 >
-                            </form>
+                            </div>
                         {/if}
                         {#if collapsed}
                             <Button
                                 class="mr-2 h-full"
                                 variant="ghost"
-                                on:click={detailsPane.expand}
+                                onclick={detailsPane?.expand}
                             >
                                 <PanelRightOpen />
                             </Button>
                         {/if}
                     </div>
-                    <AceEditor bind:value={userCode} bind:this={editor} />
+                    <AceEditor initialValue={getCode(exercise)} bind:this={codeEditor} />
                 </div>
             </Resizable.Pane>
             <Resizable.Handle withHandle />
@@ -393,7 +380,7 @@
         defaultSize={40}
         minSize={15}
         collapsedSize={0}
-        bind:pane={detailsPane}
+        bind:this={detailsPane}
         onCollapse={() => (collapsed = true)}
         onExpand={() => (collapsed = false)}
     >
