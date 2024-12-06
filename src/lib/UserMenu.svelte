@@ -31,7 +31,7 @@
             {$user.fullName}
             <ChevronDown class="h-4 w-4 text-secondary-foreground" aria-label="Dropdown Icon" />
         </DropdownMenu.Trigger>
-        <DropdownMenu.Content class="w-40">
+        <DropdownMenu.Content class="min-w-40">
             <DropdownMenu.Label class="font-normal">
                 <div class="flex flex-col space-y-1">
                     <p class="text-sm font-medium leading-none">{$user.fullName}</p>
