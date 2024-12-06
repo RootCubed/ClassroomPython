@@ -45,7 +45,7 @@
     }
 </script>
 
-<Toaster theme="dark" richColors duration={6000} />
+<Toaster theme="dark" richColors duration={5000} closeButton={true} />
 {#key $lang}
     <div class="h-screen w-full hyphens-auto">
         {@render children()}
