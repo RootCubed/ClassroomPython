@@ -12,21 +12,18 @@
     import type { ExerciseView } from "./page-types";
 
     import * as m from "$lib/paraglide/messages";
-    import { invalidateAll } from "$app/navigation";
 
     type TestcaseView = ExerciseView["testcases"][0];
 
     interface Props {
         editMode?: boolean;
         testcases: TestcaseView[];
-        exerciseURL: string;
         currTestcaseNum?: number;
     }
 
     let {
         editMode = false,
         testcases = $bindable(),
-        exerciseURL,
         currTestcaseNum = $bindable(0)
     }: Props = $props();
 
@@ -51,40 +48,13 @@
         return testcases[currTestcaseNum];
     });
 
-    async function saveTestcase() {
+    let testInputEditor: AceEditor | undefined = $state();
+
+    function onInputChange(value: string) {
         if (!currentTest) {
             return;
         }
-        if (currentTest.id == "") {
-            await fetch(`${exerciseURL}/testcase/`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(currentTest)
-            });
-        } else {
-            await fetch(`${exerciseURL}/testcase/${currentTest.id}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(currentTest)
-            });
-        }
-        invalidateAll();
-    }
-
-    async function deleteTestcase(test: TestcaseView | null) {
-        if (test == null) {
-            return;
-        }
-        testcases = testcases.filter((tc) => tc.id != test.id);
-        currTestcaseNum--;
-        await fetch(`${exerciseURL}/testcase/${test.id}`, {
-            method: "DELETE"
-        });
-        invalidateAll();
+        currentTest.input = value;
     }
 
     function testcaseCol(tc: TestcaseView) {
@@ -106,7 +76,8 @@
                     disabled={!editMode}
                     lineNumbers={false}
                     initialValue={currentTest.input}
-                    onUpdate={(value) => (currentTest.input = value)}
+                    bind:this={testInputEditor}
+                    onUpdate={onInputChange}
                 />
                 <Label for="expectedOutput">{m.code_testcase_expected_output()}</Label>
                 <Input
@@ -114,66 +85,71 @@
                     id="expectedOutput"
                     bind:value={currentTest.expectedOutput}
                 />
-                {#if editMode}
-                    <div class="flex flex-row justify-around gap-2">
-                        <Button
-                            variant="destructive"
-                            onclick={() => {
-                                deleteTestcase(currentTest);
-                            }}
-                        >
-                            {m.global_delete()}
-                        </Button>
-                        <Button variant="secondary" onclick={saveTestcase}>{m.global_save()}</Button
-                        >
-                    </div>
-                {/if}
             </div>
             <div class="flex flex-col gap-2 overflow-y-auto">
-                {#key currentTest}
-                    {#each testcases as tc, i}
+                {#each testcases as tc, i (tc.id)}
+                    <div class={cn("flex gap-2 rounded-r-md", i != currTestcaseNum && "ml-2")}>
                         <Button
                             variant="secondary"
                             class={cn(
-                                "flex cursor-pointer select-none items-center justify-between gap-1 rounded-l-none bg-zinc-200 px-2 hover:bg-opacity-50 dark:bg-zinc-800",
-                                i != currTestcaseNum && "ml-2 bg-opacity-50"
+                                "flex flex-1 cursor-pointer select-none items-center justify-between gap-1 rounded-l-none bg-zinc-200 p-2 hover:!bg-opacity-85 dark:bg-zinc-800",
+                                i != currTestcaseNum && "bg-opacity-50"
                             )}
                             onclick={() => {
                                 currTestcaseNum = i;
                             }}
                         >
                             <span class="text-sm">Testcase {i + 1}</span>
-                            <div
-                                class={cn(
-                                    "flex cursor-pointer select-none items-center justify-between gap-1 rounded-sm p-1",
-                                    testcaseCol(tc),
-                                    i != currTestcaseNum && "ml-2 bg-opacity-50"
-                                )}
-                            >
-                                {#if tc.testcaseResult == null}
-                                    <CircleDashed size={14} />
-                                {:else if tc.testcaseResult.passed}
-                                    <Check size={14} />
-                                {:else}
-                                    <X size={14} />
-                                {/if}
-                            </div>
+                            {#if !editMode}
+                                <div
+                                    class={cn(
+                                        "flex cursor-pointer select-none items-center justify-between gap-1 rounded-sm p-1",
+                                        testcaseCol(tc),
+                                        i != currTestcaseNum && "ml-2 bg-opacity-50"
+                                    )}
+                                >
+                                    {#if tc.testcaseResult == null}
+                                        <CircleDashed size={14} />
+                                    {:else if tc.testcaseResult.passed}
+                                        <Check size={14} />
+                                    {:else}
+                                        <X size={14} />
+                                    {/if}
+                                </div>
+                            {/if}
                         </Button>
-                    {/each}
-                {/key}
+                        {#if editMode}
+                            <Button
+                                variant="destructive"
+                                class="h-auto p-2"
+                                onclick={() => {
+                                    testcases.splice(i, 1);
+                                    if (currTestcaseNum > 0) {
+                                        currTestcaseNum--;
+                                    }
+                                }}
+                            >
+                                <Trash size={12} />
+                            </Button>
+                        {/if}
+                    </div>
+                {/each}
                 {#if editMode}
-                    <Button
-                        class="ml-2 flex w-8 cursor-pointer select-none gap-1 bg-zinc-200 px-2 hover:bg-opacity-50 dark:bg-zinc-800"
-                        onclick={() => {
-                            currTestcaseNum = testcases.length;
-                            testcases = [
-                                ...testcases,
-                                { ...defaultTestcase, orderNum: testcases.length }
-                            ];
-                        }}
-                    >
-                        <span class="text-center">+</span>
-                    </Button>
+                    <div class="pl-2 pr-0">
+                        <Button
+                            class="w-full cursor-pointer select-none bg-zinc-200 px-2 hover:!bg-opacity-85 dark:bg-zinc-800"
+                            onclick={() => {
+                                currTestcaseNum = testcases.length;
+                                testcases.push({
+                                    ...defaultTestcase,
+                                    id: window.crypto.randomUUID(),
+                                    orderNum: currTestcaseNum
+                                });
+                            }}
+                        >
+                            <span class="text-center text-white">+</span>
+                        </Button>
+                    </div>
                 {/if}
             </div>
         {:else}

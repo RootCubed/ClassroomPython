@@ -20,5 +20,26 @@ export const POST: RequestHandler = async ({ locals, request, params }) => {
         }
     });
 
+    const testcases = code.testcases as {
+        input: string;
+        expectedOutput: string;
+        orderNum: number;
+    }[];
+
+    await pdb.testcase.deleteMany({
+        where: {
+            exerciseId: params.exerciseID
+        }
+    });
+
+    await pdb.testcase.createMany({
+        data: testcases.map((tc) => ({
+            exerciseId: params.exerciseID,
+            input: tc.input,
+            expectedOutput: tc.expectedOutput,
+            orderNum: tc.orderNum
+        }))
+    });
+
     return new Response("OK", { status: 200 });
 };
