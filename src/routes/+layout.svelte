@@ -11,7 +11,7 @@
     import { Toaster } from "svelte-sonner";
 
     import { user, pyodide } from "$lib/page-state";
-    import { Pyodide } from "$lib/pyodide-mgr.svelte";
+    import { WebWorkerPyodide } from "$lib/pyodide-mgr.svelte";
 
     import {
         onSetLanguageTag,
@@ -41,7 +41,7 @@
     });
 
     if (browser) {
-        $pyodide = new Pyodide(new PyodideWorker());
+        $pyodide = new WebWorkerPyodide(new PyodideWorker());
     }
 </script>
 

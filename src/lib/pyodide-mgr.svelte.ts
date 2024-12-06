@@ -3,7 +3,25 @@ export interface ConsoleOutput {
     text: string;
 }
 
-export class Pyodide {
+export interface Pyodide {
+    ready: boolean;
+    runCode(
+        code: string,
+        inputMode: "user" | "file",
+        inputData: string,
+        consoleOutput: ConsoleOutput[]
+    ): Promise<void>;
+    interrupt(code: number): void;
+}
+
+export class DummyPyodide implements Pyodide {
+    ready = false;
+    constructor() {}
+    async runCode() {}
+    interrupt() {}
+}
+
+export class WebWorkerPyodide implements Pyodide {
     private pyodide: Worker;
     private interruptBuffer: Uint8Array;
     public ready = $state(false);

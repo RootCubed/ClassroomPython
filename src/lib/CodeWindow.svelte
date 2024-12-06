@@ -78,7 +78,7 @@
             currTestcaseNum = 0;
             clearResults();
         }
-        $pyodide.interrupt();
+        $pyodide.interrupt(0);
 
         consoleOutput = [];
         await $pyodide.runCode(
