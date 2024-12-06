@@ -18,6 +18,7 @@
     let submissionStatus = $derived(
         exercise.submissions.length === 0 ? "not_submitted" : "submitted"
     );
+    let missingSubmission = $derived(exercise.testcases.some((tc) => tc.testcaseResult == null));
     let correctSubmission = $derived(exercise.testcases.every((tc) => tc.testcaseResult?.passed));
 </script>
 
@@ -27,7 +28,11 @@
         selected && "bg-zinc-300 text-accent-foreground dark:bg-zinc-700",
         submissionStatus == "submitted" && "border-r-8",
         submissionStatus == "submitted" &&
-            (correctSubmission ? "border-emerald-700" : "border-rose-700")
+            (missingSubmission
+                ? "border-amber-300"
+                : correctSubmission
+                  ? "border-emerald-700"
+                  : "border-rose-700")
     )}
 >
     <a
@@ -49,25 +54,25 @@
                 <Cog size={16} />
             </a>
         {:else if submissionStatus == "not_submitted" || submissionStatus == "submitted"}
-<Tooltip.Provider>
-            <Tooltip.Root>
-                <Tooltip.Trigger>
-                    <span
-                        class={cn(
-                            "mr-2 flex h-2 w-2 rounded-full",
-                            submissionStatus == "not_submitted" && "bg-yellow-600"
-                        )}
-                    ></span>
-                </Tooltip.Trigger>
-                <Tooltip.Content>
-                    {#if submissionStatus == "not_submitted"}
-                        {m.course_home_not_submitted()}
-                    {:else if submissionStatus == "submitted"}
-                        {m.course_home_submitted()}
-                    {/if}
-                </Tooltip.Content>
-            </Tooltip.Root>
-</Tooltip.Provider>
+            <Tooltip.Provider>
+                <Tooltip.Root>
+                    <Tooltip.Trigger>
+                        <span
+                            class={cn(
+                                "mr-2 flex h-2 w-2 rounded-full",
+                                submissionStatus == "not_submitted" && "bg-yellow-600"
+                            )}
+                        ></span>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                        {#if submissionStatus == "not_submitted"}
+                            {m.course_home_not_submitted()}
+                        {:else if submissionStatus == "submitted"}
+                            {m.course_home_submitted()}
+                        {/if}
+                    </Tooltip.Content>
+                </Tooltip.Root>
+            </Tooltip.Provider>
         {/if}
     </div>
 </div>
