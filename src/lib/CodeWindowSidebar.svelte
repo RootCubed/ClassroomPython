@@ -14,14 +14,12 @@
     interface Props {
         editMode?: boolean;
         exercise: Pick<ExerciseView, "description" | "testcases">;
-        exerciseURL: string;
         currTestcaseNum: number;
     }
 
     let {
         editMode = false,
         exercise = $bindable(),
-        exerciseURL,
         currTestcaseNum = $bindable()
     }: Props = $props();
 
@@ -47,12 +45,7 @@
             <Separator />
             <h2 class="p-2 text-center text-lg">{m.code_testcases()}</h2>
         </div>
-        <TestcaseList
-            {editMode}
-            {exerciseURL}
-            testcases={exercise.testcases}
-            bind:currTestcaseNum
-        />
+        <TestcaseList {editMode} bind:testcases={exercise.testcases} bind:currTestcaseNum />
     </div>
 </div>
 

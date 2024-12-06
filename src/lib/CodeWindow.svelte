@@ -34,11 +34,12 @@
         submitAs?: string;
     }
 
-    let { exercise, exerciseURL, mode = "USER", submitAs }: Props = $props();
+    let { exercise: _ex, exerciseURL, mode = "USER", submitAs }: Props = $props();
+
+    let exercise = $state(_ex);
+    let lastSavedCode = getCode(_ex);
 
     let isEditing = $derived(mode == "EDIT");
-
-    let lastSavedCode = getCode(exercise);
 
     let codeEditor: AceEditor;
 
@@ -385,7 +386,7 @@
         onExpand={() => (collapsed = false)}
     >
         {#if !collapsed}
-            <CodeWindowSidebar {exerciseURL} bind:currTestcaseNum {exercise} editMode={isEditing} />
+            <CodeWindowSidebar bind:currTestcaseNum bind:exercise editMode={isEditing} />
         {/if}
     </Resizable.Pane>
 </Resizable.PaneGroup>

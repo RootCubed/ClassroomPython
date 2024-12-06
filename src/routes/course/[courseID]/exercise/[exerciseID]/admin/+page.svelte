@@ -65,20 +65,17 @@
             </Table.Header>
             <Table.Body>
                 {#each data.exercise.submissions as submission, i}
-                    <div
+                    <Table.Row
                         onclick={() => (openSubmission = submission)}
                         onkeypress={() => (openSubmission = submission)}
-                        class="contents"
                         aria-label="Open submission"
                         role="button"
                         tabindex={i}
                     >
-                        <Table.Row>
-                            <Table.Cell>{submission.user.userName}</Table.Cell>
-                            <Table.Cell>{formatTimestamp(submission.timestamp)}</Table.Cell>
-                            <Table.Cell><ChevronRight class="float-right" /></Table.Cell>
-                        </Table.Row>
-                    </div>
+                        <Table.Cell>{submission.user.userName}</Table.Cell>
+                        <Table.Cell>{formatTimestamp(submission.timestamp)}</Table.Cell>
+                        <Table.Cell><ChevronRight class="float-right" /></Table.Cell>
+                    </Table.Row>
                 {/each}
             </Table.Body>
         </Table.Root>

@@ -45,7 +45,6 @@
         editor.setValue(initialValue, -1);
 
         editor.on("change", () => {
-            console.log("change");
             value = editor.getValue();
         });
 

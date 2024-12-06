@@ -49,6 +49,7 @@
                 <Cog size={16} />
             </a>
         {:else if submissionStatus == "not_submitted" || submissionStatus == "submitted"}
+<Tooltip.Provider>
             <Tooltip.Root>
                 <Tooltip.Trigger>
                     <span
@@ -66,6 +67,7 @@
                     {/if}
                 </Tooltip.Content>
             </Tooltip.Root>
+</Tooltip.Provider>
         {/if}
     </div>
 </div>
