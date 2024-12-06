@@ -15,7 +15,7 @@
     let { data }: { data: PageData } = $props();
 
     function formatTimestamp(timestamp: Date) {
-        return new Date(timestamp).toLocaleString();
+        return new Date(timestamp).toLocaleString("de-CH");
     }
 
     let openSubmission: (typeof data.exercise.submissions)[number] | undefined = $state();
