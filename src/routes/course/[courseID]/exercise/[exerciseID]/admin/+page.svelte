@@ -39,7 +39,7 @@
                 exercise={{
                     ...data.exercise,
                     codeTemplate: openSubmission.code,
-                    saves: []
+                    save: null
                 }}
                 exerciseURL="/course/{$page.params.courseID}/exercise/{data.exercise.id}"
                 mode="SUBMISSION_VIEW"
@@ -84,7 +84,7 @@
         <CodeWindow
             exercise={{
                 ...data.exercise,
-                saves: []
+                save: null
             }}
             exerciseURL="/course/{$page.params.courseID}/exercise/{data.exercise.id}"
             mode="EDIT"

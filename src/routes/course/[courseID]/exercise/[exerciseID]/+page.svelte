@@ -5,7 +5,7 @@
     import { loadedExercise } from "$lib/page-state";
 </script>
 
-{#key $loadedExercise?.id}
+{#key ($loadedExercise?.id, $loadedExercise?.save)}
     {#if $loadedExercise}
         <CodeWindow
             exercise={$loadedExercise}

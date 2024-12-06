@@ -26,6 +26,11 @@
 
     let value = $state(initialValue);
 
+    export function setValue(newValue: string) {
+        value = newValue;
+        editor.setValue(newValue, -1);
+    }
+
     export function getValue() {
         return value;
     }

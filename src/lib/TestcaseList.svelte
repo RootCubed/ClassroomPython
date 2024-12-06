@@ -31,7 +31,6 @@
         id: "",
         input: "",
         expectedOutput: "",
-        exerciseId: "",
         testcaseResult: null
     };
 

@@ -31,7 +31,7 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
             }
         });
     } catch (e) {
-        throw error(500, "The exercise could not be deleted.");
+        throw error(500, "The exercise save could not be deleted.");
     }
 
     return new Response("OK", { status: 200 });

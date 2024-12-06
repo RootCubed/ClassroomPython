@@ -62,7 +62,7 @@
     let runReady = $derived($pyodide.ready);
 
     function getCode(exercise: CodeWindowExerciseView) {
-        return exercise.saves[0]?.code ?? exercise.codeTemplate;
+        return exercise.save?.code ?? exercise.codeTemplate;
     }
 
     function clearResults() {
@@ -173,7 +173,6 @@
                     testcases: exercise.testcases
                 })
             });
-            invalidateAll();
         } else {
             resp = await fetch(`${exerciseURL}/save`, {
                 method: "POST",
@@ -182,6 +181,7 @@
                 },
                 body: codeEditor.getValue()
             });
+            exercise.save = { userId: "", exerciseId: "", code: codeEditor.getValue() };
         }
         if (resp.ok) {
             lastSavedCode = codeEditor.getValue();
@@ -194,7 +194,9 @@
         await fetch(`${exerciseURL}/save`, {
             method: "DELETE"
         });
-        invalidateAll();
+        exercise.save = null;
+        codeEditor.setValue(exercise.codeTemplate);
+        lastSavedCode = exercise.codeTemplate;
     }
 
     beforeNavigate(async (navigation) => {

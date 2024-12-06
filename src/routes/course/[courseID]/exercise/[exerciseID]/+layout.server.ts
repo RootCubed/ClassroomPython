@@ -14,6 +14,9 @@ export const load: ServerLoad = async ({ params, locals }) => {
             saves: { where: { userId: locals.user.id } },
             submissions: { where: { userId: locals.user.id } },
             testcases: {
+                include: {
+                    testcaseResults: { where: { userId: locals.user.id } }
+                },
                 orderBy: { orderNum: "asc" }
             },
             exerciseGroup: true
@@ -24,22 +27,22 @@ export const load: ServerLoad = async ({ params, locals }) => {
         throw error(404, "The exercise was not found.");
     }
 
-    // Separate query because only only want have one result per testcase
-    const testcaseResults = await pdb.testcaseResult.findMany({
-        where: {
-            testcase: {
-                exerciseId: exercise.id
-            },
-            userId: locals.user.id
-        }
-    });
-
     const res = {
         exercise: {
-            ...exercise,
+            id: exercise.id,
+            title: exercise.title,
+            subtitle: exercise.subtitle,
+            description: exercise.description,
+            codeTemplate: exercise.codeTemplate,
+            exerciseGroup: exercise.exerciseGroup,
+            submissions: exercise.submissions,
+            save: exercise.saves.length > 0 ? exercise.saves[0] : null,
             testcases: exercise.testcases.map((tc) => ({
-                ...tc,
-                testcaseResult: testcaseResults.find((r) => r.testcaseId == tc.id) || null
+                id: tc.id,
+                orderNum: tc.orderNum,
+                input: tc.input,
+                expectedOutput: tc.expectedOutput,
+                testcaseResult: tc.testcaseResults.length > 0 ? tc.testcaseResults[0] : null
             }))
         }
     };
