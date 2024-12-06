@@ -7,6 +7,7 @@
     import { Button } from "$lib/components/ui/button";
     import Input from "$lib/components/ui/input/input.svelte";
     import type { PaneAPI } from "paneforge";
+    import { toast } from "svelte-sonner";
     import { cn } from "$lib/utils";
 
     import { PanelRightOpen } from "lucide-svelte";
@@ -138,7 +139,7 @@
             console.error("No submission ID");
             return;
         }
-        const resp = await fetch(`${exerciseURL}/submit`, {
+        const submitReq = fetch(`${exerciseURL}/submit`, {
             method: "POST",
             headers: {
                 "Content-Type": "text/plain"
@@ -152,12 +153,15 @@
                 submitAs
             })
         });
-        if (resp.ok) {
-            lastSavedCode = codeEditor.getValue();
-            invalidateAll();
-        } else {
-            console.error("Failed to submit code");
-        }
+        toast.promise(submitReq, {
+            loading: m.code_submit_toast_in_progress(),
+            success: () => {
+                lastSavedCode = codeEditor.getValue();
+                invalidateAll();
+                return m.code_submit_toast_success();
+            },
+            error: m.code_submit_toast_error()
+        });
     }
 
     async function saveCode() {

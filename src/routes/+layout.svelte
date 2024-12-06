@@ -8,6 +8,8 @@
     import { writable } from "svelte/store";
     import type { LayoutData } from "./$types";
 
+    import { Toaster } from "svelte-sonner";
+
     import { user, pyodide } from "$lib/page-state";
     import { Pyodide } from "$lib/pyodide-mgr.svelte";
 
@@ -43,6 +45,7 @@
     }
 </script>
 
+<Toaster theme="dark" richColors duration={6000} />
 {#key $lang}
     <div class="h-screen w-full hyphens-auto">
         {@render children()}
