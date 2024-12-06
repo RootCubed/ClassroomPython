@@ -1,11 +1,15 @@
 <script lang="ts">
-    import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
-    import { ChevronDown, User } from "lucide-svelte";
-    import { user } from "$lib/page-state";
     import { goto } from "$app/navigation";
+
     import { Role } from "@prisma/client";
+
+    import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
+    import { cn } from "$lib/utils";
+    import { ChevronDown, User } from "lucide-svelte";
+
+    import { user } from "./page-state";
+
     import { setLanguageTag, languageTag, type AvailableLanguageTag } from "./paraglide/runtime";
-    import { cn } from "./utils";
     import * as m from "$lib/paraglide/messages";
 
     let currLang = $state(languageTag());

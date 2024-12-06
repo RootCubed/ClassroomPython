@@ -4,7 +4,7 @@
     import rehypeKatex from "rehype-katex";
     import "katex/dist/katex.min.css";
 
-    import Separator from "./components/ui/separator/separator.svelte";
+    import Separator from "$lib/components/ui/separator/separator.svelte";
 
     import TestcaseList from "./TestcaseList.svelte";
     import type { ExerciseView } from "./page-types";

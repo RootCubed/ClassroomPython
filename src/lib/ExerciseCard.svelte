@@ -1,11 +1,15 @@
 <script lang="ts">
-    import { Cog } from "lucide-svelte";
-    import { cn } from "./utils";
-    import type { ExerciseView } from "./page-types";
-    import * as Tooltip from "./components/ui/tooltip";
-    import { user } from "./page-state";
-    import { Role } from "@prisma/client";
     import { page } from "$app/stores";
+
+    import { Role } from "@prisma/client";
+
+    import * as Tooltip from "$lib/components/ui/tooltip";
+    import { cn } from "$lib/utils";
+    import { Cog } from "lucide-svelte";
+
+    import type { ExerciseView } from "./page-types";
+    import { user } from "./page-state";
+
     import * as m from "$lib/paraglide/messages";
 
     interface Props {

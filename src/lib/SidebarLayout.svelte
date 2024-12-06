@@ -1,12 +1,13 @@
 <script lang="ts">
+    import { page } from "$app/stores";
     import type { Snippet } from "svelte";
 
-    import type { ExerciseGroupView } from "$lib/page-types";
-    import Sidebar from "./Sidebar.svelte";
     import * as Sheet from "$lib/components/ui/sheet";
-    import { Menu } from "lucide-svelte";
     import { Button } from "$lib/components/ui/button";
-    import { page } from "$app/stores";
+    import { Menu } from "lucide-svelte";
+
+    import type { ExerciseGroupView } from "./page-types";
+    import Sidebar from "./Sidebar.svelte";
 
     interface Props {
         exercises: ExerciseGroupView;

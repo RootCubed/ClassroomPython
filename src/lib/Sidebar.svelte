@@ -1,11 +1,14 @@
 <script lang="ts">
+    import { page } from "$app/stores";
+
     import * as Accordion from "$lib/components/ui/accordion";
     import { Separator } from "$lib/components/ui/separator";
-    import type { ExerciseGroupView } from "$lib/page-types";
+    import { CogIcon } from "lucide-svelte";
+
+    import type { ExerciseGroupView } from "./page-types";
     import { loadedExercise, user } from "./page-state";
     import ExerciseCard from "./ExerciseCard.svelte";
-    import { CogIcon } from "lucide-svelte";
-    import { page } from "$app/stores";
+
     import * as m from "$lib/paraglide/messages";
 
     let { exercises }: { exercises: ExerciseGroupView } = $props();
