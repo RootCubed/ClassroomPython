@@ -111,13 +111,15 @@
         </Table.Root>
     </Tabs.Content>
     <Tabs.Content value="edit" class="h-full overflow-auto">
-        <CodeWindow
-            exercise={{
-                ...data.exercise,
-                save: null
-            }}
-            exerciseURL="/course/{$page.params.courseID}/exercise/{data.exercise.id}"
-            mode="EDIT"
-        />
+        {#key $page.url}
+            <CodeWindow
+                exercise={{
+                    ...data.exercise,
+                    save: null
+                }}
+                exerciseURL="/course/{$page.params.courseID}/exercise/{data.exercise.id}"
+                mode="EDIT"
+            />
+        {/key}
     </Tabs.Content>
 </Tabs.Root>
