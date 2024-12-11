@@ -325,7 +325,7 @@
                                 >
                             </div>
                         {/if}
-                        {#if collapsed}
+                        {#if detailsPane?.isCollapsed()}
                             <Button
                                 class="mr-2 h-full"
                                 variant="ghost"
@@ -344,15 +344,13 @@
             </Resizable.Pane>
         </Resizable.PaneGroup>
     </Resizable.Pane>
-    <Resizable.Handle withHandle={!collapsed} />
+    <Resizable.Handle withHandle={!detailsPane?.isCollapsed()} />
     <Resizable.Pane
-        collapsible
-        defaultSize={40}
+        collapsible={true}
+        defaultSize={50}
         minSize={15}
         collapsedSize={0}
         bind:this={detailsPane}
-        onCollapse={() => (collapsed = true)}
-        onExpand={() => (collapsed = false)}
     >
         {#if !collapsed}
             <CodeWindowSidebar bind:currTestcaseNum bind:exercise editMode={isEditing} />
