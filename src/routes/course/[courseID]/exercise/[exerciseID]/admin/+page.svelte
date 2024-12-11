@@ -89,6 +89,7 @@
                 <Table.Row>
                     <Table.Head>User</Table.Head>
                     <Table.Head>Time</Table.Head>
+                    <Table.Head>Score</Table.Head>
                     <Table.Head></Table.Head>
                 </Table.Row>
             </Table.Header>
