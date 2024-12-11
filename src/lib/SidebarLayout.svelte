@@ -44,7 +44,7 @@
                         </Button>
                     {/snippet}
                 </Sheet.Trigger>
-                <Sheet.Content class="md:hidden" side="left">
+                <Sheet.Content class="overflow-auto md:hidden" side="left">
                     <Sidebar {exercises} />
                 </Sheet.Content>
             </Sheet.Root>
