@@ -8,6 +8,7 @@ declare global {
             paraglide: ParaglideLocals<AvailableLanguageTag>;
 
             user: ClientUser | null;
+            isSEB: boolean;
         }
     }
 }

@@ -17,6 +17,12 @@ function isRouteMatch(route: string | null, filter: string[]) {
 export const handle: Handle = async ({ event, resolve }) => {
     const user = await authUser(event);
 
+    const headers = event.request.headers;
+
+    const sebReqHash = headers.get("x-safeexambrowser-requesthash");
+
+    event.locals.isSEB = !!sebReqHash;
+
     if (isRouteMatch(event.route.id, adminOnlyRoutes) && user?.role !== Role.ADMIN) {
         throw error(403, "Forbidden");
     } else if (isRouteMatch(event.route.id, nonStudentRoutes) && user?.role === Role.STUDENT) {
