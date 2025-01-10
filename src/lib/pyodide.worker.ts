@@ -29,9 +29,9 @@ function browserStdin() {
 
 // Remove TigerJython-specific syntax like repeat
 function untiger(code: string) {
-    const matches = code.match(/repeat ([^:]+):/g) ?? [];
+    const matches = code.match(/^\w*repeat ([^:]+):/gm) ?? [];
     for (const m of matches) {
-        const subM = m.match(/repeat ([^:]+):/)!;
+        const subM = m.match(/^\w*repeat ([^:]+):/m)!;
         code = code.replace(m, `for _${code.indexOf(m)} in range(${subM[1]}):`);
     }
     return code;
