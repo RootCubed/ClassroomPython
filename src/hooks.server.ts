@@ -19,9 +19,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     const headers = event.request.headers;
 
-    const sebReqHash = headers.get("x-safeexambrowser-requesthash");
-
-    event.locals.isSEB = !!sebReqHash;
+    const userAgent = headers.get("User-Agent");
+    event.locals.isSEB = userAgent?.includes("SEB") ?? false;
 
     if (isRouteMatch(event.route.id, adminOnlyRoutes) && user?.role !== Role.ADMIN) {
         throw error(403, "Forbidden");
