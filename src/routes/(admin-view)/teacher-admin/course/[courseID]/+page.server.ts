@@ -2,7 +2,7 @@ import { getOrCreateMSUser } from "$lib/oauth/oauth";
 import { getOAuthToken } from "$lib/server/auth";
 import { getExercises } from "$lib/server/db";
 import pdb from "$lib/server/prisma-db";
-import { error, fail, type Actions, type ServerLoad } from "@sveltejs/kit";
+import { error, fail, redirect, type Actions, type ServerLoad } from "@sveltejs/kit";
 
 export const load: ServerLoad = async ({ locals, params }) => {
     if (!locals.user) {
@@ -103,8 +103,10 @@ export const actions: Actions = {
         const data = await request.formData();
         const title = data.get("title")?.toString();
         const description = data.get("description")?.toString();
+        const isExam = data.get("isExam");
+        const isVisible = data.get("isVisible");
 
-        if (!title || !description) {
+        if (title == null || description == null) {
             return fail(400, { message: "Invalid arguments" });
         }
 
@@ -116,8 +118,35 @@ export const actions: Actions = {
             where: { id: params.courseID },
             data: {
                 title,
-                description
+                description,
+                isExam: !!isExam,
+                isVisible: !!isVisible
             }
         });
+    },
+    deleteCourse: async ({ params, locals }) => {
+        if (locals.user?.role != "ADMIN") {
+            return fail(403, { message: "Forbidden - must be admin to delete courses" });
+        }
+
+        if (!params.courseID) {
+            return fail(500, { message: "Course not found" });
+        }
+
+        const deleteTransactions = [
+            pdb.exercise.deleteMany({
+                where: { exerciseGroup: { courseId: params.courseID } }
+            }),
+            pdb.exerciseGroup.deleteMany({
+                where: { courseId: params.courseID }
+            }),
+            pdb.course.delete({
+                where: { id: params.courseID }
+            })
+        ];
+
+        await pdb.$transaction(deleteTransactions);
+
+        return redirect(303, "/teacher-admin");
     }
 };

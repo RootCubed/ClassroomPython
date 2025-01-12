@@ -8,7 +8,7 @@
     import { Button } from "$lib/components/ui/button";
     import * as Card from "$lib/components/ui/card";
     import * as Dialog from "$lib/components/ui/dialog";
-    import Label from "$lib/components/ui/label/label.svelte";
+    import { Label } from "$lib/components/ui/label";
     import { Plus } from "lucide-svelte";
     import AceEditor from "$lib/AceEditor.svelte";
     import ErrorableInput from "$lib/ErrorableInput.svelte";
@@ -99,6 +99,19 @@
                 value={data.course.description}
                 serverResp={undefined}
             />
+            <div class="flex gap-2">
+                <Label for="isExam">Prüfung</Label>
+                <input type="checkbox" id="isExam" name="isExam" checked={data.course.isExam} />
+            </div>
+            <div class="flex gap-2">
+                <Label for="isVisible">Sichtbar für Schüler:innen</Label>
+                <input
+                    type="checkbox"
+                    id="isVisible"
+                    name="isVisible"
+                    checked={data.course.isVisible}
+                />
+            </div>
             <Button type="submit">Speichern</Button>
         </div>
     </form>
@@ -159,5 +172,18 @@
                 </Card.Content>
             </div>
         </Card.Root>
+    </div>
+    <div class="space-y-4">
+        <h3 class="text-xl font-bold">Kurs löschen</h3>
+
+        <form
+            method="POST"
+            action="?/deleteCourse"
+            use:enhance
+            onsubmit={invalidateAll}
+            class="flex flex-row gap-2"
+        >
+            <Button type="submit" variant="destructive">Kurs löschen</Button>
+        </form>
     </div>
 </div>

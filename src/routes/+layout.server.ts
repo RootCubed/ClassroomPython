@@ -13,14 +13,11 @@ export const load: ServerLoad = async ({ locals }) => {
                             { owners: { some: { id: locals.user?.id } } }
                         ]
                     },
-                    {
-                        title:
-                            locals.user?.role != "STUDENT"
-                                ? {}
-                                : locals.isSEB
-                                  ? { startsWith: "[PRÜFUNG]" }
-                                  : { not: { startsWith: "[PRÜFUNG]" } }
-                    }
+                    locals.user?.role == "STUDENT"
+                        ? {
+                              AND: [{ isVisible: true }, { isExam: locals.isSEB }]
+                          }
+                        : {}
                 ]
             }
         })
