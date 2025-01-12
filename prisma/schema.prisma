@@ -108,6 +108,9 @@ model Course {
   students User[] @relation("courseStudents")
 
   exercises ExerciseGroup[]
+
+  isExam    Boolean @default(false)
+  isVisible Boolean @default(true)
 }
 
 model Save {

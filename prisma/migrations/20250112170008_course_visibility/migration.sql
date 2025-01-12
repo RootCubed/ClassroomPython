@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Course" ADD COLUMN     "isExam" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "isVisible" BOOLEAN NOT NULL DEFAULT true;
