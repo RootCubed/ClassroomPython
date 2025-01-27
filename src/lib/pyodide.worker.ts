@@ -1,5 +1,7 @@
 import * as pyodide from "pyodide";
 
+// Pyodide v0.27.1
+
 let _py: pyodide.PyodideInterface | undefined;
 
 (async () => {
