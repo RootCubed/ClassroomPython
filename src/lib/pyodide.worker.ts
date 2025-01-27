@@ -1,6 +1,6 @@
 import * as pyodide from "pyodide";
 
-// Pyodide v0.27.1
+const _pyVersion = "0.27.2";
 
 let _py: pyodide.PyodideInterface | undefined;
 
