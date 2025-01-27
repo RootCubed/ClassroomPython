@@ -1,7 +1,5 @@
 import * as pyodide from "pyodide";
 
-const _pyVersion = "0.27.2";
-
 let _py: pyodide.PyodideInterface | undefined;
 
 (async () => {
@@ -13,7 +11,9 @@ async function getPy() {
     if (_py) {
         return _py;
     }
-    _py = await pyodide.loadPyodide();
+    _py = await pyodide.loadPyodide({
+        indexURL: "/node_modules/pyodide/"
+    });
     return _py;
 }
 

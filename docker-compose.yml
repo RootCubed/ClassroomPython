@@ -20,7 +20,8 @@ services:
             npx prisma migrate deploy &&
             npx prisma generate &&
             npm run build &&
-            cp -t ./build/prod/client/_app/immutable/workers \
+            mkdir -p ./build/prod/client/node_modules/pyodide &&
+            cp -t ./build/prod/client/node_modules/pyodide \
             ./node_modules/pyodide/pyodide.asm.js \
             ./node_modules/pyodide/pyodide.asm.wasm \
             ./node_modules/pyodide/python_stdlib.zip \
