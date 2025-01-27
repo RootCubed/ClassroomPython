@@ -29,12 +29,14 @@ function browserStdin() {
 
 // Remove TigerJython-specific syntax like repeat
 function untiger(code: string) {
-    const matches = code.match(/^\w*repeat ([^:]+):/gm) ?? [];
-    for (const m of matches) {
-        const subM = m.match(/^\w*repeat ([^:]+):/m)!;
-        code = code.replace(m, `for _${code.indexOf(m)} in range(${subM[1]}):`);
+    const lines = code.split("\n");
+    for (let i = 0; i < lines.length; i++) {
+        let m = lines[i].match(/^(\s*)repeat ([^:]+):/);
+        if (m) {
+            lines[i] = `${m[1]}for _repeat_iter_${i} in range(${m[2]}):`;
+        }
     }
-    return code;
+    return lines.join("\n");
 }
 
 async function handleInput(title: string, datatype: string) {
