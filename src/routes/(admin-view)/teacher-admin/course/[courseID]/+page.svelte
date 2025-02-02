@@ -147,7 +147,7 @@
             <h4>{group.title}</h4>
             <div class="grid gap-2">
                 {#each group.exercises as exercise}
-                    <Card.Root class="cursor-pointer hover:bg-accent">
+                    <Card.Root class="hover:bg-accent cursor-pointer">
                         <Card.Header>
                             <Card.Title>{exercise.title}</Card.Title>
                             <Card.Description>{exercise.subtitle}</Card.Description>
@@ -158,7 +158,7 @@
             </div>
         {/each}
 
-        <Card.Root class="cursor-pointer hover:bg-accent">
+        <Card.Root class="hover:bg-accent cursor-pointer">
             <div
                 onclick={() => (createExercise = true)}
                 onkeypress={() => (createExercise = true)}

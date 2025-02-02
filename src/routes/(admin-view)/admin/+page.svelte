@@ -173,7 +173,7 @@
                                 form="add-user-form"
                                 id="role"
                                 name="role"
-                                class="my-2 rounded-md border border-input bg-background p-1.5 text-sm ring-offset-background"
+                                class="border-input bg-background ring-offset-background my-2 rounded-md border p-1.5 text-sm"
                             >
                                 <option value="STUDENT">Schüler</option>
                                 <option value="TEACHER">Lehrer</option>
@@ -200,7 +200,7 @@
         <div class="grid max-w-sm items-center gap-1.5">
             <Label for="clpy-course-upload">Lade eine Python-Datei hoch:</Label>
             <input
-                class="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium"
+                class="border-input bg-background ring-offset-background rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium"
                 bind:files={singleFile}
                 id="clpy-course-upload"
                 type="file"
@@ -212,7 +212,7 @@
         <div class="grid max-w-sm items-center gap-1.5">
             <Label for="clpy-course-upload">Lade einen clpy_course-Order hoch:</Label>
             <input
-                class="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium"
+                class="border-input bg-background ring-offset-background rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium"
                 bind:files
                 id="clpy-course-upload"
                 type="file"

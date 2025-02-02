@@ -133,7 +133,7 @@
                     </DropdownMenu.Root>
                     {#if inputSource == "fileInput"}
                         <span
-                            class="pointer-events-none absolute left-7 top-3 rounded-md p-2 font-mono text-xs font-bold text-gray-700 dark:text-gray-200"
+                            class="pointer-events-none absolute top-3 left-7 rounded-md p-2 font-mono text-xs font-bold text-gray-700 dark:text-gray-200"
                         >
                             T{currTestcaseNum + 1}
                         </span>

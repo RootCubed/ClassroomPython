@@ -28,18 +28,18 @@
                         {#each data.courses as course}
                             <a
                                 href={`course/${course.id}`}
-                                class="my-3 flex flex-col items-start gap-2 rounded-lg border p-3 text-sm transition-all hover:bg-accent"
+                                class="hover:bg-accent my-3 flex flex-col items-start gap-2 rounded-lg border p-3 text-sm transition-all"
                             >
                                 <span class="text-lg font-semibold">{course.title}</span>
                                 <span class="text-sm">{course.description}</span>
                             </a>
                         {/each}
                     {:else if $user.role === Role.STUDENT}
-                        <span class="text-sm italic text-gray-500">
+                        <span class="text-sm text-gray-500 italic">
                             {m.home_no_courses_student()}
                         </span>
                     {:else}
-                        <span class="text-sm italic text-gray-500">
+                        <span class="text-sm text-gray-500 italic">
                             {m.home_no_courses_teacher()}
                         </span>
                     {/if}

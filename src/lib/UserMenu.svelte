@@ -25,17 +25,17 @@
     <DropdownMenu.Root>
         <DropdownMenu.Trigger
             tabindex={0}
-            class="flex items-center gap-2 rounded-md bg-secondary p-2 text-sm hover:bg-secondary/80"
+            class="bg-secondary hover:bg-secondary/80 flex items-center gap-2 rounded-md p-2 text-sm"
         >
             <User size={16} aria-label="User icon" />
             {$user.fullName}
-            <ChevronDown class="h-4 w-4 text-secondary-foreground" aria-label="Dropdown Icon" />
+            <ChevronDown class="text-secondary-foreground h-4 w-4" aria-label="Dropdown Icon" />
         </DropdownMenu.Trigger>
         <DropdownMenu.Content class="min-w-40">
             <DropdownMenu.Label class="font-normal">
                 <div class="flex flex-col space-y-1">
-                    <p class="text-sm font-medium leading-none">{$user.fullName}</p>
-                    <p class="text-xs leading-none text-muted-foreground">{$user.userName}</p>
+                    <p class="text-sm leading-none font-medium">{$user.fullName}</p>
+                    <p class="text-muted-foreground text-xs leading-none">{$user.userName}</p>
                 </div>
             </DropdownMenu.Label>
             <DropdownMenu.Separator />

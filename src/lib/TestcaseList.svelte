@@ -91,7 +91,7 @@
                         <Button
                             variant="secondary"
                             class={cn(
-                                "flex flex-1 cursor-pointer select-none items-center justify-between gap-1 rounded-l-none bg-zinc-200 p-2 hover:!bg-opacity-85 dark:bg-zinc-800",
+                                "hover:!bg-opacity-85 flex flex-1 cursor-pointer items-center justify-between gap-1 rounded-l-none bg-zinc-200 p-2 select-none dark:bg-zinc-800",
                                 i != currTestcaseNum && "bg-opacity-50"
                             )}
                             onclick={() => {
@@ -102,9 +102,9 @@
                             {#if !editMode}
                                 <div
                                     class={cn(
-                                        "flex cursor-pointer select-none items-center justify-between gap-1 rounded-sm p-1",
+                                        "flex cursor-pointer items-center justify-between gap-1 rounded-sm p-1 select-none",
                                         testcaseCol(tc),
-                                        i != currTestcaseNum && "ml-2 bg-opacity-50"
+                                        i != currTestcaseNum && "bg-opacity-50 ml-2"
                                     )}
                                 >
                                     {#if tc.testcaseResult == null}
@@ -134,9 +134,9 @@
                     </div>
                 {/each}
                 {#if editMode}
-                    <div class="pl-2 pr-0">
+                    <div class="pr-0 pl-2">
                         <Button
-                            class="w-full cursor-pointer select-none bg-zinc-200 px-2 hover:!bg-opacity-85 dark:bg-zinc-800"
+                            class="hover:!bg-opacity-85 w-full cursor-pointer bg-zinc-200 px-2 select-none dark:bg-zinc-800"
                             onclick={() => {
                                 currTestcaseNum = testcases.length;
                                 testcases.push({
@@ -152,7 +152,7 @@
                 {/if}
             </div>
         {:else}
-            <span class="text-center text-sm text-muted-foreground"
+            <span class="text-muted-foreground text-center text-sm"
                 >{m.code_testcase_no_testcases()}</span
             >
         {/if}

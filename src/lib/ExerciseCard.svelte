@@ -28,8 +28,8 @@
 
 <div
     class={cn(
-        "flex min-h-16 flex-row rounded-lg bg-zinc-100 transition-all hover:!bg-opacity-85 dark:bg-zinc-800",
-        selected && "bg-zinc-300 text-accent-foreground dark:bg-zinc-700",
+        "hover:!bg-opacity-85 flex min-h-16 flex-row rounded-lg bg-zinc-100 transition-all dark:bg-zinc-800",
+        selected && "text-accent-foreground bg-zinc-300 dark:bg-zinc-700",
         submissionStatus == "submitted" && "border-r-8",
         submissionStatus == "submitted" &&
             (missingSubmission
@@ -41,7 +41,7 @@
 >
     <a
         href="/course/{$page.params.courseID}/exercise/{exercise.id}"
-        class="flex flex-grow flex-col items-start gap-1 border border-opacity-0 p-3 text-sm"
+        class="border-opacity-0 flex flex-grow flex-col items-start gap-1 border p-3 text-sm"
     >
         <div class="relative flex w-full items-center">
             <div class="flex items-center gap-2">

@@ -31,7 +31,7 @@
                         <span class="w-full border-t"></span>
                     </div>
                     <div class="relative flex justify-center text-xs uppercase">
-                        <span class="bg-background px-2 text-muted-foreground">
+                        <span class="bg-background text-muted-foreground px-2">
                             {m.auth_or_continue_with()}
                         </span>
                     </div>

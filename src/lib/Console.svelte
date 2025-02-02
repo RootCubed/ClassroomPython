@@ -17,7 +17,7 @@
 <div class="flex h-full flex-col bg-zinc-300 text-gray-900 dark:bg-zinc-900 dark:text-gray-300">
     <span class="w-full bg-zinc-200 p-2 dark:bg-zinc-800">{m.code_console()}</span>
     <div class="relative h-full overflow-auto" bind:this={scrollContainer}>
-        <div class="absolute left-0 top-0 p-2">
+        <div class="absolute top-0 left-0 p-2">
             {#each consoleOutput as chunk}
                 {#if chunk.type === "stdout"}
                     <pre>{chunk.text}</pre>

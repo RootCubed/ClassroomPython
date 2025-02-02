@@ -35,7 +35,7 @@
         <div class="hidden w-[300px] overflow-auto border-r-2 p-2 md:block">
             <Sidebar {exercises} />
         </div>
-        <div class="absolute left-0 top-0 m-2 md:hidden">
+        <div class="absolute top-0 left-0 m-2 md:hidden">
             <Sheet.Root bind:open={popoverOpen}>
                 <Sheet.Trigger>
                     {#snippet child({ props })}

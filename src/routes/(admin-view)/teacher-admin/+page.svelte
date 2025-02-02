@@ -46,7 +46,7 @@
         <h3 class="text-xl font-bold">Aktive Kurse</h3>
 
         {#each data.courses as course, i}
-            <Card.Root class="cursor-pointer hover:bg-accent">
+            <Card.Root class="hover:bg-accent cursor-pointer">
                 <a href={`/teacher-admin/course/${course.id}`} class="contents">
                     <Card.Header>
                         <Card.Title>
@@ -61,7 +61,7 @@
             </Card.Root>
         {/each}
 
-        <Card.Root class="cursor-pointer hover:bg-accent">
+        <Card.Root class="hover:bg-accent cursor-pointer">
             <div
                 onclick={() => (createCourse = true)}
                 onkeypress={() => (createCourse = true)}
