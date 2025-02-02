@@ -1,19 +1,28 @@
 import * as pyodide from "pyodide";
 
 let _py: pyodide.PyodideInterface | undefined;
+let pyLoadPromise: Promise<pyodide.PyodideInterface> | undefined;
+
+async function loadPyodide() {
+    const py = await pyodide.loadPyodide({
+        indexURL: "/node_modules/pyodide/"
+    });
+    return py;
+}
 
 (async () => {
-    _py = await getPy();
+    pyLoadPromise = loadPyodide();
+    _py = await pyLoadPromise;
     self.postMessage({ type: "ready" });
 })();
 
 async function getPy() {
-    if (_py) {
-        return _py;
+    if (!_py) {
+        await pyLoadPromise;
     }
-    _py = await pyodide.loadPyodide({
-        indexURL: "/node_modules/pyodide/"
-    });
+    if (!_py) {
+        throw new Error("Failed to load Pyodide");
+    }
     return _py;
 }
 
