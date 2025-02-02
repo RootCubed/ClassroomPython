@@ -1,11 +1,9 @@
-import { fontFamily } from "tailwindcss/defaultTheme";
 import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 
 const config: Config = {
-    darkMode: ["class"],
+    darkMode: "class",
     content: ["./src/**/*.{html,js,svelte,ts}"],
-    safelist: ["dark"],
     theme: {
         container: {
             center: true,
@@ -67,7 +65,7 @@ const config: Config = {
                 sm: "calc(var(--radius) - 4px)"
             },
             fontFamily: {
-                sans: ["Hind", ...fontFamily.sans]
+                sans: ["Hind", "Arial", "sans-serif"]
             },
             keyframes: {
                 "accordion-down": {
