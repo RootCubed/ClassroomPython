@@ -53,6 +53,7 @@
     "code_submit_dialog_title": "Submit code",
     "code_submit_dialog_results_title": "Results",
     "code_submit_dialog_results_message": "All test cases have been executed. Your score is: {result}",
+    "code_submit_dialog_no_testcases": "(No test cases available)",
     "code_submit_confirm": "Do you want to submit your code? You can submit this exercise as many times as you like.",
     "code_submit_toast_error": "An error occurred while submitting your solution. Please try again.",
     "code_submit_toast_success": "Your solution has been submitted.",

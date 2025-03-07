@@ -53,6 +53,7 @@
     "code_submit_dialog_title": "Code abgeben",
     "code_submit_dialog_results_title": "Ergebnisse",
     "code_submit_dialog_results_message": "Alle Testfälle wurden ausgeführt. Dein Resultat ist: {result}",
+    "code_submit_dialog_no_testcases": "(Keine Testfälle verfügbar)",
     "code_submit_confirm": "Möchtest du deinen Code abgeben? Du kannst diese Aufgabe beliebig oft abgeben.",
     "code_submit_toast_error": "Ein Fehler ist beim Einreichen deiner Lösung aufgetreten. Bitte versuche es erneut.",
     "code_submit_toast_success": "Deine Lösung wurde eingereicht.",

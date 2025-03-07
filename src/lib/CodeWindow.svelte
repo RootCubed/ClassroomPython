@@ -81,12 +81,22 @@
         $pyodide.interrupt(0);
 
         consoleOutput = [];
-        await $pyodide.runCode(
-            codeEditor.getValue(),
-            inputSource == "userInput" ? "user" : "file",
-            exercise.testcases[currTestcaseNum]?.input,
-            consoleOutput
-        );
+        const inputMode = inputSource == "userInput" ? "user" : "file";
+        if (exercise.testcases.length == 0) {
+            await $pyodide.runCode(codeEditor.getValue(), inputMode, "", consoleOutput);
+            if (inputSource == "runAll") {
+                submitDialogState.resultReady = true;
+                submitDialogState.score = 0;
+                return;
+            }
+        } else {
+            await $pyodide.runCode(
+                codeEditor.getValue(),
+                inputMode,
+                exercise.testcases[currTestcaseNum]?.input,
+                consoleOutput
+            );
+        }
 
         if (inputSource == "userInput") {
             return;
@@ -242,37 +252,41 @@
         <AlertDialog.Header>
             <AlertDialog.Title>{m.code_submit_dialog_title()}</AlertDialog.Title>
             <AlertDialog.Description class="text-white">
-                <h2 class="text-lg">{m.code_submit_dialog_results_title()}</h2>
-                <div class="flex flex-row gap-px overflow-hidden rounded-md">
-                    {#each exercise.testcases as testcase, i}
-                        <div
-                            class={cn(
-                                "flex h-8 flex-1 items-center justify-center text-white",
-                                testcase.testcaseResult == null
-                                    ? "bg-zinc-600"
-                                    : testcase.testcaseResult.passed
-                                      ? "bg-green-600"
-                                      : "bg-red-600"
-                            )}
-                        >
-                            {#if testcase.testcaseResult == null}
-                                <LoadingSpinner />
-                            {:else}
-                                <span>{i + 1}</span>
-                            {/if}
-                        </div>
-                    {/each}
-                </div>
-                {#if submitDialogState.resultReady}
-                    <p class="mt-2">
-                        {m.code_submit_dialog_results_message({
-                            result: `${submitDialogState.score}/${exercise.testcases.length}`
-                        })}
-                    </p>
+                {#if exercise.testcases.length > 0}
+                    <h2 class="text-lg">{m.code_submit_dialog_results_title()}</h2>
+                    <div class="flex flex-row gap-px overflow-hidden rounded-md">
+                        {#each exercise.testcases as testcase, i}
+                            <div
+                                class={cn(
+                                    "flex h-8 flex-1 items-center justify-center text-white",
+                                    testcase.testcaseResult == null
+                                        ? "bg-zinc-600"
+                                        : testcase.testcaseResult.passed
+                                          ? "bg-green-600"
+                                          : "bg-red-600"
+                                )}
+                            >
+                                {#if testcase.testcaseResult == null}
+                                    <LoadingSpinner />
+                                {:else}
+                                    <span>{i + 1}</span>
+                                {/if}
+                            </div>
+                        {/each}
+                    </div>
+                    {#if submitDialogState.resultReady}
+                        <p class="mt-2">
+                            {m.code_submit_dialog_results_message({
+                                result: `${submitDialogState.score}/${exercise.testcases.length}`
+                            })}
+                        </p>
 
-                    <p class="mt-2">
-                        {m.code_submit_confirm()}
-                    </p>
+                        <p class="mt-2">
+                            {m.code_submit_confirm()}
+                        </p>
+                    {/if}
+                {:else}
+                    <p>{m.code_submit_dialog_no_testcases()}</p>
                 {/if}
             </AlertDialog.Description>
         </AlertDialog.Header>
