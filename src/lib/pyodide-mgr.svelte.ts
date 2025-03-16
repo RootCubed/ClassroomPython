@@ -23,14 +23,16 @@ export class DummyPyodide implements Pyodide {
 
 export class WebWorkerPyodide implements Pyodide {
     private pyodide: Worker;
-    private interruptBuffer: Uint8Array;
+    private interruptBuffer: SharedArrayBuffer;
+    private stdinBuffer: SharedArrayBuffer;
     public ready = $state(false);
     private codeFinishedCb: () => void = () => {};
     private consoleOutputRef: ConsoleOutput[] = [];
 
     constructor(worker: Worker) {
         this.pyodide = worker;
-        this.interruptBuffer = new Uint8Array(new SharedArrayBuffer(1));
+        this.interruptBuffer = new SharedArrayBuffer(1);
+        this.stdinBuffer = new SharedArrayBuffer(32 * 1024); // 32 KiB buffer for stdin
 
         this.pyodide.addEventListener("message", (ev) => {
             if (ev.data.type == "ready") {
@@ -39,15 +41,25 @@ export class WebWorkerPyodide implements Pyodide {
                     type: "setInterruptBuffer",
                     buffer: this.interruptBuffer
                 });
+                this.pyodide.postMessage({
+                    type: "setStdinBuffer",
+                    buffer: this.stdinBuffer
+                });
             } else if (ev.data.type == "done") {
                 this.codeFinishedCb();
             } else if (ev.data.type == "inputReq") {
                 // TODO: Use a nicer prompt box
                 const response = prompt(ev.data.content);
-                this.pyodide.postMessage({
-                    type: "stdinResp",
-                    buffer: response
-                });
+                const notify = new Int32Array(this.stdinBuffer);
+                const bufView = new Int8Array(this.stdinBuffer);
+                if (response != null) {
+                    const dataBytes = new TextEncoder().encode(response);
+                    bufView.set(dataBytes, 4);
+                    Atomics.store(notify, 0, dataBytes.length);
+                } else {
+                    Atomics.store(notify, 0, -1);
+                }
+                Atomics.notify(notify, 0);
             } else {
                 this.consoleOutputRef.push({
                     type: ev.data.type,
@@ -78,7 +90,7 @@ export class WebWorkerPyodide implements Pyodide {
     }
 
     interrupt(code: number = 0) {
-        this.interruptBuffer[0] = code;
+        new Uint8Array(this.interruptBuffer)[0] = code;
     }
 
     registerCallback(callback: (ev: MessageEvent) => void) {

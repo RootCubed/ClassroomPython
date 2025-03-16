@@ -3,6 +3,8 @@ import * as pyodide from "pyodide";
 let _py: pyodide.PyodideInterface | undefined;
 let pyLoadPromise: Promise<pyodide.PyodideInterface> | undefined;
 
+let stdinSharedBuffer: Int32Array | undefined;
+
 async function loadPyodide() {
     const py = await pyodide.loadPyodide({
         indexURL: "/node_modules/pyodide/"
@@ -29,15 +31,6 @@ async function getPy() {
 let runMode: "user" | "file" = "user";
 let currentInput: string[] = [];
 
-let stdinReceived: ((s: string) => void) | null = null;
-function browserStdin() {
-    return new Promise<string>((resolve) => {
-        stdinReceived = (s: string) => {
-            resolve(s);
-        };
-    });
-}
-
 // Remove TigerJython-specific syntax like repeat
 function untiger(code: string) {
     const lines = code.split("\n");
@@ -50,7 +43,7 @@ function untiger(code: string) {
     return lines.join("\n");
 }
 
-async function handleInput(title: string, datatype: string) {
+function handleInput(title: string, datatype: string) {
     if (runMode == "file") {
         const input = currentInput.shift();
         if (input == undefined) {
@@ -59,13 +52,34 @@ async function handleInput(title: string, datatype: string) {
         return input;
     }
 
+    if (!stdinSharedBuffer) {
+        throw new Error("stdin buffer not set");
+    }
+
+    Atomics.store(stdinSharedBuffer, 0, -1);
+
     self.postMessage({
         type: "inputReq",
         datatype,
         content: title
     });
 
-    return await browserStdin();
+    Atomics.wait(stdinSharedBuffer, 0, -1);
+
+    const byteCount = Atomics.load(stdinSharedBuffer, 0);
+    if (byteCount == -1) {
+        throw new Error("KeyboardInterrupt");
+    }
+
+    const decoder = new TextDecoder();
+    // Temporary copy because decoder.decode() does not accept SharedArrayBuffer
+    const tempBuffer = new ArrayBuffer(byteCount);
+    const tempView = new Uint8Array(tempBuffer);
+    const sharedView = new Uint8Array(stdinSharedBuffer.buffer);
+    for (let i = 0; i < byteCount; i++) {
+        tempView[i] = sharedView[i + 4];
+    }
+    return decoder.decode(tempView);
 }
 
 async function runCode(code: string) {
@@ -88,19 +102,28 @@ async function runCode(code: string) {
             return text.length;
         }
     });
-    py.globals.set("input", async (title: string) => {
+    py.globals.set("input", (title: string) => {
         return handleInput(title, "str");
     });
-    py.globals.set("inputString", async (title: string) => {
+    py.globals.set("inputString", (title: string) => {
         return handleInput(title, "str");
     });
-    py.globals.set("inputInt", async (title: string) => {
-        return parseInt(await handleInput(title, "int"));
+    py.globals.set("inputInt", (title: string) => {
+        const input = handleInput(title, "int");
+        try {
+            return BigInt(input);
+        } catch (e) {
+            throw new Error("Invalid input");
+        }
     });
-    py.globals.set("inputFloat", async (title: string) => {
-        return parseFloat(await handleInput(title, "float"));
+    py.globals.set("inputFloat", (title: string) => {
+        const input = handleInput(title, "float");
+        try {
+            return parseFloat(input);
+        } catch (e) {
+            throw new Error("Invalid input");
+        }
     });
-    code = code.replace(/\binput(Int|String|Float)?\s*[(]/g, "await $&");
     code = untiger(code);
     try {
         await py.runPythonAsync(code);
@@ -126,7 +149,7 @@ async function runCode(code: string) {
             }
         });
         py.runPython("import traceback;import sys;traceback.print_exception(sys.last_exc)");
-        if (error[error.length - 1].startsWith("KeyboardInterrupt")) {
+        if (error[error.length - 1].includes("KeyboardInterrupt")) {
             self.postMessage({
                 type: "stderr",
                 content: "Das Programm wurde unterbrochen."
@@ -152,14 +175,11 @@ self.onmessage = async (event) => {
         }
         await runCode(event.data.python);
         self.postMessage({ type: "done" });
-    } else if (type === "setInterruptBuffer") {
+    } else if (type == "setInterruptBuffer") {
         const py = await getPy();
         py.setInterruptBuffer(event.data.buffer);
-    } else if (type == "stdinResp") {
-        if (!stdinReceived) {
-            throw new Error("stdinResp received without stdinRequested");
-        }
-        stdinReceived(event.data.buffer);
+    } else if (type == "setStdinBuffer") {
+        stdinSharedBuffer = new Int32Array(event.data.buffer);
     } else {
         console.error("Unknown message type", type);
     }
