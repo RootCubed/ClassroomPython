@@ -6,8 +6,14 @@ let pyLoadPromise: Promise<pyodide.PyodideInterface> | undefined;
 let stdinSharedBuffer: Int32Array | undefined;
 
 async function loadPyodide() {
+    let indexURL: string;
+    if (process.env.NODE_ENV == "production") {
+        indexURL = "/node_modules/pyodide-" + pyodide.version + "/";
+    } else {
+        indexURL = "/node_modules/pyodide/";
+    }
     const py = await pyodide.loadPyodide({
-        indexURL: "/node_modules/pyodide/"
+        indexURL
     });
     return py;
 }
