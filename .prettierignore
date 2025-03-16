@@ -2,5 +2,6 @@
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
-# Also ignore shadcn-svelte components
+# Also ignore shadcn-svelte components and paraglide-js
 src/lib/components/ui/*
+src/lib/paraglide/*
