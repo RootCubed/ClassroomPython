@@ -7,15 +7,18 @@
     import { cn } from "$lib/utils";
     import { ChevronDown, User } from "lucide-svelte";
 
-    import { user } from "./page-state";
+    import { locale, user } from "./page-state";
 
-    import { setLanguageTag, languageTag, type AvailableLanguageTag } from "./paraglide/runtime";
+    import { setLocale, getLocale, type Locale } from "./paraglide/runtime";
     import * as m from "$lib/paraglide/messages";
 
-    let currLang = $state(languageTag());
-    $effect(() => setLanguageTag(currLang));
+    let currLang = $state(getLocale());
+    $effect(() => {
+        $locale = currLang;
+        setLocale(currLang, { reload: false });
+    });
 
-    const langs: { tag: AvailableLanguageTag; sym: string }[] = [
+    const langs: { tag: Locale; sym: string }[] = [
         { tag: "en", sym: "🇬🇧" },
         { tag: "de-ch", sym: "🇩🇪" }
     ];

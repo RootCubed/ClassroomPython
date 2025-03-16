@@ -5,19 +5,13 @@
 
     import { browser } from "$app/environment";
     import type { Snippet } from "svelte";
-    import { writable } from "svelte/store";
     import type { LayoutData } from "./$types";
 
     import { Toaster } from "svelte-sonner";
 
-    import { user, pyodide } from "$lib/page-state";
+    import { user, pyodide, locale } from "$lib/page-state";
     import { WebWorkerPyodide } from "$lib/pyodide-mgr.svelte";
-
-    import {
-        onSetLanguageTag,
-        setLanguageTag,
-        type AvailableLanguageTag
-    } from "$lib/paraglide/runtime";
+    import { getLocale } from "$lib/paraglide/runtime";
 
     interface Props {
         data: LayoutData;
@@ -30,15 +24,7 @@
         $user = data.user;
     }
 
-    export const lang = writable<AvailableLanguageTag>("de-ch", (set) => {
-        onSetLanguageTag((l) => {
-            set(l);
-        });
-    });
-
-    lang.subscribe((l) => {
-        setLanguageTag(l);
-    });
+    $locale = getLocale();
 
     if (browser) {
         $pyodide = new WebWorkerPyodide(new PyodideWorker());
@@ -46,7 +32,7 @@
 </script>
 
 <Toaster theme="dark" richColors duration={5000} closeButton={true} />
-{#key $lang}
+{#key $locale}
     <div class="h-screen w-full hyphens-auto">
         {@render children()}
     </div>
