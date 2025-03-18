@@ -112,6 +112,7 @@ async function runCode(code: string) {
             return text.length;
         }
     });
+    py.globals.clear();
     py.globals.set("input", (title: string) => {
         return handleInput(title, "str");
     });
