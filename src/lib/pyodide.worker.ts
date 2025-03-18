@@ -41,9 +41,13 @@ let currentInput: string[] = [];
 function untiger(code: string) {
     const lines = code.split("\n");
     for (let i = 0; i < lines.length; i++) {
-        let m = lines[i].match(/^(\s*)repeat ([^:]+):/);
-        if (m) {
-            lines[i] = `${m[1]}for _repeat_iter_${i} in range(${m[2]}):`;
+        const m_repeat_n = lines[i].match(/^(\s*)repeat ([^:]+):/);
+        if (m_repeat_n) {
+            lines[i] = `${m_repeat_n[1]}for _repeat_iter_${i} in range(${m_repeat_n[2]}):`;
+        }
+        const m_repeat = lines[i].match(/^(\s*)repeat:/);
+        if (m_repeat) {
+            lines[i] = `${m_repeat[1]}while True:`;
         }
     }
     return lines.join("\n");
