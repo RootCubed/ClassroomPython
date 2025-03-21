@@ -188,7 +188,7 @@ self.onmessage = async (event) => {
         self.postMessage({ type: "done" });
     } else if (type == "setInterruptBuffer") {
         const py = await getPy();
-        py.setInterruptBuffer(event.data.buffer);
+        py.setInterruptBuffer(new Uint8Array(event.data.buffer));
     } else if (type == "setStdinBuffer") {
         stdinSharedBuffer = new Int32Array(event.data.buffer);
     } else {
