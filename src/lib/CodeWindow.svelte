@@ -46,6 +46,8 @@
     let detailsPane: PaneAPI | undefined = $state(undefined);
 
     let currTestcaseNum = $state(0);
+    let failedTestcaseNum: null | number = null;
+    let failedConsoleOutput: ConsoleOutput[] = [];
     let inputSource: InputSource = $state("userInput");
 
     let leaveConfirmWindow = $state({
@@ -76,6 +78,7 @@
         if (inputSource == "runAll" && userTriggered) {
             submitDialogState.resultReady = false;
             currTestcaseNum = 0;
+            failedTestcaseNum = null;
             clearResults();
         }
         $pyodide.interrupt(0);
@@ -117,6 +120,10 @@
         if (!correctOutput && !ignoreFail) {
             return;
         }
+        if (!correctOutput) {
+            failedConsoleOutput = consoleOutput;
+            failedTestcaseNum = currTestcaseNum;
+        }
         if (inputSource == "runAll") {
             if (currTestcaseNum < exercise.testcases.length) {
                 currTestcaseNum++;
@@ -124,7 +131,10 @@
             if (currTestcaseNum < exercise.testcases.length) {
                 await runCode(inputSource, false, ignoreFail);
             } else {
-                currTestcaseNum = 0;
+                if (failedTestcaseNum != null) {
+                    consoleOutput = failedConsoleOutput;
+                    currTestcaseNum = failedTestcaseNum;
+                }
                 submitDialogState.resultReady = true;
                 submitDialogState.score = exercise.testcases.filter(
                     (x) => x.testcaseResult?.passed
