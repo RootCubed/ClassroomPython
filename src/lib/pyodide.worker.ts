@@ -3,6 +3,7 @@ import * as pyodide from "pyodide";
 let _py: pyodide.PyodideInterface | undefined;
 let pyLoadPromise: Promise<pyodide.PyodideInterface> | undefined;
 
+let interruptBuffer: Uint8Array | undefined;
 let stdinSharedBuffer: Int32Array | undefined;
 
 async function loadPyodide() {
@@ -188,7 +189,8 @@ self.onmessage = async (event) => {
         self.postMessage({ type: "done" });
     } else if (type == "setInterruptBuffer") {
         const py = await getPy();
-        py.setInterruptBuffer(new Uint8Array(event.data.buffer));
+        interruptBuffer = new Uint8Array(event.data.buffer);
+        py.setInterruptBuffer(interruptBuffer);
     } else if (type == "setStdinBuffer") {
         stdinSharedBuffer = new Int32Array(event.data.buffer);
     } else {

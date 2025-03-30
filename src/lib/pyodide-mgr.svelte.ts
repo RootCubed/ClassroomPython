@@ -25,6 +25,8 @@ export class WebWorkerPyodide implements Pyodide {
     private pyodide: Worker;
     private interruptBuffer: SharedArrayBuffer;
     private stdinBuffer: SharedArrayBuffer;
+    private isCancelling = false;
+    private receiveMessages = true;
     public ready = $state(false);
     private codeFinishedCb: () => void = () => {};
     private consoleOutputRef: ConsoleOutput[] = [];
@@ -61,10 +63,20 @@ export class WebWorkerPyodide implements Pyodide {
                 }
                 Atomics.notify(notify, 0);
             } else {
-                this.consoleOutputRef.push({
-                    type: ev.data.type,
-                    text: ev.data.content
-                });
+                if (this.receiveMessages) {
+                    if (this.isCancelling) {
+                        this.consoleOutputRef.push({
+                            type: "stderr",
+                            text: "Das Programm wurde unterbrochen."
+                        });
+                        this.receiveMessages = false;
+                    } else {
+                        this.consoleOutputRef.push({
+                            type: ev.data.type,
+                            text: ev.data.content
+                        });
+                    }
+                }
             }
         });
     }
@@ -75,6 +87,8 @@ export class WebWorkerPyodide implements Pyodide {
         inputData: string,
         consoleOutput: ConsoleOutput[]
     ): Promise<void> {
+        this.isCancelling = false;
+        this.receiveMessages = true;
         this.consoleOutputRef = consoleOutput;
         this.pyodide.postMessage({
             type: "run",
@@ -90,6 +104,7 @@ export class WebWorkerPyodide implements Pyodide {
     }
 
     interrupt(code: number = 0) {
+        this.isCancelling = true;
         new Uint8Array(this.interruptBuffer)[0] = code;
     }
 
