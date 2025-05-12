@@ -9,7 +9,7 @@
     import * as Card from "$lib/components/ui/card";
     import * as Dialog from "$lib/components/ui/dialog";
     import { Label } from "$lib/components/ui/label";
-    import { Plus } from "lucide-svelte";
+    import { Plus, Trash } from "lucide-svelte";
     import AceEditor from "$lib/AceEditor.svelte";
     import ErrorableInput from "$lib/ErrorableInput.svelte";
 
@@ -147,13 +147,26 @@
             <h4>{group.title}</h4>
             <div class="grid gap-2">
                 {#each group.exercises as exercise}
-                    <Card.Root class="hover:bg-accent cursor-pointer">
-                        <Card.Header>
-                            <Card.Title>{exercise.title}</Card.Title>
-                            <Card.Description>{exercise.subtitle}</Card.Description>
-                        </Card.Header>
-                        <Card.Content></Card.Content>
-                    </Card.Root>
+                    <div class="flex items-center justify-between border-b p-2">
+                        <div>
+                            <h2 class="text-lg font-semibold">{exercise.title}</h2>
+                            <p class="text-muted-foreground text-sm">{exercise.subtitle}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <form
+                                method="POST"
+                                action="?/deleteExercise"
+                                use:enhance
+                                onsubmit={invalidateAll}
+                                class="flex flex-row gap-2"
+                            >
+                                <input type="hidden" name="exerciseID" value={exercise.id} />
+                                <Button variant="destructive" class="h-8 w-8 p-0" type="submit">
+                                    <Trash />
+                                </Button>
+                            </form>
+                        </div>
+                    </div>
                 {/each}
             </div>
         {/each}

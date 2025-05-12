@@ -148,5 +148,17 @@ export const actions: Actions = {
         await pdb.$transaction(deleteTransactions);
 
         return redirect(303, "/teacher-admin");
+    },
+    deleteExercise: async ({ request }) => {
+        const data = await request.formData();
+        const exerciseID = data.get("exerciseID")?.toString();
+
+        if (!exerciseID) {
+            return fail(400, { message: "Invalid arguments" });
+        }
+
+        await pdb.exercise.delete({
+            where: { id: exerciseID }
+        });
     }
 };
