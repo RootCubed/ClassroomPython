@@ -61,5 +61,16 @@
     "code_admin_save_toast_error": "An error occurred while saving the exercise. Please try again.",
     "code_admin_save_toast_success": "Exercise saved successfully.",
     "code_admin_save_toast_in_progress": "Saving exercise...",
-    "code_save_toast_error": "An error occurred while saving your code. Please try again."
+    "code_save_toast_error": "An error occurred while saving your code. Please try again.",
+    "global_role_student": "Student",
+    "global_role_teacher": "Teacher",
+    "global_role_admin": "Admin",
+    "global_role_prompt_select": "Select a role",
+    "admin_loginas": "Login as this user",
+    "admin_reset_password": "Reset password",
+    "admin_delete_user": "Delete user",
+    "admin_actions_group": "Admin Actions",
+    "global_user_full_name": "Name",
+    "global_user_username": "Username",
+    "global_user_role": "Role"
 }

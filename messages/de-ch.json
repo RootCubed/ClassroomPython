@@ -61,5 +61,16 @@
     "code_admin_save_toast_error": "Beim Speichern der Aufgabe ist ein Fehler aufgetreten. Bitte versuche es erneut.",
     "code_admin_save_toast_success": "Aufgabe erfolgreich gespeichert.",
     "code_admin_save_toast_in_progress": "Aufgabe wird gespeichert...",
-    "code_save_toast_error": "Beim Speichern ist ein Fehler aufgetreten. Bitte versuche es erneut."
+    "code_save_toast_error": "Beim Speichern ist ein Fehler aufgetreten. Bitte versuche es erneut.",
+    "global_role_student": "Schüler:in",
+    "global_role_teacher": "Lehrperson",
+    "global_role_admin": "Admin",
+    "global_role_prompt_select": "Rolle auswählen",
+    "admin_loginas": "Als diesen Benutzer anmelden",
+    "admin_reset_password": "Passwort zurücksetzen",
+    "admin_delete_user": "Benutzer löschen",
+    "admin_actions_group": "Admin-Aktionen",
+    "global_user_full_name": "Name",
+    "global_user_username": "Benutzername",
+    "global_user_role": "Rolle"
 }

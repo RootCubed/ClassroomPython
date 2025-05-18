@@ -4,24 +4,21 @@ import { Role } from "@prisma/client";
 import { fail, type ActionFailure, type Actions, type Load } from "@sveltejs/kit";
 
 export const load: Load = async () => {
-    try {
-        return {
-            users: await pdb.user.findMany()
-        };
-    } catch (e) {
-        console.error(e);
-        return {
-            users: null
-        };
-    }
+    return {
+        users: await pdb.user.findMany({
+            orderBy: {
+                fullName: "asc"
+            }
+        })
+    };
 };
 
 export const actions: Actions = {
     deleteUser: async ({ request, locals }) => {
         const data = await request.formData();
-        const id = data.get("userId")?.toString();
+        const id = data.get("id")?.toString();
 
-        if (id === undefined) {
+        if (id == undefined) {
             return fail(400, { message: "No user ID provided" });
         }
 
@@ -32,7 +29,7 @@ export const actions: Actions = {
                 oauth: true
             }
         });
-        if (user === null || user.id === locals.user?.id) {
+        if (user == null || user.id == locals.user?.id) {
             return fail(400, { message: "Cannot delete this user" });
         }
 
@@ -70,7 +67,7 @@ export const actions: Actions = {
             STUDENT: Role.STUDENT
         }[role];
 
-        if (roleValue === undefined) {
+        if (roleValue == undefined) {
             return fail(400, {
                 role: {
                     value: role,
@@ -79,7 +76,7 @@ export const actions: Actions = {
             });
         }
 
-        if (fullName === undefined || fullName === "") {
+        if (fullName == undefined || fullName == "") {
             return fail(400, {
                 fullName: {
                     value: "",
@@ -88,7 +85,7 @@ export const actions: Actions = {
             });
         }
 
-        if (username === undefined || username === "") {
+        if (username == undefined || username == "") {
             return fail(400, {
                 username: {
                     value: "",
@@ -98,5 +95,31 @@ export const actions: Actions = {
         }
 
         await createUser(username, fullName, roleValue, username);
+    },
+    changeRole: async ({ locals, request }) => {
+        const data = await request.formData();
+        const id = data.get("id")?.toString();
+        const role = data.get("role")?.toString();
+        if (id == undefined) {
+            return fail(400, { message: "No user ID provided" });
+        }
+        if (locals.user?.id == id) {
+            return fail(400, { message: "Cannot change own role" });
+        }
+
+        const roleValue: Record<string, Role> = {
+            ADMIN: Role.ADMIN,
+            TEACHER: Role.TEACHER,
+            STUDENT: Role.STUDENT
+        };
+
+        if (role == undefined || !roleValue[role]) {
+            return fail(400, { message: "Invalid role" });
+        }
+
+        await pdb.user.update({
+            where: { id },
+            data: { role: roleValue[role] }
+        });
     }
 };
