@@ -32,7 +32,7 @@ export default defineConfig({
         viteServerConfig
     ],
     optimizeDeps: {
-        exclude: ["pyodide"]
+        exclude: ["pyodide", "@lucide"]
     },
     worker: {
         format: "es"

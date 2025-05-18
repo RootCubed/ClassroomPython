@@ -7,7 +7,7 @@
 
     import ErrorableInput from "$lib/ErrorableInput.svelte";
     import LoginWithMicrosoftButton from "$lib/oauth/LoginWithMicrosoftButton.svelte";
-    import { ArrowRight } from "lucide-svelte";
+    import { ArrowRight } from "@lucide/svelte";
 
     import * as m from "$lib/paraglide/messages";
 

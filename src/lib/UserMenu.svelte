@@ -5,7 +5,7 @@
 
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
     import { cn } from "$lib/utils";
-    import { ChevronDown, User } from "lucide-svelte";
+    import { ChevronDown, User } from "@lucide/svelte";
 
     import { locale, user } from "./page-state";
 

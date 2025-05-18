@@ -5,7 +5,7 @@
     import Input from "$lib/components/ui/input/input.svelte";
     import { Label } from "$lib/components/ui/label";
 
-    import { Check, X, CircleDashed, Trash } from "lucide-svelte";
+    import { Check, X, CircleDashed, Trash } from "@lucide/svelte";
     import { cn } from "$lib/utils";
 
     import AceEditor from "./AceEditor.svelte";

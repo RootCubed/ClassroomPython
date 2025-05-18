@@ -6,7 +6,7 @@
     import { Button } from "$lib/components/ui/button";
     import * as Card from "$lib/components/ui/card";
     import * as Dialog from "$lib/components/ui/dialog";
-    import { Plus } from "lucide-svelte";
+    import { Plus } from "@lucide/svelte";
 
     import ErrorableInput from "$lib/ErrorableInput.svelte";
 

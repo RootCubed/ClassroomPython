@@ -10,7 +10,7 @@
     import { toast } from "svelte-sonner";
     import { cn } from "$lib/utils";
 
-    import { PanelRightOpen } from "lucide-svelte";
+    import { PanelRightOpen } from "@lucide/svelte";
 
     import { user, pyodide } from "./page-state";
     import type { ExerciseView } from "./page-types";

@@ -6,7 +6,7 @@
     import * as Tabs from "$lib/components/ui/tabs";
     import * as Table from "$lib/components/ui/table";
     import * as Dialog from "$lib/components/ui/dialog";
-    import { ChevronRight } from "lucide-svelte";
+    import { ChevronRight } from "@lucide/svelte";
 
     import CodeWindow from "$lib/CodeWindow.svelte";
 

@@ -5,7 +5,7 @@
 
     import * as Tooltip from "$lib/components/ui/tooltip";
     import { cn } from "$lib/utils";
-    import { Cog } from "lucide-svelte";
+    import { Cog } from "@lucide/svelte";
 
     import type { ExerciseView } from "./page-types";
     import { user } from "./page-state";

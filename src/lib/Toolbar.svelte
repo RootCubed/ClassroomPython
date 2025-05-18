@@ -2,7 +2,15 @@
     import { Button } from "$lib/components/ui/button";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
     import * as Tooltip from "$lib/components/ui/tooltip";
-    import { ChevronDown, Play, Rocket, RotateCcw, Save, SkipForward, Square } from "lucide-svelte";
+    import {
+        ChevronDown,
+        Play,
+        Rocket,
+        RotateCcw,
+        Save,
+        SkipForward,
+        Square
+    } from "@lucide/svelte";
 
     import LoadingSpinner from "./LoadingSpinner.svelte";
 

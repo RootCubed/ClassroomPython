@@ -4,7 +4,7 @@
 
     import * as Sheet from "$lib/components/ui/sheet";
     import { Button } from "$lib/components/ui/button";
-    import { Menu } from "lucide-svelte";
+    import { Menu } from "@lucide/svelte";
 
     import type { ExerciseGroupView } from "./page-types";
     import Sidebar from "./Sidebar.svelte";

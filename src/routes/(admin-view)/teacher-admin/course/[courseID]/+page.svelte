@@ -9,7 +9,7 @@
     import * as Card from "$lib/components/ui/card";
     import * as Dialog from "$lib/components/ui/dialog";
     import { Label } from "$lib/components/ui/label";
-    import { Plus, Trash } from "lucide-svelte";
+    import { Plus, Trash } from "@lucide/svelte";
     import AceEditor from "$lib/AceEditor.svelte";
     import ErrorableInput from "$lib/ErrorableInput.svelte";
 

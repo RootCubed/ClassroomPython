@@ -3,7 +3,7 @@
 
     import * as Accordion from "$lib/components/ui/accordion";
     import { Separator } from "$lib/components/ui/separator";
-    import { CogIcon } from "lucide-svelte";
+    import { CogIcon } from "@lucide/svelte";
 
     import type { ExerciseGroupView } from "./page-types";
     import { loadedExercise, user } from "./page-state";
