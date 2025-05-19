@@ -42,23 +42,25 @@
         <h2 class="text-2xl font-bold">Lehrer-Dashboard</h2>
         <p class="text-muted-foreground">Kursmanagement</p>
     </div>
-    <div class="max-w-xl space-y-4">
+    <div class="max-w-xl">
         <h3 class="text-xl font-bold">Aktive Kurse</h3>
 
         {#each data.courses as course, i}
-            <Card.Root class="hover:bg-accent cursor-pointer">
-                <a href={`/teacher-admin/course/${course.id}`} class="contents">
-                    <Card.Header>
-                        <Card.Title>
-                            {course.title}
-                        </Card.Title>
-                        <Card.Description>{course.description}</Card.Description>
-                    </Card.Header>
-                    <Card.Content>
-                        <p class="text-muted-foreground">{course.students.length} Schüler</p>
-                    </Card.Content>
-                </a>
-            </Card.Root>
+            <div class="inline-block w-1/2 p-2">
+                <Card.Root class="hover:bg-accent cursor-pointer">
+                    <a href={`/teacher-admin/course/${course.id}`} class="contents">
+                        <Card.Header>
+                            <Card.Title>
+                                {course.title}
+                            </Card.Title>
+                            <Card.Description>{course.description}</Card.Description>
+                        </Card.Header>
+                        <Card.Content>
+                            <p class="text-muted-foreground">{course.students.length} Schüler</p>
+                        </Card.Content>
+                    </a>
+                </Card.Root>
+            </div>
         {/each}
 
         <Card.Root class="hover:bg-accent cursor-pointer">
