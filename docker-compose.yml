@@ -20,8 +20,8 @@ services:
             npx prisma migrate deploy &&
             npx prisma generate &&
             npm run build &&
-            mkdir -p ./build/prod/client/node_modules/pyodide-0.27.3 &&
-            cp -t ./build/prod/client/node_modules/pyodide-0.27.3 \
+            mkdir -p ./build/prod/client/node_modules/pyodide-0.27.6 &&
+            cp -t ./build/prod/client/node_modules/pyodide-0.27.6 \
             ./node_modules/pyodide/pyodide.asm.js \
             ./node_modules/pyodide/pyodide.asm.wasm \
             ./node_modules/pyodide/python_stdlib.zip \
