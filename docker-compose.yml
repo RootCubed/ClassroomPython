@@ -4,7 +4,7 @@ volumes:
     pgdata:
 services:
     frontend:
-        image: node:22-alpine
+        image: node:24-alpine
         environment:
             POSTGRES_HOST: backend
         working_dir: /home/node/app
