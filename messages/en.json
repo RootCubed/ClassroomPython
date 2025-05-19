@@ -70,6 +70,7 @@
     "admin_reset_password": "Reset password",
     "admin_delete_user": "Delete user",
     "admin_actions_group": "Admin Actions",
+    "admin_create_user": "Create user",
     "global_user_full_name": "Name",
     "global_user_username": "Username",
     "global_user_role": "Role"

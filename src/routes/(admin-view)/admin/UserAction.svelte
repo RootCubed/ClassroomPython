@@ -46,9 +46,9 @@
         {/snippet}
     </DropdownMenu.Trigger>
     <DropdownMenu.Content>
-        <DropdownMenu.Separator />
         <DropdownMenu.Group>
             <DropdownMenu.GroupHeading>{m.admin_actions_group()}</DropdownMenu.GroupHeading>
+            <DropdownMenu.Separator />
             <DropdownMenu.Item class="mx-2" onclick={loginAs}>{m.admin_loginas()}</DropdownMenu.Item
             >
             <DropdownMenu.Item class="mx-2" onclick={resetPassword}

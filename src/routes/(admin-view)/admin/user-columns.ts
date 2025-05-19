@@ -1,7 +1,7 @@
 import { renderComponent } from "$lib/components/ui/data-table";
 import type { ClientUser } from "$lib/server/auth";
 import type { ColumnDef } from "@tanstack/table-core";
-import UserRole from "$lib/components/dataviews/UserRole.svelte";
+import UserRole from "$lib/components/dataviews/UserRoleInput.svelte";
 import UserAction from "./UserAction.svelte";
 import { toast } from "svelte-sonner";
 import { invalidateAll } from "$app/navigation";
@@ -20,9 +20,8 @@ async function updateRole(id: string, role: Role) {
         })
     });
     const json = await resp.json();
-    if (json.type == "success") {
+    if (json.type != "success") {
         invalidateAll();
-    } else {
         toast.error("Failed to update role: " + json.data);
     }
 }
@@ -41,7 +40,6 @@ export const columns: ColumnDef<ClientUser>[] = [
         header: m.global_user_role,
         cell: ({ row }) => {
             return renderComponent(UserRole, {
-                id: row.original.id,
                 role: row.original.role,
                 onchange: (newRole) => updateRole(row.original.id, newRole)
             });

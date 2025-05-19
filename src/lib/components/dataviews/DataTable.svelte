@@ -1,4 +1,4 @@
-<script lang="ts" generics="TData, TValue">
+<script lang="ts" generics="TData, TValue, T">
     import {
         type ColumnDef,
         type ColumnFiltersState,
@@ -10,17 +10,24 @@
     import { createSvelteTable, FlexRender } from "$lib/components/ui/data-table/index.js";
     import * as Table from "$lib/components/ui/table/index.js";
     import { Input } from "$lib/components/ui/input";
+    import * as Dialog from "$lib/components/ui/dialog";
     import DataTablePagination from "./DataTablePagination.svelte";
+    import Button from "../ui/button/button.svelte";
+    import type { Snippet } from "svelte";
 
     type DataTableProps<TData, TValue> = {
         columns: ColumnDef<TData, TValue>[];
         data: TData[];
+        dialog?: string;
+        createDialog?: Snippet<[{ dialogClose: () => void }]>;
     };
 
-    let { data, columns }: DataTableProps<TData, TValue> = $props();
+    let { data, columns, dialog, createDialog }: DataTableProps<TData, TValue> = $props();
 
     let pagination = $state<PaginationState>({ pageIndex: 0, pageSize: 8 });
     let columnFilters = $state<ColumnFiltersState>([]);
+
+    let dialogOpen = $state(false);
 
     const table = createSvelteTable({
         get data() {
@@ -47,8 +54,23 @@
     });
 </script>
 
+<Dialog.Root bind:open={dialogOpen}>
+    <Dialog.Content class="flex max-w-sm flex-col">
+        <Dialog.Header>
+            <Dialog.Title>{dialog}</Dialog.Title>
+        </Dialog.Header>
+        {#if createDialog}
+            {@render createDialog({
+                dialogClose: () => {
+                    dialogOpen = false;
+                }
+            })}
+        {/if}
+    </Dialog.Content>
+</Dialog.Root>
+
 <div class="flex max-w-[800px] flex-col gap-4 py-4">
-    <div class="flex">
+    <div class="flex justify-between">
         <Input
             placeholder="Filter names..."
             value={(table.getColumn("fullName")?.getFilterValue() as string) ?? ""}
@@ -60,6 +82,11 @@
             }}
             class="max-w-[300px]"
         />
+        {#if dialog != ""}
+            <Button onclick={() => (dialogOpen = true)} onkeypress={() => (dialogOpen = true)}
+                >{dialog}</Button
+            >
+        {/if}
     </div>
     <div class="rounded-md border">
         <Table.Root>
