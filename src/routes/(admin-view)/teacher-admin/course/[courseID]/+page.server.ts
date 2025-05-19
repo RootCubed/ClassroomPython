@@ -12,7 +12,9 @@ export const load: ServerLoad = async ({ locals, params }) => {
     const course = await pdb.course.findUnique({
         where: { id: params.courseID! },
         include: {
-            students: true
+            students: {
+                orderBy: { fullName: "asc" }
+            }
         }
     });
     const exercises = await getExercises(params.courseID!, locals.user);
@@ -66,7 +68,7 @@ export const actions: Actions = {
     },
     addStudent: async ({ request, params, locals }) => {
         const data = await request.formData();
-        const username = data.get("studentUsername")?.toString();
+        const username = data.get("username")?.toString();
 
         if (!locals.user) {
             return fail(401);
@@ -79,25 +81,59 @@ export const actions: Actions = {
         }
 
         if (!username) {
-            return fail(400, { message: "Invalid arguments" });
+            return fail(400, {
+                username: {
+                    value: username ?? "",
+                    error: "Invalid username"
+                }
+            });
         }
 
         if (!params.courseID) {
             return fail(500, { message: "Course not found" });
         }
 
-        const user = await getOrCreateMSUser(oauth, username);
-
-        await pdb.course.update({
-            where: { id: params.courseID },
-            data: {
-                students: {
-                    connect: {
-                        id: user.id
+        if (
+            await pdb.course.findFirst({
+                where: {
+                    id: params.courseID,
+                    students: {
+                        some: {
+                            userName: username
+                        }
                     }
                 }
-            }
-        });
+            })
+        ) {
+            return fail(400, {
+                username: {
+                    value: username,
+                    error: "User already in course"
+                }
+            });
+        }
+
+        try {
+            const user = await getOrCreateMSUser(oauth, username);
+
+            await pdb.course.update({
+                where: { id: params.courseID },
+                data: {
+                    students: {
+                        connect: {
+                            id: user.id
+                        }
+                    }
+                }
+            });
+        } catch (e) {
+            return fail(500, {
+                username: {
+                    value: username,
+                    error: "User not found"
+                }
+            });
+        }
     },
     updateCourse: async ({ request, params }) => {
         const data = await request.formData();
@@ -159,6 +195,29 @@ export const actions: Actions = {
 
         await pdb.exercise.delete({
             where: { id: exerciseID }
+        });
+    },
+    removeFromCourse: async ({ request, params }) => {
+        const data = await request.formData();
+        const userID = data.get("id")?.toString();
+
+        if (!userID) {
+            return fail(400, { message: "Invalid arguments" });
+        }
+
+        if (!params.courseID) {
+            return fail(500, { message: "Course not found" });
+        }
+
+        await pdb.course.update({
+            where: { id: params.courseID },
+            data: {
+                students: {
+                    disconnect: {
+                        id: userID
+                    }
+                }
+            }
         });
     }
 };
