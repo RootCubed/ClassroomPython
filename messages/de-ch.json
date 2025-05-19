@@ -95,5 +95,6 @@
     "global_description": "Beschreibung",
     "exercises_folder_name": "Ordnername",
     "exercises_code_template": "Code-Vorlage",
-    "teacher_admin_cm_remove_user": "Benutzer entfernen"
+    "teacher_admin_cm_remove_user": "Benutzer entfernen",
+    "table_no_results": "Keine Ergebnisse."
 }

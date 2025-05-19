@@ -95,5 +95,6 @@
     "global_description": "Description",
     "exercises_folder_name": "Folder name",
     "exercises_code_template": "Code template",
-    "teacher_admin_cm_remove_user": "Remove user"
+    "teacher_admin_cm_remove_user": "Remove user",
+    "table_no_results": "No results."
 }

@@ -1,4 +1,5 @@
-<script lang="ts" generics="TData, TValue, T">
+<script lang="ts" generics="TData, TValue">
+    import type { Snippet } from "svelte";
     import {
         type ColumnDef,
         type ColumnFiltersState,
@@ -11,9 +12,9 @@
     import * as Table from "$lib/components/ui/table/index.js";
     import { Input } from "$lib/components/ui/input";
     import * as Dialog from "$lib/components/ui/dialog";
+    import { Button } from "$lib/components/ui/button";
     import DataTablePagination from "./DataTablePagination.svelte";
-    import Button from "../ui/button/button.svelte";
-    import type { Snippet } from "svelte";
+    import { m } from "$lib/paraglide/messages";
 
     type DataTableProps<TData, TValue> = {
         columns: ColumnDef<TData, TValue>[];
@@ -82,7 +83,7 @@
             }}
             class="max-w-[300px]"
         />
-        {#if dialog != ""}
+        {#if dialog}
             <Button onclick={() => (dialogOpen = true)} onkeypress={() => (dialogOpen = true)}
                 >{dialog}</Button
             >
@@ -121,7 +122,7 @@
                 {:else}
                     <Table.Row>
                         <Table.Cell colspan={columns.length} class="h-24 text-center">
-                            No results.
+                            {m.table_no_results()}
                         </Table.Cell>
                     </Table.Row>
                 {/each}
