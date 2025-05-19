@@ -4,9 +4,18 @@
     import { ChevronLeft, ChevronRight } from "@lucide/svelte";
 
     let { table, pagination }: { table: Table<TData>; pagination: PaginationState } = $props();
+
+    let page = $state(pagination.pageIndex + 1);
+
+    // Handle page reset
+    $effect(() => {
+        if (pagination.pageIndex == 0) {
+            page = 1;
+        }
+    });
 </script>
 
-<Pagination.Root count={table.getRowCount()} perPage={pagination.pageSize}>
+<Pagination.Root count={table.getRowCount()} perPage={pagination.pageSize} bind:page>
     {#snippet children({ pages, currentPage })}
         <Pagination.Content>
             <Pagination.Item>
